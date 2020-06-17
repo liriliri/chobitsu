@@ -2,9 +2,10 @@
   "name": "chobitsu",
   "version": "0.0.1",
   "description": "Chrome devtools protocol JavaScript implementation",
-  "main": "index.js",
+  "main": "dist/chobitsu.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "webpack --mode=development -w",
+    "build": "webpack --mode=production"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,10 @@
   "homepage": "https://github.com/liriliri/chobitsu#readme",
   "dependencies": {},
   "devDependencies": {
-    "typescript": "^3.9.5"
+    "licia": "^1.22.0",
+    "ts-loader": "^7.0.5",
+    "typescript": "^3.9.5",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
   }
 }

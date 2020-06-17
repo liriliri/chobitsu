@@ -1,2 +1,5 @@
 .gitignore
 .npmignore
+tslint.json
+tsconfig.json
+webpack.config.js
