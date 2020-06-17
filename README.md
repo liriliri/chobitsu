@@ -1,2 +1,3 @@
-# chobittsu
-Chrome devtools protocol JavaScript implementation
+# chobitsu
+
+Chrome devtools protocol JavaScript implementation.
