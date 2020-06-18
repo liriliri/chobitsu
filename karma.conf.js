@@ -6,7 +6,19 @@ module.exports = function (config) {
   config.set({
     basePath: '',
     frameworks: ['mocha', 'chai'],
-    files: ['src/index.ts', './tests/Runtime.spec.js'],
+    files: [
+      'src/index.ts',
+      './tests/CSS.spec.js',
+      './tests/Debugger.spec.js',
+      './tests/DOM.spec.js',
+      './tests/DOMDebugger.spec.js',
+      './tests/DOMStorage.spec.js',
+      './tests/Network.spec.js',
+      './tests/Overlay.spec.js',
+      './tests/Page.spec.js',
+      './tests/Runtime.spec.js',
+      './tests/Storage.spec.js',
+    ],
     plugins: [
       'karma-mocha',
       'karma-chai-plugins',
