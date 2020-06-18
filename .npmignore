@@ -6,3 +6,4 @@ tsconfig.json
 webpack.config.js
 prettier.config.js
 karma.conf.js
+.travis.yml

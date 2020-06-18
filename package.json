@@ -4,6 +4,7 @@
   "description": "Chrome devtools protocol JavaScript implementation",
   "main": "dist/chobitsu.js",
   "scripts": {
+    "ci": "npm run lint && npm test && npm run build",
     "dev": "webpack --mode=development -w",
     "build": "webpack --mode=production",
     "lint": "tslint src/**/*.ts",
