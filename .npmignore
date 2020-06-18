@@ -1,6 +1,8 @@
+tests/
 .gitignore
 .npmignore
 tslint.json
 tsconfig.json
 webpack.config.js
 prettier.config.js
+karma.conf.js
