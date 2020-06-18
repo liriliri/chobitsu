@@ -1,4 +1,6 @@
 tests/
+src/
+scripts/
 .gitignore
 .npmignore
 tslint.json
