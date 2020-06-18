@@ -24,7 +24,7 @@ class Chobitsu {
   setOnMessage(onMessage: OnMessage) {
     this.onMessage = onMessage;
   }
-  sendMessage(method: string, params: any) {
+  sendMessage(method: string, params: any = {}) {
     const id = uuid();
 
     this.sendRawMessage(
