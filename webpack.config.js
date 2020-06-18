@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = (env, argv) => {
   const config = {
     entry: './src/index.ts',
-    devtool: 'inline-source-map',
+    devtool: 'source-map',
     output: {
       filename: 'chobitsu.js',
       path: path.resolve(__dirname, 'dist'),
@@ -20,10 +20,6 @@ module.exports = (env, argv) => {
       ],
     },
   };
-
-  if (argv.mode === 'production') {
-    config.devtool = 'none';
-  }
 
   return config;
 };

@@ -7,7 +7,7 @@
     "dev": "webpack --mode=development -w",
     "build": "webpack --mode=production",
     "lint": "tslint src/**/*.ts",
-    "format": "prettier src/**/*.ts --write"
+    "format": "prettier src/**/*.ts *.{js,json} --write"
   },
   "repository": {
     "type": "git",
@@ -24,6 +24,7 @@
   "homepage": "https://github.com/liriliri/chobitsu#readme",
   "dependencies": {},
   "devDependencies": {
+    "@types/node": "^14.0.13",
     "licia": "^1.22.0",
     "prettier": "^2.0.5",
     "ts-loader": "^7.0.5",
