@@ -107,7 +107,10 @@ each(methods, (type, name) => {
     connector.trigger('Runtime.consoleAPICalled', {
       type,
       args,
-      stackTrace: { callFrames: type === 'error' || type === 'warning' ? getCallFrames() : [] },
+      stackTrace: {
+        callFrames:
+          type === 'error' || type === 'warning' ? getCallFrames() : [],
+      },
       executionContextId: executionContext.id,
       timestamp: now(),
     });
@@ -130,7 +133,11 @@ function parseFn(fnStr: string) {
   return result;
 }
 
-async function callFn(functionDeclaration: string, args: any[], ctx: any = null) {
+async function callFn(
+  functionDeclaration: string,
+  args: any[],
+  ctx: any = null
+) {
   const fnParams = parseFn(functionDeclaration);
   let fn;
 

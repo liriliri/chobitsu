@@ -24,7 +24,12 @@ class Observer extends Emitter {
     if (mutation.type === 'attributes') {
       this.emit('attributes', mutation.target, mutation.attributeName);
     } else if (mutation.type === 'childList') {
-      this.emit('childList', mutation.target, mutation.addedNodes, mutation.removedNodes);
+      this.emit(
+        'childList',
+        mutation.target,
+        mutation.addedNodes,
+        mutation.removedNodes
+      );
     } else if (mutation.type === 'characterData') {
       this.emit('characterData', mutation.target);
     }

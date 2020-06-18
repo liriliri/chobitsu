@@ -264,52 +264,55 @@ mutationObserver.on('attributes', (target: any, name: string) => {
   }
 });
 
-mutationObserver.on('childList', (target: Node, addedNodes: NodeList, removedNodes: NodeList) => {
-  const parentNodeId = getNodeId(target);
-  if (!parentNodeId) return;
+mutationObserver.on(
+  'childList',
+  (target: Node, addedNodes: NodeList, removedNodes: NodeList) => {
+    const parentNodeId = getNodeId(target);
+    if (!parentNodeId) return;
 
-  function childNodeCountUpdated() {
-    connector.trigger('DOM.childNodeCountUpdated', {
-      childNodeCount: stringifyNode.wrap(target, {
-        depth: 0,
-      }).childNodeCount,
-      nodeId: parentNodeId,
-    });
-  }
-
-  if (!isEmpty(addedNodes)) {
-    childNodeCountUpdated();
-    for (let i = 0, len = addedNodes.length; i < len; i++) {
-      const node = addedNodes[i];
-      const previousNode = stringifyNode.getPreviousNode(node);
-      const previousNodeId = previousNode ? getNodeId(previousNode) : 0;
-      const params: any = {
-        node: stringifyNode.wrap(node, {
+    function childNodeCountUpdated() {
+      connector.trigger('DOM.childNodeCountUpdated', {
+        childNodeCount: stringifyNode.wrap(target, {
           depth: 0,
-        }),
-        parentNodeId,
-        previousNodeId,
-      };
-
-      connector.trigger('DOM.childNodeInserted', params);
-    }
-  }
-
-  if (!isEmpty(removedNodes)) {
-    for (let i = 0, len = removedNodes.length; i < len; i++) {
-      const node = removedNodes[i];
-      const nodeId = getNodeId(node);
-      if (!nodeId) {
-        childNodeCountUpdated();
-        break;
-      }
-      connector.trigger('DOM.childNodeRemoved', {
-        nodeId: getNodeId(node),
-        parentNodeId,
+        }).childNodeCount,
+        nodeId: parentNodeId,
       });
     }
+
+    if (!isEmpty(addedNodes)) {
+      childNodeCountUpdated();
+      for (let i = 0, len = addedNodes.length; i < len; i++) {
+        const node = addedNodes[i];
+        const previousNode = stringifyNode.getPreviousNode(node);
+        const previousNodeId = previousNode ? getNodeId(previousNode) : 0;
+        const params: any = {
+          node: stringifyNode.wrap(node, {
+            depth: 0,
+          }),
+          parentNodeId,
+          previousNodeId,
+        };
+
+        connector.trigger('DOM.childNodeInserted', params);
+      }
+    }
+
+    if (!isEmpty(removedNodes)) {
+      for (let i = 0, len = removedNodes.length; i < len; i++) {
+        const node = removedNodes[i];
+        const nodeId = getNodeId(node);
+        if (!nodeId) {
+          childNodeCountUpdated();
+          break;
+        }
+        connector.trigger('DOM.childNodeRemoved', {
+          nodeId: getNodeId(node),
+          parentNodeId,
+        });
+      }
+    }
   }
-});
+);
 
 mutationObserver.on('characterData', (target: Node) => {
   const nodeId = getNodeId(target);

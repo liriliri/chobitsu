@@ -3,3 +3,4 @@
 tslint.json
 tsconfig.json
 webpack.config.js
+prettier.config.js

@@ -29,7 +29,9 @@ export function enable() {
 export function getComputedStyleForNode(params: any) {
   const node = getNode(params.nodeId);
 
-  const computedStyle: any = stylesheet.formatStyle(window.getComputedStyle(node));
+  const computedStyle: any = stylesheet.formatStyle(
+    window.getComputedStyle(node)
+  );
 
   return {
     computedStyle: toCssProperties(computedStyle),
@@ -82,7 +84,10 @@ export function getInlineStylesForNode(params: any) {
     const cssPropertiesWithoutRange = toCssProperties(parsedStyle);
 
     inlineStyle.shorthandEntries = getShorthandEntries(style);
-    inlineStyle.cssProperties = concat(cssPropertiesWithRange, cssPropertiesWithoutRange);
+    inlineStyle.cssProperties = concat(
+      cssPropertiesWithRange,
+      cssPropertiesWithoutRange
+    );
   }
 
   return {
@@ -95,7 +100,9 @@ export function getMatchedStylesForNode(params: any) {
   const matchedCSSRules = stylesheet.getMatchedCssRules(node);
 
   return {
-    matchedCSSRules: map(matchedCSSRules, matchedCSSRule => formatMatchedCssRule(node, matchedCSSRule)),
+    matchedCSSRules: map(matchedCSSRules, matchedCSSRule =>
+      formatMatchedCssRule(node, matchedCSSRule)
+    ),
     ...getInlineStylesForNode(params),
   };
 }
@@ -103,7 +110,9 @@ export function getMatchedStylesForNode(params: any) {
 export function getBackgroundColors(params: any) {
   const node = getNode(params.nodeId);
 
-  const computedStyle: any = stylesheet.formatStyle(window.getComputedStyle(node));
+  const computedStyle: any = stylesheet.formatStyle(
+    window.getComputedStyle(node)
+  );
 
   return {
     backgroundColors: [computedStyle['background-color']],

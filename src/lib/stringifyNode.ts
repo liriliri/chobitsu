@@ -52,7 +52,8 @@ export function wrap(node: any, { depth = 1 } = {}) {
 
   const childNodes = filterNodes(node.childNodes);
   ret.childNodeCount = childNodes.length;
-  const hasOneTextNode = ret.childNodeCount === 1 && childNodes[0].nodeType === 3;
+  const hasOneTextNode =
+    ret.childNodeCount === 1 && childNodes[0].nodeType === 3;
   if (depth > 0 || hasOneTextNode) {
     ret.children = getChildNodes(node, depth);
   }

@@ -40,7 +40,10 @@ export function clear() {
   selfs.clear();
 }
 
-export function wrap(value: any, { generatePreview = false, self = value } = {}): any {
+export function wrap(
+  value: any,
+  { generatePreview = false, self = value } = {}
+): any {
   const ret = basic(value);
   const { type, subtype } = ret;
 
@@ -106,7 +109,12 @@ export function releaseObj(objectId: number) {
 }
 
 export function getProperties(params: any) {
-  const { accessorPropertiesOnly, objectId, ownProperties, generatePreview } = params;
+  const {
+    accessorPropertiesOnly,
+    objectId,
+    ownProperties,
+    generatePreview,
+  } = params;
   const properties = [];
 
   const options = {

@@ -45,7 +45,11 @@ const winEventProto = getWinEventProto();
 const origAddEvent = winEventProto.addEventListener;
 const origRmEvent = winEventProto.removeEventListener;
 
-winEventProto.addEventListener = function (type: string, listener: any, options: any) {
+winEventProto.addEventListener = function (
+  type: string,
+  listener: any,
+  options: any
+) {
   addEvent(this, type, listener, options);
   origAddEvent.apply(this, arguments);
 };

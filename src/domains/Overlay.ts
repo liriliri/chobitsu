@@ -14,7 +14,11 @@ const transparent: any = { r: 0, g: 0, b: 0, a: 0 };
 
 export function highlightNode(params: any) {
   const { nodeId, highlightConfig, objectId } = params;
-  let { marginColor = transparent, paddingColor = transparent, borderColor = transparent } = highlightConfig;
+  let {
+    marginColor = transparent,
+    paddingColor = transparent,
+    borderColor = transparent,
+  } = highlightConfig;
   const { contentColor = transparent, showInfo } = highlightConfig;
 
   let node: any;
@@ -47,7 +51,11 @@ export function highlightNode(params: any) {
           top: top < 25 ? 0 : -25,
           left: 0,
         })
-        .html(`<span style="color:#881280;">#text</span> | ${Math.round(width)} × ${Math.round(height)}`)
+        .html(
+          `<span style="color:#881280;">#text</span> | ${Math.round(
+            width
+          )} × ${Math.round(height)}`
+        )
         .show();
     } else {
       $info.hide();
@@ -61,7 +69,8 @@ export function highlightNode(params: any) {
   $container.css({ left, top, width, height }).show();
 
   const computedStyle = window.getComputedStyle(node);
-  const getNumStyle = (name: string) => pxToNum(computedStyle.getPropertyValue(name));
+  const getNumStyle = (name: string) =>
+    pxToNum(computedStyle.getPropertyValue(name));
 
   const ml = getNumStyle('margin-left');
   const mr = getNumStyle('margin-right');
@@ -131,7 +140,9 @@ export function highlightNode(params: any) {
         top: -mt - (top - mt < 25 ? 0 : 25),
         left: -ml,
       })
-      .html(`${formatElName(node)} | ${Math.round(width)} × ${Math.round(height)}`)
+      .html(
+        `${formatElName(node)} | ${Math.round(width)} × ${Math.round(height)}`
+      )
       .show();
   } else {
     $info.hide();
@@ -279,7 +290,8 @@ const info = createEl({
   padding: '0 5px',
   whiteSpace: 'nowrap',
   overflowX: 'hidden',
-  boxShadow: '0 2px 2px 0 rgba(0, 0, 0, 0.05), 0 1px 4px 0 rgba(0, 0, 0, 0.08), 0 3px 1px -2px rgba(0, 0, 0, 0.2)',
+  boxShadow:
+    '0 2px 2px 0 rgba(0, 0, 0, 0.05), 0 1px 4px 0 rgba(0, 0, 0, 0.08), 0 3px 1px -2px rgba(0, 0, 0, 0.2)',
 });
 const $info = $(info);
 

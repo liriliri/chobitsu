@@ -72,7 +72,12 @@ export class XhrRequest extends Emitter {
     };
 
     const type = getType(xhr.getResponseHeader('Content-Type') || '');
-    if (resType === 'blob' && (type.type === 'text' || type.subType === 'javascript' || type.subType === 'json')) {
+    if (
+      resType === 'blob' &&
+      (type.type === 'text' ||
+        type.subType === 'javascript' ||
+        type.subType === 'json')
+    ) {
       readBlobAsText(xhr.response, (err: Error, result: string) => {
         if (result) resTxt = result;
         update();
@@ -215,7 +220,9 @@ const link = document.createElement('a');
 export function fullUrl(href: string) {
   link.href = href;
 
-  return link.protocol + '//' + link.host + link.pathname + link.search + link.hash;
+  return (
+    link.protocol + '//' + link.host + link.pathname + link.search + link.hash
+  );
 }
 
 function getFileName(url: string) {
