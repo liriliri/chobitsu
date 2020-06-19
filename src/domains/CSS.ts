@@ -159,8 +159,8 @@ export function setStyleTexts(params: any) {
 }
 
 function formatMatchedCssRule(node: any, matchedCssRule: any) {
-  const { selectorText } = matchedCssRule;
-  const selectors = map(selectorText.split(','), trim);
+  const { selectorText }: { selectorText: string } = matchedCssRule;
+  const selectors = map(selectorText.split(','), selector => trim(selector));
 
   const shorthandEntries = getShorthandEntries(matchedCssRule.style);
   const style = stylesheet.formatStyle(matchedCssRule.style);
