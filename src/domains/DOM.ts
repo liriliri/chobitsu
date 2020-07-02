@@ -13,6 +13,10 @@ import { setGlobal } from '../lib/evaluate';
 import contain from 'licia/contain';
 import { createId } from '../lib/util';
 import lowerCase from 'licia/lowerCase';
+import each from 'licia/each';
+import toArr from 'licia/toArr';
+import xpath from 'licia/xpath';
+import concat from 'licia/concat';
 
 export function collectClassNamesFromSubtree(params: any) {
   const node = getNode(params.nodeId);
@@ -77,19 +81,42 @@ const searchResults = new Map();
 
 export function performSearch(params: any) {
   const query = lowerCase(params.query);
-  const result: any[] = [];
+  let result: any[] = [];
 
+  try {
+    result = concat(result, toArr(document.querySelectorAll(query)));
+  } catch (e) {
+    /* tslint:disable-next-line */
+  }
+  try {
+    result = concat(result, xpath(query));
+  } catch (e) {
+    /* tslint:disable-next-line */
+  }
   traverseNode(document, (node: any) => {
     const { nodeType } = node;
-    let value = '';
     if (nodeType === 1) {
-      const html = node.outerHTML.replace(node.innerHTML, '');
-      value = lowerCase(html);
+      const localName = node.localName;
+      if (
+        contain(`<${localName} `, query) ||
+        contain(`</${localName}>`, query)
+      ) {
+        result.push(node);
+        return;
+      }
+
+      const attributes: string[] = [];
+      each(node.attributes, ({ name, value }) => attributes.push(name, value));
+      for (let i = 0, len = attributes.length; i < len; i++) {
+        if (contain(lowerCase(attributes[i]), query)) {
+          result.push(node);
+          break;
+        }
+      }
     } else if (nodeType === 3) {
-      value = lowerCase(node.nodeValue);
-    }
-    if (contain(value, query)) {
-      result.push(node);
+      if (contain(lowerCase(node.nodeValue), query)) {
+        result.push(node);
+      }
     }
   });
 
