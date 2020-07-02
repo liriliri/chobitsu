@@ -111,7 +111,7 @@ export function getSearchResults(params: any) {
     const nodeId = getNodeId(node);
 
     if (!nodeId) {
-      return safeCreateNodeId(node);
+      return pushNodesToFrontend(node);
     }
 
     return nodeId;
@@ -123,7 +123,7 @@ export function getSearchResults(params: any) {
 }
 
 // Make sure all parent nodes has been retrieved.
-export function safeCreateNodeId(node: any) {
+export function pushNodesToFrontend(node: any) {
   const nodes = [node];
   let parentNode = node.parentNode;
   while (parentNode) {

@@ -1,5 +1,5 @@
 import { getNode, getNodeId } from '../lib/stringifyNode';
-import { safeCreateNodeId } from './DOM';
+import { pushNodesToFrontend } from './DOM';
 import $ from 'licia/$';
 import h from 'licia/h';
 import isMobile from 'licia/isMobile';
@@ -182,7 +182,7 @@ function moveListener(e: any) {
   let nodeId = getNodeId(node);
 
   if (!nodeId) {
-    nodeId = safeCreateNodeId(node);
+    nodeId = pushNodesToFrontend(node);
   }
 
   highlightNode({
