@@ -43,6 +43,7 @@ export async function callFunctionOn(params: any) {
 
 export function enable() {
   uncaught.start();
+  monitorConsole();
   connector.trigger('Runtime.executionContextCreated', {
     context: executionContext,
   });
@@ -79,43 +80,45 @@ export function releaseObject(params: any) {
 
 declare const console: any;
 
-const methods: any = {
-  log: 'log',
-  warn: 'warning',
-  error: 'error',
-  info: 'info',
-  dir: 'dir',
-  table: 'table',
-  group: 'startGroup',
-  groupCollapsed: 'startGroupCollapsed',
-  groupEnd: 'endGroup',
-  debug: 'debug',
-  clear: 'clear',
-};
-
-each(methods, (type, name) => {
-  const origin = console[name].bind(console);
-  console[name] = (...args: any[]) => {
-    origin(...args);
-
-    args = map(args, arg =>
-      stringifyObj.wrap(arg, {
-        generatePreview: true,
-      })
-    );
-
-    connector.trigger('Runtime.consoleAPICalled', {
-      type,
-      args,
-      stackTrace: {
-        callFrames:
-          type === 'error' || type === 'warning' ? getCallFrames() : [],
-      },
-      executionContextId: executionContext.id,
-      timestamp: now(),
-    });
+function monitorConsole() {
+  const methods: any = {
+    log: 'log',
+    warn: 'warning',
+    error: 'error',
+    info: 'info',
+    dir: 'dir',
+    table: 'table',
+    group: 'startGroup',
+    groupCollapsed: 'startGroupCollapsed',
+    groupEnd: 'endGroup',
+    debug: 'debug',
+    clear: 'clear',
   };
-});
+
+  each(methods, (type, name) => {
+    const origin = console[name].bind(console);
+    console[name] = (...args: any[]) => {
+      origin(...args);
+
+      args = map(args, arg =>
+        stringifyObj.wrap(arg, {
+          generatePreview: true,
+        })
+      );
+
+      connector.trigger('Runtime.consoleAPICalled', {
+        type,
+        args,
+        stackTrace: {
+          callFrames:
+            type === 'error' || type === 'warning' ? getCallFrames() : [],
+        },
+        executionContextId: executionContext.id,
+        timestamp: now(),
+      });
+    };
+  });
+}
 
 const Function = window.Function;
 /* tslint:disable-next-line */

@@ -45,6 +45,10 @@ chobitsu.sendRawMessage(JSON.stringify({
     storageTypes: 'local_storage'
   }));
 })();
+
+const domStorage = chobitsu.domain('DOMStorage');
+domStorage.enable();
+domStorage.on('domStorageItemUpdated', params => console.log(params));
 ```
 
 ## API
@@ -60,3 +64,8 @@ Set message handler.
 ### sendMessage(method: string, params: any): Promise<any>
 
 Send message without setting id and get result.
+
+### domain(name: string)
+
+Get domain object.
+

@@ -2,12 +2,16 @@ import connector from './lib/connector';
 import noop from 'licia/noop';
 import uuid from 'licia/uuid';
 import methods from './domains/methods';
+import each from 'licia/each';
+import Emitter from 'licia/Emitter';
 
 type OnMessage = (message: string) => void;
+type DomainMethod = (...args: any[]) => any;
 
 class Chobitsu {
   private onMessage: OnMessage;
   private resolves: Map<string, (value?: any) => void> = new Map();
+  private domains: Map<string, { [index: string]: DomainMethod }> = new Map();
   constructor() {
     this.onMessage = noop;
     connector.on('message', message => {
@@ -18,8 +22,21 @@ class Chobitsu {
         resolve(parsedMessage.result);
       }
 
+      if (!parsedMessage.id) {
+        const [name, method] = parsedMessage.method.split('.');
+        const domain = this.domains.get(name);
+        if (domain) {
+          domain.emit(method, parsedMessage.params);
+        }
+      }
+
       this.onMessage(message);
     });
+
+    this.initDomains();
+  }
+  domain(name: string) {
+    return this.domains.get(name);
   }
   setOnMessage(onMessage: OnMessage) {
     this.onMessage = onMessage;
@@ -57,6 +74,20 @@ class Chobitsu {
     }
 
     connector.emit('message', JSON.stringify(resultMsg));
+  }
+  private initDomains() {
+    const domains = this.domains;
+
+    each(methods, (fn: any, key: string) => {
+      const [name, method] = key.split('.');
+      let domain = domains.get(name);
+      if (!domain) {
+        domain = {};
+        Emitter.mixin(domain);
+      }
+      domain[method] = fn;
+      domains.set(name, domain);
+    });
   }
   private async callMethod(method: string, params: any) {
     if (methods[method]) {
