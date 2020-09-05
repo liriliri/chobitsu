@@ -50,7 +50,9 @@ export const enable = once(function () {
         url: data.url,
         headers: data.reqHeaders,
       };
-      if (data.data) request.postData = data.data;
+      if (data.data) {
+        request.postData = data.data;
+      }
 
       connector.trigger('Network.requestWillBeSent', {
         requestId: id,
@@ -126,7 +128,9 @@ export const enable = once(function () {
         headers: data.reqHeaders,
       };
 
-      if (data.data) request.postData = data.data;
+      if (data.data) {
+        request.postData = data.data;
+      }
 
       connector.trigger('Network.requestWillBeSent', {
         requestId: id,

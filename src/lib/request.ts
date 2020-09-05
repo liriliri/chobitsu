@@ -33,6 +33,7 @@ export class XhrRequest extends Emitter {
       url: this.url,
       data,
       time: now(),
+      reqHeaders: this.reqHeaders,
       method: this.method,
     };
     if (!isEmpty(this.reqHeaders)) {
@@ -117,6 +118,7 @@ export class FetchRequest extends Emitter {
       name: getFileName(this.url),
       url: this.url,
       data,
+      reqHeaders: this.reqHeaders,
       time: now(),
       method: this.method,
     });
