@@ -1,6 +1,6 @@
 {
   "name": "chobitsu",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Chrome devtools protocol JavaScript implementation",
   "main": "dist/chobitsu.js",
   "scripts": {
@@ -32,7 +32,7 @@
     "karma-chrome-launcher": "^3.1.0",
     "karma-mocha": "^2.0.1",
     "karma-webpack": "^4.0.2",
-    "licia": "^1.22.0",
+    "licia": "^1.26.0",
     "mocha": "^8.0.1",
     "prettier": "^2.0.5",
     "ts-loader": "^7.0.5",

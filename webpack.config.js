@@ -1,4 +1,8 @@
 const path = require('path');
+const webpack = require('webpack');
+const pkg = require('./package.json');
+
+const banner = pkg.name + ' v' + pkg.version + ' ' + pkg.homepage;
 
 module.exports = {
   entry: './src/index.ts',
@@ -20,4 +24,7 @@ module.exports = {
       },
     ],
   },
+  plugins: [
+    new webpack.BannerPlugin(banner),
+  ]
 };
