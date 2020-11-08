@@ -4,11 +4,11 @@
 [![Build status][travis-image]][travis-url]
 [![License][license-image]][npm-url]
 
-[npm-image]: https://img.shields.io/npm/v/chobitsu.svg
+[npm-image]: https://img.shields.io/npm/v/chobitsu?style=flat-square 
 [npm-url]: https://npmjs.org/package/chobitsu
-[travis-image]: https://img.shields.io/travis/liriliri/chobitsu.svg
+[travis-image]: https://img.shields.io/travis/liriliri/chobitsu?style=flat-square
 [travis-url]: https://travis-ci.org/liriliri/chobitsu
-[license-image]: https://img.shields.io/npm/l/chobitsu.svg
+[license-image]: https://img.shields.io/npm/l/chobitsu?style=flat-square
 
 Chrome devtools protocol JavaScript implementation.
 
