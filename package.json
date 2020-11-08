@@ -6,10 +6,10 @@
   "scripts": {
     "ci": "npm run lint && npm test && npm run build",
     "dev": "webpack --mode=development -w",
-    "build": "webpack --mode=production && node scripts/build.js",
+    "build": "webpack --mode=production && node script/build.js",
     "lint": "tslint src/**/*.ts",
     "test": "karma start",
-    "format": "prettier src/**/*.ts *.{js,json} tests/*.js scripts/*.js --write"
+    "format": "prettier src/**/*.ts *.{js,json} tests/*.js script/*.js --write"
   },
   "repository": {
     "type": "git",
