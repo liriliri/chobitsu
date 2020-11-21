@@ -1,6 +1,7 @@
 tests/
 src/
 scripts/
+coverage/
 .gitignore
 .npmignore
 tslint.json

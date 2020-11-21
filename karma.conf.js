@@ -1,6 +1,10 @@
 const webpackCfg = require('./webpack.config');
 webpackCfg.devtool = 'inline-source-map';
 webpackCfg.mode = 'development';
+webpackCfg.module.rules[0].loader = [
+  '@jsdevtools/coverage-istanbul-loader',
+  'ts-loader',
+];
 
 module.exports = function (config) {
   config.set({
@@ -24,12 +28,16 @@ module.exports = function (config) {
       'karma-chai-plugins',
       'karma-chrome-launcher',
       'karma-webpack',
+      'karma-coverage-istanbul-reporter',
     ],
     webpackServer: {
       noInfo: true,
     },
     webpack: webpackCfg,
-    reporters: ['progress'],
+    reporters: ['progress', 'coverage-istanbul'],
+    coverageIstanbulReporter: {
+      reports: ['html', 'lcovonly', 'text', 'text-summary']
+    },
     preprocessors: {
       'src/index.ts': ['webpack'],
     },
