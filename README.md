@@ -20,7 +20,7 @@ Chrome devtools protocol JavaScript implementation.
 You can get it on npm.
 
 ```bash
-npm install chobitsu -g
+npm install chobitsu --save
 ```
 
 ## Usage
@@ -72,3 +72,6 @@ Send message without setting id and get result.
 
 Get domain object.
 
+## Related Projects
+
+* [chii](https://github.com/liriliri/chii): Remote debugging tool.
