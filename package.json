@@ -9,7 +9,7 @@
     "build": "webpack --mode=production && node script/build.js",
     "lint": "tslint src/**/*.ts",
     "test": "karma start",
-    "format": "prettier src/**/*.ts *.{js,json} test/*.js script/*.js --write"
+    "format": "lsla prettier src/**/*.ts *.{js,json} test/*.js script/*.js --write"
   },
   "repository": {
     "type": "git",
@@ -36,7 +36,6 @@
     "karma-webpack": "^4.0.2",
     "licia": "^1.26.0",
     "mocha": "^8.0.1",
-    "prettier": "^2.0.5",
     "ts-loader": "^7.0.5",
     "tslint": "^6.1.2",
     "tslint-config-prettier": "^1.18.0",

@@ -36,7 +36,7 @@ module.exports = function (config) {
     webpack: webpackCfg,
     reporters: ['progress', 'coverage-istanbul'],
     coverageIstanbulReporter: {
-      reports: ['html', 'lcovonly', 'text', 'text-summary']
+      reports: ['html', 'lcovonly', 'text', 'text-summary'],
     },
     preprocessors: {
       'src/index.ts': ['webpack'],
