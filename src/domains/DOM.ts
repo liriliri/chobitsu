@@ -11,7 +11,7 @@ import map from 'licia/map';
 import unique from 'licia/unique';
 import { setGlobal } from '../lib/evaluate';
 import contain from 'licia/contain';
-import { createId } from '../lib/util';
+import { createId, requestLru } from '../lib/util';
 import lowerCase from 'licia/lowerCase';
 import each from 'licia/each';
 import toArr from 'licia/toArr';
@@ -295,6 +295,105 @@ mutationObserver.on(
   'childList',
   (target: Node, addedNodes: NodeList, removedNodes: NodeList) => {
     const parentNodeId = getNodeId(target);
+    if (!isEmpty(addedNodes)) {
+      for (let i = 0, len = addedNodes.length; i < len; i++) {
+        const node = addedNodes[i] as HTMLImageElement;
+        if (!node || !node.tagName) {
+          continue;
+        }
+        const tagName = node.tagName.toLowerCase();
+        if (['script', 'img'].includes(tagName)) {
+          const url = node.src || node.getAttribute('src');
+          const getType = (type: string): string => {
+            const map: any = {
+              script: 'Script',
+              img: 'Image',
+            };
+            return map[type] ? map[type] : 'Other';
+          };
+          if (url && !requestLru.get(url)) {
+            const requestId = createId();
+            requestLru.set(url, requestId);
+
+            // 说明是图片或者script请求，则发送url
+            connector.trigger('Network.requestWillBeSent', {
+              requestId,
+              type: getType(tagName),
+              request: {
+                url,
+                method: 'get',
+                headers: {},
+                initialPriority: 'Low',
+                // TODO: how to get the correct value here
+                referrerPolicy: 'no-referrer-when-downgrade',
+              },
+              timestamp: Date.now() / 1000,
+            });
+            const clean = () => {
+              node.removeEventListener('load', onload);
+              node.removeEventListener('error', onerror);
+            };
+            const onload = () => {
+              if (requestLru.get(url) !== requestId) {
+                return;
+              }
+              const contentLength = 0;
+              const timestamp = Date.now() / 1000;
+              const encodedDataLength = contentLength;
+              const dataLength = contentLength;
+              // Definition: https://chromedevtools.github.io/devtools-protocol/tot/Network#event-responseReceived
+              connector.trigger('Network.responseReceived', {
+                requestId,
+                timestamp,
+                // Definition: https://chromedevtools.github.io/devtools-protocol/tot/Network#type-ResourceType
+                type: getType(tagName),
+                // Definition: https://chromedevtools.github.io/devtools-protocol/tot/Network#type-Response
+                response: {
+                  url: url,
+                  status: 200,
+                  statusText: 'ok',
+                  mimeType: '',
+                  headers: {},
+                  requestHeaders: {},
+                  connectionReused: false,
+                  connectionId: 0,
+                  fromDiskCache: false,
+                  fromServiceWorker: false,
+                  encodedDataLength,
+                  securityState: 'neutral',
+                },
+              });
+              connector.trigger('Network.dataReceived', {
+                requestId,
+                timestamp,
+                dataLength,
+                encodedDataLength,
+              });
+              connector.trigger('Network.loadingFinished', {
+                requestId,
+                timestamp,
+                encodedDataLength,
+              });
+              clean();
+            };
+            const onerror = (error: ErrorEvent) => {
+              connector.trigger('Network.loadingFailed', {
+                requestId,
+                timestamp: Date.now() / 1000,
+                type: getType(tagName),
+                errorText: error.message,
+                canceled: false,
+              });
+              clean();
+            };
+            // 加个超时
+            setTimeout(onload, 100);
+            node.addEventListener('load', onload);
+            node.addEventListener('error', onerror);
+          }
+        }
+      }
+    }
     if (!parentNodeId) return;
 
     function childNodeCountUpdated() {
@@ -305,7 +404,6 @@ mutationObserver.on(
         nodeId: parentNodeId,
       });
     }
-
     if (!isEmpty(addedNodes)) {
       childNodeCountUpdated();
       for (let i = 0, len = addedNodes.length; i < len; i++) {

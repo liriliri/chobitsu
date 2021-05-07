@@ -121,6 +121,15 @@ const methods: any = {
   'Storage.trackCacheStorageForOrigin': noop,
   'Storage.trackIndexedDBForOrigin': noop,
   'Storage.clearDataForOrigin': Storage.clearDataForOrigin,
+  // -------↓↓↓ 新增 ↓↓↓------
+  // frontend 刷新快捷键，页面刷新
+  'Page.reload': Page.reload,
+  // 屏蔽暂时不支持或者没用的method
+  'Target.setDiscoverTargets': noop,
+  'Target.setRemoteLocations': noop,
+  'Target.setAutoAttach': noop,
+  'Emulation.setFocusEmulationEnabled': noop,
+  'Page.setAdBlockingEnabled': noop,
 };
 
 export default methods;

@@ -1,6 +1,6 @@
 {
-  "name": "chobitsu",
-  "version": "0.2.2",
+  "name": "@ksky521/chobitsu",
+  "version": "0.3.0",
   "description": "Chrome devtools protocol JavaScript implementation",
   "main": "dist/chobitsu.js",
   "scripts": {
@@ -24,7 +24,9 @@
     "url": "https://github.com/liriliri/chobitsu/issues"
   },
   "homepage": "https://github.com/liriliri/chobitsu#readme",
-  "dependencies": {},
+  "dependencies": {
+    "lru-fast": "^0.2.2"
+  },
   "devDependencies": {
     "@jsdevtools/coverage-istanbul-loader": "^3.0.5",
     "@types/node": "^14.0.13",

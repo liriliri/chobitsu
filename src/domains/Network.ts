@@ -6,6 +6,7 @@ import once from 'licia/once';
 import isNative from 'licia/isNative';
 import { XhrRequest, FetchRequest } from '../lib/request';
 import connector from '../lib/connector';
+import imageDelegate from './networks/Image';
 
 export function deleteCookies(params: any) {
   rmCookie(params.name);
@@ -162,6 +163,9 @@ export const enable = once(function () {
 
     return fetchResult;
   };
+
+  // 修改Image对象
+  imageDelegate();
 });
 
 export function getResponseBody(params: any) {

@@ -2,6 +2,9 @@ import $ from 'licia/$';
 import fetch from 'licia/fetch';
 import { fullUrl } from '../lib/request';
 
+export function reload() {
+  location.reload();
+}
 export async function getAppManifest() {
   const $links = $('link');
   const ret: any = {

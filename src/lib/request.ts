@@ -66,6 +66,7 @@ export class XhrRequest extends Emitter {
     const update = () => {
       this.emit('done', this.id, {
         status: xhr.status,
+        statusText: xhr.statusText,
         size: getSize(xhr, false, this.url),
         time: now(),
         resTxt,
@@ -136,6 +137,7 @@ export class FetchRequest extends Emitter {
           resTxt,
           resHeaders: getFetchHeaders(res),
           status: res.status,
+          statusText: res.statusText,
         };
         if (!isEmpty(this.reqHeaders)) {
           data.reqHeaders = this.reqHeaders;
