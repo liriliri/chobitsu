@@ -8,24 +8,9 @@ import now from 'licia/now';
 import each from 'licia/each';
 import startWith from 'licia/startWith';
 import toNum from 'licia/toNum';
-import { createId, fullUrl } from './util';
+import { createId, fullUrl, getMimeTypeByUrl } from './util';
 import { isSupported } from './resourceTiming';
 import connector from './connector';
-
-const MIME_TYPE = {
-  'text/css': ['css'],
-  'image/jpeg': ['jpeg', 'jpg', 'jpe'],
-  'image/gif': ['gif'],
-  'image/heic': ['heic'],
-  'image/heif': ['heif'],
-  'image/apng': ['apng'],
-  'image/png': ['png'],
-  'application/xml': ['xml', 'xsl', 'xsd', 'rng'],
-  'application/javascript': ['js', 'mjs'],
-  'application/json': ['json', 'map'],
-  'text/plain': ['txt', 'text', 'conf', 'def', 'list', 'log', 'in', 'ini'],
-  'text/html': ['html', 'htm', 'shtml'],
-};
 
 export class ElementRequest extends Emitter {
   private el: HTMLImageElement | HTMLScriptElement;
@@ -43,29 +28,11 @@ export class ElementRequest extends Emitter {
     // 如果支持performance resourcetiming，则放弃这种方案：dom、new Image
     if (!isSupported) {
       this.type = this.getType(this.tagName);
-      this.mimeType = this.getMimeType(this.url);
+      this.mimeType = getMimeTypeByUrl(this.url);
       this.id = createId();
       this.willBeSent();
       this.bindEvent();
     }
-  }
-  getMimeType(url: string) {
-    const parsedUrl = new Url(url);
-    const extname = parsedUrl.pathname.split('.').pop();
-    let r = '';
-    if (!extname) {
-      return r;
-    }
-    for (let type of Object.keys(MIME_TYPE)) {
-      //@ts-ignore
-      const exts: string[] | undefined = MIME_TYPE[type] || [];
-      if (exts && exts.length && exts.includes(extname)) {
-        r = type;
-        break;
-      }
-    }
-
-    return r;
   }
   willBeSent() {
     // 说明是图片或者script请求，则发送url
@@ -118,18 +85,20 @@ export class ElementRequest extends Emitter {
     const timestamp = Date.now() / 1000;
     const encodedDataLength = contentLength;
 
-    connector.trigger('Network.responseReceivedExtraInfo', {
-      requestId,
-      blockedCookies: [],
-      headers: {},
-    });
-
     connector.trigger('Network.responseReceived', {
       requestId,
       timestamp,
       type: this.type,
       response: {
         url: this.url,
+        headers: {
+          'accept-ranges': 'bytes',
+          connection: 'keep-alive',
+          'keep-alive': 'timeout=5',
+          'content-length': encodedDataLength,
+          'content-type': this.mimeType,
+          'x-powered-by': 'Devtools-Resource-Timing',
+        },
         status: 200,
         statusText: 'ok',
         mimeType: this.mimeType,

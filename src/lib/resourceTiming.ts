@@ -1,55 +1,33 @@
 // 利用轮询 performance.getEntriesByType 抓取请求
 
 import connector from './connector';
-import { createId, hasRequest, removeRequestSetCache } from './util';
+import {
+  createId,
+  hasRequest,
+  removeRequestSetCache,
+  getMimeTypeByUrl,
+} from './util';
 
 let cursor = 0;
 let timer: ReturnType<typeof setTimeout> | null;
 
-function getType(
-  e: string
-): {
-  type: 'XHR' | 'Script' | 'Stylesheet' | 'Image' | 'Document' | 'XHR';
-  mime:
-    | 'application/json'
-    | 'text/javascript'
-    | 'text/css'
-    | 'image/png'
-    | 'text/html'
-    | 'application/json';
-} {
+function getType(e: string) {
   switch (e) {
     case 'xmlhttprequest':
-      return {
-        type: 'XHR',
-        mime: 'application/json',
-      };
+      return 'XHR';
     case 'script':
-      return {
-        type: 'Script',
-        mime: 'text/javascript',
-      };
+      return 'Script';
     case 'link':
-      return {
-        type: 'Stylesheet',
-        mime: 'text/css',
-      };
+      return 'Stylesheet';
     case 'css':
     case 'img':
-      return {
-        type: 'Image',
-        mime: 'image/png',
-      };
+      return 'Image';
+    case 'fetch':
+      return 'Fetch';
     case 'navigation':
-      return {
-        type: 'Document',
-        mime: 'text/html',
-      };
+      return 'Document';
     default:
-      return {
-        type: 'XHR',
-        mime: 'application/json',
-      };
+      return 'XHR';
   }
 }
 function checkResourceTiming(): void {
@@ -73,7 +51,7 @@ function checkResourceTiming(): void {
       continue;
     }
 
-    const { mime, type } = getType(initiatorType);
+    const type = getType(initiatorType);
     const requestId = createId();
     connector.trigger('Network.requestWillBeSent', {
       requestId,
@@ -92,21 +70,28 @@ function checkResourceTiming(): void {
       timestamp: startTime,
       wallTime: Date.now() / 1e3,
     });
+
     setTimeout(() => {
       removeRequestSetCache(name);
+      const mimeType = getMimeTypeByUrl(name);
+
       connector.trigger('Network.responseReceived', {
         requestId,
         timestamp: responseEnd,
         type,
         response: {
-          url: name,
           status: 200,
           statusText: 'OK',
-          mimeType: mime,
-          headers: {},
-          requestHeaders: {},
+          mimeType,
+          headers: {
+            'accept-ranges': 'bytes',
+            connection: 'keep-alive',
+            'keep-alive': 'timeout=5',
+            'content-length': encodedBodySize,
+            'content-type': mimeType,
+            'x-powered-by': 'Devtools-Resource-Timing',
+          },
           encodedDataLength: encodedBodySize,
-          securityState: 'neutral',
         },
       });
       connector.trigger('Network.loadingFinished', {
