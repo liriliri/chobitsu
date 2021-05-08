@@ -74,6 +74,9 @@ export const enable = once(function () {
         requestId: id,
         type: 'XHR',
         response: {
+          mimeType: data.mimeType,
+          statusText: data.statusText,
+          encodedDataLength: data.size,
           status: data.status,
         },
         timestamp: data.time / 1000,

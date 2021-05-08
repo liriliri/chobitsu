@@ -9,6 +9,148 @@ import each from 'licia/each';
 import startWith from 'licia/startWith';
 import toNum from 'licia/toNum';
 import { createId } from './util';
+import connector from './connector';
+
+const MIME_TYPE = {
+  'text/css': ['css'],
+  'image/jpeg': ['jpeg', 'jpg', 'jpe'],
+  'image/gif': ['gif'],
+  'image/heic': ['heic'],
+  'image/heif': ['heif'],
+  'image/apng': ['apng'],
+  'image/png': ['png'],
+  'application/xml': ['xml', 'xsl', 'xsd', 'rng'],
+  'application/javascript': ['js', 'mjs'],
+  'application/json': ['json', 'map'],
+  'text/plain': ['txt', 'text', 'conf', 'def', 'list', 'log', 'in', 'ini'],
+  'text/html': ['html', 'htm', 'shtml'],
+};
+
+export class ElementRequest extends Emitter {
+  private el: HTMLImageElement | HTMLScriptElement;
+  private tagName: string;
+  private url: string;
+  private id: string;
+  private type: string;
+  private mimeType: string;
+  constructor(element: HTMLImageElement | HTMLScriptElement, url: string) {
+    super();
+
+    this.el = element;
+    this.tagName = element.tagName.toLowerCase();
+    this.url = fullUrl(url);
+    this.type = this.getType(this.tagName);
+    this.mimeType = this.getMimeType(this.url);
+    this.id = createId();
+    this.willBeSent();
+    this.bindEvent();
+  }
+  getMimeType(url: string) {
+    const parsedUrl = new Url(url);
+    const extname = parsedUrl.pathname.split('.').pop();
+    let r = '';
+    if (!extname) {
+      return r;
+    }
+    for (let type of Object.keys(MIME_TYPE)) {
+      //@ts-ignore
+      const exts: string[] | undefined = MIME_TYPE[type] || [];
+      if (exts && exts.length && exts.includes(extname)) {
+        r = type;
+        break;
+      }
+    }
+
+    return r;
+  }
+  willBeSent() {
+    // 说明是图片或者script请求，则发送url
+    connector.trigger('Network.requestWillBeSent', {
+      requestId: this.id,
+      type: this.type,
+      request: {
+        url: this.url,
+        method: 'get',
+        headers: {},
+        initialPriority: 'Low',
+        // TODO: how to get the correct value here
+        referrerPolicy: 'no-referrer-when-downgrade',
+      },
+      timestamp: Date.now() / 1000,
+    });
+  }
+  bindEvent() {
+    let timeid: ReturnType<typeof setTimeout>;
+    const clear = () => {
+      if (timeid) {
+        clearTimeout(timeid);
+      }
+      this.el.removeEventListener('load', onload);
+      this.el.removeEventListener('error', onerror);
+    };
+    const onload = () => {
+      clear();
+      this.onLoad.bind(this)();
+    };
+    const onerror = (err: any) => {
+      clear();
+      this.onError.bind(this)(err);
+    };
+    // add Event listener
+    timeid = setTimeout(onload, 1000);
+    this.el.addEventListener('load', onload);
+    this.el.addEventListener('error', onerror);
+  }
+  getType(type: string): string {
+    const map: any = {
+      script: 'Script',
+      img: 'Image',
+    };
+    return map[type] ? map[type] : 'Other';
+  }
+  onLoad() {
+    const requestId = this.id;
+    const contentLength = 10;
+    const timestamp = Date.now() / 1000;
+    const encodedDataLength = contentLength;
+
+    connector.trigger('Network.responseReceivedExtraInfo', {
+      requestId,
+      blockedCookies: [],
+      headers: {},
+    });
+
+    // Definition: https://chromedevtools.github.io/devtools-protocol/tot/Network#event-responseReceived
+    connector.trigger('Network.responseReceived', {
+      requestId,
+      timestamp,
+      // Definition: https://chromedevtools.github.io/devtools-protocol/tot/Network#type-ResourceType
+      type: this.type,
+      // Definition: https://chromedevtools.github.io/devtools-protocol/tot/Network#type-Response
+      response: {
+        url: this.url,
+        status: 200,
+        statusText: 'ok',
+        mimeType: this.mimeType,
+        encodedDataLength,
+      },
+    });
+    connector.trigger('Network.loadingFinished', {
+      requestId,
+      timestamp,
+      encodedDataLength,
+    });
+  }
+  onError(err: any) {
+    connector.trigger('Network.loadingFailed', {
+      requestId: this.id,
+      timestamp: Date.now() / 1000,
+      type: this.type,
+      errorText: err.message,
+      canceled: false,
+    });
+  }
+}
 
 export class XhrRequest extends Emitter {
   private xhr: XMLHttpRequest;
@@ -62,9 +204,9 @@ export class XhrRequest extends Emitter {
     const xhr = this.xhr;
     const resType = xhr.responseType;
     let resTxt = '';
-
     const update = () => {
       this.emit('done', this.id, {
+        mimeType: xhr.getResponseHeader('Content-Type'),
         status: xhr.status,
         statusText: xhr.statusText,
         size: getSize(xhr, false, this.url),

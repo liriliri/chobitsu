@@ -24,9 +24,7 @@
     "url": "https://github.com/liriliri/chobitsu/issues"
   },
   "homepage": "https://github.com/liriliri/chobitsu#readme",
-  "dependencies": {
-    "lru-fast": "^0.2.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@jsdevtools/coverage-istanbul-loader": "^3.0.5",
     "@types/node": "^14.0.13",
