@@ -15,6 +15,9 @@ export function hasRequest(url: string): boolean {
   requestUniqueSet.add(url);
   return false;
 }
+export function removeRequestSetCache(url: string) {
+  requestUniqueSet.delete(url);
+}
 
 const link = document.createElement('a');
 export function fullUrl(href: string) {

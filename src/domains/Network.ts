@@ -153,6 +153,9 @@ export const enable = once(function () {
         requestId: id,
         type: 'Fetch',
         response: {
+          mimeType: data.type,
+          statusText: data.statusText,
+          encodedDataLength: data.size,
           status: data.status,
           headers: data.resHeaders,
         },

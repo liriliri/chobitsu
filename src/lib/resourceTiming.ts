@@ -1,7 +1,7 @@
 // 利用轮询 performance.getEntriesByType 抓取请求
 
 import connector from './connector';
-import { createId, hasRequest } from './util';
+import { createId, hasRequest, removeRequestSetCache } from './util';
 
 let cursor = 0;
 let timer: ReturnType<typeof setTimeout> | null;
@@ -92,26 +92,29 @@ function checkResourceTiming(): void {
       timestamp: startTime,
       wallTime: Date.now() / 1e3,
     });
-    connector.trigger('Network.responseReceived', {
-      requestId,
-      timestamp: responseEnd,
-      type,
-      response: {
-        url: name,
-        status: 200,
-        statusText: 'OK',
-        mimeType: mime,
-        headers: {},
-        requestHeaders: {},
+    setTimeout(() => {
+      removeRequestSetCache(name);
+      connector.trigger('Network.responseReceived', {
+        requestId,
+        timestamp: responseEnd,
+        type,
+        response: {
+          url: name,
+          status: 200,
+          statusText: 'OK',
+          mimeType: mime,
+          headers: {},
+          requestHeaders: {},
+          encodedDataLength: encodedBodySize,
+          securityState: 'neutral',
+        },
+      });
+      connector.trigger('Network.loadingFinished', {
+        requestId,
+        timestamp: responseEnd,
         encodedDataLength: encodedBodySize,
-        securityState: 'neutral',
-      },
-    });
-    connector.trigger('Network.loadingFinished', {
-      requestId,
-      timestamp: responseEnd,
-      encodedDataLength: encodedBodySize,
-    });
+      });
+    }, 30);
   }
   if (self.performance.clearResourceTimings) {
     self.performance.clearResourceTimings();

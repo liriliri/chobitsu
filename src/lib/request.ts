@@ -8,7 +8,8 @@ import now from 'licia/now';
 import each from 'licia/each';
 import startWith from 'licia/startWith';
 import toNum from 'licia/toNum';
-import { createId, hasRequest, fullUrl } from './util';
+import { createId, fullUrl } from './util';
+import { isSupported } from './resourceTiming';
 import connector from './connector';
 
 const MIME_TYPE = {
@@ -39,8 +40,8 @@ export class ElementRequest extends Emitter {
     this.el = element;
     this.tagName = element.tagName.toLowerCase();
     this.url = fullUrl(url);
-    // 不要多发
-    if (!hasRequest(url)) {
+    // 如果支持performance resourcetiming，则放弃这种方案：dom、new Image
+    if (!isSupported) {
       this.type = this.getType(this.tagName);
       this.mimeType = this.getMimeType(this.url);
       this.id = createId();
