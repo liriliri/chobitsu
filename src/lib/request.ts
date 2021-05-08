@@ -8,7 +8,7 @@ import now from 'licia/now';
 import each from 'licia/each';
 import startWith from 'licia/startWith';
 import toNum from 'licia/toNum';
-import { createId } from './util';
+import { createId, hasRequest, fullUrl } from './util';
 import connector from './connector';
 
 const MIME_TYPE = {
@@ -39,11 +39,14 @@ export class ElementRequest extends Emitter {
     this.el = element;
     this.tagName = element.tagName.toLowerCase();
     this.url = fullUrl(url);
-    this.type = this.getType(this.tagName);
-    this.mimeType = this.getMimeType(this.url);
-    this.id = createId();
-    this.willBeSent();
-    this.bindEvent();
+    // 不要多发
+    if (!hasRequest(url)) {
+      this.type = this.getType(this.tagName);
+      this.mimeType = this.getMimeType(this.url);
+      this.id = createId();
+      this.willBeSent();
+      this.bindEvent();
+    }
   }
   getMimeType(url: string) {
     const parsedUrl = new Url(url);
@@ -120,13 +123,10 @@ export class ElementRequest extends Emitter {
       headers: {},
     });
 
-    // Definition: https://chromedevtools.github.io/devtools-protocol/tot/Network#event-responseReceived
     connector.trigger('Network.responseReceived', {
       requestId,
       timestamp,
-      // Definition: https://chromedevtools.github.io/devtools-protocol/tot/Network#type-ResourceType
       type: this.type,
-      // Definition: https://chromedevtools.github.io/devtools-protocol/tot/Network#type-Response
       response: {
         url: this.url,
         status: 200,
@@ -359,16 +359,6 @@ function getSize(xhr: XMLHttpRequest, headersOnly: boolean, url: string) {
   if (size === 0) getStrSize();
 
   return size;
-}
-
-const link = document.createElement('a');
-
-export function fullUrl(href: string) {
-  link.href = href;
-
-  return (
-    link.protocol + '//' + link.host + link.pathname + link.search + link.hash
-  );
 }
 
 function getFileName(url: string) {

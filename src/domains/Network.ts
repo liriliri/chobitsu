@@ -7,6 +7,7 @@ import isNative from 'licia/isNative';
 import { XhrRequest, FetchRequest } from '../lib/request';
 import connector from '../lib/connector';
 import imageDelegate from './networks/Image';
+import resourceTiming from '../lib/resourceTiming';
 
 export function deleteCookies(params: any) {
   rmCookie(params.name);
@@ -34,6 +35,10 @@ export function getCookies() {
 const resTxtMap = new Map();
 
 export const enable = once(function () {
+  // 修改Image对象
+  imageDelegate();
+  resourceTiming();
+
   const winXhrProto = window.XMLHttpRequest.prototype;
 
   const origSend: any = winXhrProto.send;
@@ -166,9 +171,6 @@ export const enable = once(function () {
 
     return fetchResult;
   };
-
-  // 修改Image对象
-  imageDelegate();
 });
 
 export function getResponseBody(params: any) {
