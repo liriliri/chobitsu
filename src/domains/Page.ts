@@ -1,6 +1,6 @@
 import $ from 'licia/$';
 import fetch from 'licia/fetch';
-import { fullUrl } from '../lib/request';
+import { fullUrl } from '../lib/util';
 
 export function reload() {
   location.reload();
