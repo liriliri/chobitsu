@@ -84,10 +84,7 @@ function checkResourceTiming(): void {
           statusText: 'OK',
           mimeType,
           headers: {
-            'accept-ranges': 'bytes',
-            connection: 'keep-alive',
-            'keep-alive': 'timeout=5',
-            'content-length': encodedBodySize,
+            'content-length': encodedBodySize + '',
             'content-type': mimeType,
             'x-powered-by': 'Devtools-Resource-Timing',
           },

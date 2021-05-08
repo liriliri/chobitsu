@@ -92,10 +92,7 @@ export class ElementRequest extends Emitter {
       response: {
         url: this.url,
         headers: {
-          'accept-ranges': 'bytes',
-          connection: 'keep-alive',
-          'keep-alive': 'timeout=5',
-          'content-length': encodedDataLength,
+          'content-length': encodedDataLength + '',
           'content-type': this.mimeType,
           'x-powered-by': 'Devtools-Resource-Timing',
         },
