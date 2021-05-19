@@ -2,9 +2,23 @@ import $ from 'licia/$';
 import fetch from 'licia/fetch';
 import { fullUrl } from '../lib/util';
 
-export function reload() {
-  location.reload();
+export function reload(opts: any) {
+  location.reload(!!opts.ignoreCache);
+  return {};
 }
+export function navigate(opts: any) {
+  if (!opts || typeof opts.url !== 'string') {
+    return;
+  }
+
+  location.assign(opts.url);
+  return {};
+}
+export function navigateToHistoryEntry(opts: any) {
+  history.go(opts.entryId);
+  return {};
+}
+
 export async function getAppManifest() {
   const $links = $('link');
   const ret: any = {

@@ -4,7 +4,6 @@ import uuid from 'licia/uuid';
 import methods from './domains/methods';
 import each from 'licia/each';
 import Emitter from 'licia/Emitter';
-import isArray from 'licia/isArr';
 
 type OnMessage = (message: string) => void;
 type DomainMethod = (...args: any[]) => any;
@@ -79,16 +78,20 @@ class Chobitsu {
 
     connector.emit('message', JSON.stringify(resultMsg));
   }
-  registerMethod(methods: any[] | any) {
-    if (!isArray(methods)) {
-      methods = [methods];
+  registerMethod(methodName: string, fn: any) {
+    if (methods[methodName]) {
+      throw Error(`${methodName} is registered!`);
+    } else {
+      methods[methodName] = fn;
+      this._addMethods({
+        [methodName]: fn,
+      });
     }
-    this._addMethods(methods);
   }
-  private _addMethods(methods: any[]) {
+  private _addMethods(methodObj: any) {
     const domains = this.domains;
 
-    each(methods, (fn: any, key: string) => {
+    each(methodObj, (fn: any, key: string) => {
       const [name, method] = key.split('.');
       let domain = domains.get(name);
       if (!domain) {
