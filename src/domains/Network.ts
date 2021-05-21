@@ -37,7 +37,7 @@ const resTxtMap = new Map();
 export const enable = once(function () {
   // 修改Image对象
   imageDelegate();
-  resourceTiming();
+  resourceTiming(resTxtMap);
 
   const winXhrProto = window.XMLHttpRequest.prototype;
 

@@ -30,7 +30,7 @@ function getType(e: string) {
       return 'XHR';
   }
 }
-function checkResourceTiming(): void {
+function checkResourceTiming(resTxtMap: Map<string, string>): void {
   if (!self.performance) {
     return;
   }
@@ -91,6 +91,8 @@ function checkResourceTiming(): void {
           encodedDataLength: encodedBodySize,
         },
       });
+      // 增加response返回内容，后面想办法加上！
+      resTxtMap.set(requestId, '');
       connector.trigger('Network.loadingFinished', {
         requestId,
         timestamp: responseEnd,
@@ -110,11 +112,11 @@ export function restore(): void {
   timer = null;
 }
 
-function poll(): void {
+function poll(resTxtMap: Map<string, string>): void {
   restore();
   timer = setTimeout(() => {
-    checkResourceTiming();
-    poll();
+    checkResourceTiming(resTxtMap);
+    poll(resTxtMap);
   }, 1000);
 }
 
@@ -123,10 +125,10 @@ export const isSupported =
     ? false
     : true;
 
-export default (): boolean => {
+export default (resTxtMap: Map<string, string>): boolean => {
   if (!isSupported) {
     return false;
   }
-  poll();
+  poll(resTxtMap);
   return true;
 };
