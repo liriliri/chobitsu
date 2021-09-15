@@ -113,9 +113,10 @@ export const enable = once(function () {
     origSetRequestHeader.apply(this, arguments);
   };
 
-  let isFetchSupported = false;
-  if (window.fetch) isFetchSupported = isNative(window.fetch);
-  if (!isFetchSupported) return;
+  //! if page was injected `window.fetch` polyfill
+  //! `isNative(window.fetch)` will return `false`
+  //! that cause break
+  if (!window.fetch) return;
 
   const origFetch = window.fetch;
 
