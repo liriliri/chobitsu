@@ -22,6 +22,17 @@ module.exports = {
         test: /\.ts$/,
         loader: 'ts-loader',
       },
+      {
+        test: /\.css$/,
+        use: [
+          {
+            loader: 'raw-loader',
+            options: {
+              esModule: false,
+            },
+          },
+        ],
+      },
     ],
   },
   plugins: [new webpack.BannerPlugin(banner)],

@@ -108,7 +108,7 @@ const methods: any = {
   'Inspector.enable': noop,
   'IndexedDB.requestDatabaseNames': noop,
 
-  'Overlay.enable': noop,
+  'Overlay.enable': Overlay.enable,
   'Overlay.hideHighlight': Overlay.hideHighlight,
   'Overlay.highlightFrame': noop,
   'Overlay.highlightNode': Overlay.highlightNode,

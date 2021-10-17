@@ -1,6 +1,6 @@
 {
   "name": "chobitsu",
-  "version": "0.2.2",
+  "version": "0.3.2",
   "description": "Chrome devtools protocol JavaScript implementation",
   "main": "dist/chobitsu.js",
   "scripts": {
@@ -24,7 +24,6 @@
     "url": "https://github.com/liriliri/chobitsu/issues"
   },
   "homepage": "https://github.com/liriliri/chobitsu#readme",
-  "dependencies": {},
   "devDependencies": {
     "@jsdevtools/coverage-istanbul-loader": "^3.0.5",
     "@types/node": "^14.0.13",
@@ -35,7 +34,9 @@
     "karma-mocha": "^2.0.1",
     "karma-webpack": "^4.0.2",
     "licia": "^1.26.0",
+    "luna-dom-highlighter": "^0.3.1",
     "mocha": "^8.0.1",
+    "raw-loader": "^4.0.2",
     "ts-loader": "^7.0.5",
     "tslint": "^6.1.2",
     "tslint-config-prettier": "^1.18.0",
