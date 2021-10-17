@@ -1,100 +1,100 @@
-import each from 'licia/each';
-import Emitter from 'licia/Emitter';
-import { createId } from './util';
+import each from 'licia/each'
+import Emitter from 'licia/Emitter'
+import { createId } from './util'
 
-const elProto: any = Element.prototype;
+const elProto: any = Element.prototype
 
-let matchesSel: any = () => false;
+let matchesSel: any = () => false
 
 if (elProto.webkitMatchesSelector) {
-  matchesSel = (el: any, selText: string) => el.webkitMatchesSelector(selText);
+  matchesSel = (el: any, selText: string) => el.webkitMatchesSelector(selText)
 } else if (elProto.mozMatchesSelector) {
-  matchesSel = (el: any, selText: string) => el.mozMatchesSelector(selText);
+  matchesSel = (el: any, selText: string) => el.mozMatchesSelector(selText)
 }
 
 export function matchesSelector(el: any, selText: string) {
-  return matchesSel(el, selText);
+  return matchesSel(el, selText)
 }
 
-const emitter = new Emitter();
+const emitter = new Emitter()
 export function onStyleSheetAdded(fn: any) {
-  emitter.on('styleSheetAdded', fn);
+  emitter.on('styleSheetAdded', fn)
 }
 
 export function getStyleSheets() {
-  return document.styleSheets;
+  return document.styleSheets
 }
 
 export function getMatchedCssRules(node: any) {
-  const ret: any[] = [];
+  const ret: any[] = []
 
   each(document.styleSheets, (styleSheet: any) => {
-    let styleSheetId = styleSheet.styleSheetId;
+    let styleSheetId = styleSheet.styleSheetId
     if (!styleSheetId) {
-      styleSheetId = createId();
-      styleSheet.styleSheetId = styleSheetId;
-      emitter.emit('styleSheetAdded', styleSheet);
+      styleSheetId = createId()
+      styleSheet.styleSheetId = styleSheetId
+      emitter.emit('styleSheetAdded', styleSheet)
     }
     try {
       // Started with version 64, Chrome does not allow cross origin script to access this property.
-      if (!styleSheet.cssRules) return;
+      if (!styleSheet.cssRules) return
     } catch (e) {
-      return;
+      return
     }
 
     each(styleSheet.cssRules, (cssRule: any) => {
-      let matchesEl = false;
+      let matchesEl = false
 
       // Mobile safari will throw DOM Exception 12 error, need to try catch it.
       try {
-        matchesEl = matchesSelector(node, cssRule.selectorText);
+        matchesEl = matchesSelector(node, cssRule.selectorText)
       } catch (e) {
         /* tslint:disable-next-line */
       }
 
-      if (!matchesEl) return;
+      if (!matchesEl) return
 
       ret.push({
         selectorText: cssRule.selectorText,
         style: cssRule.style,
         styleSheetId,
-      });
-    });
-  });
+      })
+    })
+  })
 
-  return ret;
+  return ret
 }
 
 export function formatStyle(style: any) {
-  const ret: any = {};
+  const ret: any = {}
 
   for (let i = 0, len = style.length; i < len; i++) {
-    const name = style[i];
+    const name = style[i]
 
-    ret[name] = style[name];
+    ret[name] = style[name]
   }
 
-  return ret;
+  return ret
 }
 
-const inlineStyleSheetIds = new Map();
-const inlineStyleNodeIds = new Map();
+const inlineStyleSheetIds = new Map()
+const inlineStyleNodeIds = new Map()
 
 export function getOrCreateInlineStyleSheetId(nodeId: any) {
-  let styleSheetId = inlineStyleSheetIds.get(nodeId);
-  if (styleSheetId) return styleSheetId;
+  let styleSheetId = inlineStyleSheetIds.get(nodeId)
+  if (styleSheetId) return styleSheetId
 
-  styleSheetId = createId();
-  inlineStyleSheetIds.set(nodeId, styleSheetId);
-  inlineStyleNodeIds.set(styleSheetId, nodeId);
+  styleSheetId = createId()
+  inlineStyleSheetIds.set(nodeId, styleSheetId)
+  inlineStyleNodeIds.set(styleSheetId, nodeId)
 
-  return styleSheetId;
+  return styleSheetId
 }
 
 export function getInlineStyleSheetId(nodeId: any) {
-  return inlineStyleSheetIds.get(nodeId);
+  return inlineStyleSheetIds.get(nodeId)
 }
 
 export function getInlineStyleNodeId(styleSheetId: string) {
-  return inlineStyleNodeIds.get(styleSheetId);
+  return inlineStyleNodeIds.get(styleSheetId)
 }

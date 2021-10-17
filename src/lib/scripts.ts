@@ -6,8 +6,8 @@ const script = {
   endLine: 100000,
   scriptLanguage: 'JavaScript',
   url: '',
-};
+}
 
 export function get() {
-  return script;
+  return script
 }

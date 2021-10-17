@@ -1,29 +1,29 @@
-import Emitter from 'licia/Emitter';
-import isStr from 'licia/isStr';
-import last from 'licia/last';
-import Url from 'licia/Url';
-import isEmpty from 'licia/isEmpty';
-import trim from 'licia/trim';
-import now from 'licia/now';
-import each from 'licia/each';
-import startWith from 'licia/startWith';
-import toNum from 'licia/toNum';
-import { createId } from './util';
+import Emitter from 'licia/Emitter'
+import isStr from 'licia/isStr'
+import last from 'licia/last'
+import Url from 'licia/Url'
+import isEmpty from 'licia/isEmpty'
+import trim from 'licia/trim'
+import now from 'licia/now'
+import each from 'licia/each'
+import startWith from 'licia/startWith'
+import toNum from 'licia/toNum'
+import { createId } from './util'
 
 export class XhrRequest extends Emitter {
-  private xhr: XMLHttpRequest;
-  private method: string;
-  private url: string;
-  private id: string;
-  private reqHeaders: any;
+  private xhr: XMLHttpRequest
+  private method: string
+  private url: string
+  private id: string
+  private reqHeaders: any
   constructor(xhr: XMLHttpRequest, method: string, url: string) {
-    super();
+    super()
 
-    this.xhr = xhr;
-    this.reqHeaders = {};
-    this.method = method;
-    this.url = fullUrl(url);
-    this.id = createId();
+    this.xhr = xhr
+    this.reqHeaders = {}
+    this.method = method
+    this.url = fullUrl(url)
+    this.id = createId()
   }
   // #1
   toJSON() {
@@ -31,10 +31,10 @@ export class XhrRequest extends Emitter {
       method: this.method,
       url: this.url,
       id: this.id,
-    };
+    }
   }
   handleSend(data: any) {
-    if (!isStr(data)) data = '';
+    if (!isStr(data)) data = ''
 
     data = {
       name: getFileName(this.url),
@@ -43,33 +43,33 @@ export class XhrRequest extends Emitter {
       time: now(),
       reqHeaders: this.reqHeaders,
       method: this.method,
-    };
-    if (!isEmpty(this.reqHeaders)) {
-      data.reqHeaders = this.reqHeaders;
     }
-    this.emit('send', this.id, data);
+    if (!isEmpty(this.reqHeaders)) {
+      data.reqHeaders = this.reqHeaders
+    }
+    this.emit('send', this.id, data)
   }
   handleReqHeadersSet(key: string, val: string) {
     if (key && val) {
-      this.reqHeaders[key] = val;
+      this.reqHeaders[key] = val
     }
   }
   handleHeadersReceived() {
-    const { xhr } = this;
+    const { xhr } = this
 
-    const type = getType(xhr.getResponseHeader('Content-Type') || '');
+    const type = getType(xhr.getResponseHeader('Content-Type') || '')
     this.emit('headersReceived', this.id, {
       type: type.type,
       subType: type.subType,
       size: getSize(xhr, true, this.url),
       time: now(),
       resHeaders: getHeaders(xhr),
-    });
+    })
   }
   handleDone() {
-    const xhr = this.xhr;
-    const resType = xhr.responseType;
-    let resTxt = '';
+    const xhr = this.xhr
+    const resType = xhr.responseType
+    let resTxt = ''
 
     const update = () => {
       this.emit('done', this.id, {
@@ -77,10 +77,10 @@ export class XhrRequest extends Emitter {
         size: getSize(xhr, false, this.url),
         time: now(),
         resTxt,
-      });
-    };
+      })
+    }
 
-    const type = getType(xhr.getResponseHeader('Content-Type') || '');
+    const type = getType(xhr.getResponseHeader('Content-Type') || '')
     if (
       resType === 'blob' &&
       (type.type === 'text' ||
@@ -88,39 +88,39 @@ export class XhrRequest extends Emitter {
         type.subType === 'json')
     ) {
       readBlobAsText(xhr.response, (err: Error, result: string) => {
-        if (result) resTxt = result;
-        update();
-      });
+        if (result) resTxt = result
+        update()
+      })
     } else {
-      if (resType === '' || resType === 'text') resTxt = xhr.responseText;
-      if (resType === 'json') resTxt = JSON.stringify(xhr.response);
+      if (resType === '' || resType === 'text') resTxt = xhr.responseText
+      if (resType === 'json') resTxt = JSON.stringify(xhr.response)
 
-      update();
+      update()
     }
   }
 }
 
 export class FetchRequest extends Emitter {
-  private url: string;
-  private id: string;
-  private method: string;
-  private options: any;
-  private reqHeaders: any;
+  private url: string
+  private id: string
+  private method: string
+  private options: any
+  private reqHeaders: any
   constructor(url: any, options: any = {}) {
-    super();
+    super()
 
-    if (url instanceof window.Request) url = url.url;
+    if (url instanceof window.Request) url = url.url
 
-    this.url = fullUrl(url);
-    this.id = createId();
-    this.options = options;
-    this.reqHeaders = options.headers || {};
-    this.method = options.method || 'GET';
+    this.url = fullUrl(url)
+    this.id = createId()
+    this.options = options
+    this.reqHeaders = options.headers || {}
+    this.method = options.method || 'GET'
   }
   send(fetchResult: any) {
-    const options = this.options;
+    const options = this.options
 
-    const data = isStr(options.body) ? options.body : '';
+    const data = isStr(options.body) ? options.body : ''
 
     this.emit('send', this.id, {
       name: getFileName(this.url),
@@ -129,12 +129,12 @@ export class FetchRequest extends Emitter {
       reqHeaders: this.reqHeaders,
       time: now(),
       method: this.method,
-    });
+    })
 
     fetchResult.then((res: any) => {
-      res = res.clone();
+      res = res.clone()
 
-      const type = getType(res.headers.get('Content-Type'));
+      const type = getType(res.headers.get('Content-Type'))
       res.text().then((resTxt: string) => {
         const data: any = {
           type: type.type,
@@ -144,108 +144,108 @@ export class FetchRequest extends Emitter {
           resTxt,
           resHeaders: getFetchHeaders(res),
           status: res.status,
-        };
-        if (!isEmpty(this.reqHeaders)) {
-          data.reqHeaders = this.reqHeaders;
         }
-        this.emit('done', this.id, data);
-      });
+        if (!isEmpty(this.reqHeaders)) {
+          data.reqHeaders = this.reqHeaders
+        }
+        this.emit('done', this.id, data)
+      })
 
-      return res;
-    });
+      return res
+    })
   }
 }
 
 function getFetchSize(res: any, resTxt: string) {
-  let size = 0;
+  let size = 0
 
-  const contentLen = res.headers.get('Content-length');
+  const contentLen = res.headers.get('Content-length')
 
   if (contentLen) {
-    size = toNum(contentLen);
+    size = toNum(contentLen)
   } else {
-    size = lenToUtf8Bytes(resTxt);
+    size = lenToUtf8Bytes(resTxt)
   }
 
-  return size;
+  return size
 }
 
 function getFetchHeaders(res: any) {
-  const ret: any = {};
+  const ret: any = {}
 
-  res.headers.forEach((val: string, key: string) => (ret[key] = val));
+  res.headers.forEach((val: string, key: string) => (ret[key] = val))
 
-  return ret;
+  return ret
 }
 
 function getHeaders(xhr: XMLHttpRequest) {
-  const raw = xhr.getAllResponseHeaders();
-  const lines = raw.split('\n');
+  const raw = xhr.getAllResponseHeaders()
+  const lines = raw.split('\n')
 
-  const ret: any = {};
+  const ret: any = {}
 
   each(lines, line => {
-    line = trim(line);
+    line = trim(line)
 
-    if (line === '') return;
+    if (line === '') return
 
-    const [key, val] = line.split(':', 2);
+    const [key, val] = line.split(':', 2)
 
-    ret[key] = trim(val);
-  });
+    ret[key] = trim(val)
+  })
 
-  return ret;
+  return ret
 }
 
 function getSize(xhr: XMLHttpRequest, headersOnly: boolean, url: string) {
-  let size = 0;
+  let size = 0
 
   function getStrSize() {
     if (!headersOnly) {
-      const resType = xhr.responseType;
-      let resTxt = '';
+      const resType = xhr.responseType
+      let resTxt = ''
 
-      if (resType === '' || resType === 'text') resTxt = xhr.responseText;
-      if (resTxt) size = lenToUtf8Bytes(resTxt);
+      if (resType === '' || resType === 'text') resTxt = xhr.responseText
+      if (resTxt) size = lenToUtf8Bytes(resTxt)
     }
   }
 
   if (isCrossOrig(url)) {
-    getStrSize();
+    getStrSize()
   } else {
     try {
-      size = toNum(xhr.getResponseHeader('Content-Length'));
+      size = toNum(xhr.getResponseHeader('Content-Length'))
     } catch (e) {
-      getStrSize();
+      getStrSize()
     }
   }
 
-  if (size === 0) getStrSize();
+  if (size === 0) getStrSize()
 
-  return size;
+  return size
 }
 
-const link = document.createElement('a');
+const link = document.createElement('a')
 
 export function fullUrl(href: string) {
-  link.href = href;
+  link.href = href
 
   return (
     link.protocol + '//' + link.host + link.pathname + link.search + link.hash
-  );
+  )
 }
 
 function getFileName(url: string) {
-  let ret = last(url.split('/'));
+  let ret = last(url.split('/'))
 
-  if (ret.indexOf('?') > -1) ret = trim(ret.split('?')[0]);
+  if (ret.indexOf('?') > -1) ret = trim(ret.split('?')[0])
 
   if (ret === '') {
-    const urlObj = new Url(url);
-    ret = urlObj.hostname;
+    const urlObj = new Url(url)
+    ret = urlObj.hostname
   }
 
-  return ret;
+  return ret
 }
 
 function getType(contentType: string) {
@@ -253,35 +253,35 @@ function getType(contentType: string) {
     return {
       type: 'unknown',
       subType: 'unknown',
-    };
+    }
 
-  const type = contentType.split(';')[0].split('/');
+  const type = contentType.split(';')[0].split('/')
 
   return {
     type: type[0],
     subType: last(type),
-  };
+  }
 }
 
 function readBlobAsText(blob: Blob, callback: any) {
-  const reader = new FileReader();
+  const reader = new FileReader()
   reader.onload = () => {
-    callback(null, reader.result);
-  };
+    callback(null, reader.result)
+  }
   reader.onerror = err => {
-    callback(err);
-  };
-  reader.readAsText(blob);
+    callback(err)
+  }
+  reader.readAsText(blob)
 }
 
-const origin = window.location.origin;
+const origin = window.location.origin
 
 function isCrossOrig(url: string) {
-  return !startWith(url, origin);
+  return !startWith(url, origin)
 }
 
 function lenToUtf8Bytes(str: string) {
-  const m = encodeURIComponent(str).match(/%[89ABab]/g);
+  const m = encodeURIComponent(str).match(/%[89ABab]/g)
 
-  return str.length + (m ? m.length : 0);
+  return str.length + (m ? m.length : 0)
 }

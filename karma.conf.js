@@ -1,10 +1,10 @@
-const webpackCfg = require('./webpack.config');
-webpackCfg.devtool = 'inline-source-map';
-webpackCfg.mode = 'development';
+const webpackCfg = require('./webpack.config')
+webpackCfg.devtool = 'inline-source-map'
+webpackCfg.mode = 'development'
 webpackCfg.module.rules[0].loader = [
   '@jsdevtools/coverage-istanbul-loader',
   'ts-loader',
-];
+]
 
 module.exports = function (config) {
   config.set({
@@ -47,5 +47,5 @@ module.exports = function (config) {
     browsers: ['ChromeHeadless'],
     singleRun: true,
     concurrency: Infinity,
-  });
-};
+  })
+}

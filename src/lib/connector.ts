@@ -1,4 +1,4 @@
-import Emitter from 'licia/Emitter';
+import Emitter from 'licia/Emitter'
 
 class Connector extends Emitter {
   trigger(method: string, params: any) {
@@ -8,8 +8,8 @@ class Connector extends Emitter {
         method,
         params,
       })
-    );
+    )
   }
 }
 
-export default new Connector();
+export default new Connector()

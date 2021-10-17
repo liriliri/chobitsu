@@ -1,13 +1,13 @@
-import { getNode, getNodeId } from '../lib/stringifyNode';
-import * as stylesheet from '../lib/stylesheet';
-import map from 'licia/map';
-import last from 'licia/last';
-import each from 'licia/each';
-import trim from 'licia/trim';
-import startWith from 'licia/startWith';
-import concat from 'licia/concat';
-import connector from '../lib/connector';
-import mutationObserver from '../lib/mutationObserver';
+import { getNode, getNodeId } from '../lib/stringifyNode'
+import * as stylesheet from '../lib/stylesheet'
+import map from 'licia/map'
+import last from 'licia/last'
+import each from 'licia/each'
+import trim from 'licia/trim'
+import startWith from 'licia/startWith'
+import concat from 'licia/concat'
+import connector from '../lib/connector'
+import mutationObserver from '../lib/mutationObserver'
 
 export function enable() {
   each(stylesheet.getStyleSheets(), (styleSheet: any) => {
@@ -21,149 +21,149 @@ export function enable() {
           endColumn: 0,
           endLine: 0,
         },
-      });
+      })
     }
-  });
+  })
 }
 
 export function getComputedStyleForNode(params: any) {
-  const node = getNode(params.nodeId);
+  const node = getNode(params.nodeId)
 
   const computedStyle: any = stylesheet.formatStyle(
     window.getComputedStyle(node)
-  );
+  )
 
   return {
     computedStyle: toCssProperties(computedStyle),
-  };
+  }
 }
 
 export function getInlineStylesForNode(params: any) {
-  const { nodeId } = params;
-  const node = getNode(nodeId);
-  const { style } = node;
+  const { nodeId } = params
+  const node = getNode(nodeId)
+  const { style } = node
   const inlineStyle: any = {
     shorthandEntries: [],
     cssProperties: [],
-  };
+  }
 
   if (style) {
-    const styleSheetId = stylesheet.getOrCreateInlineStyleSheetId(nodeId);
-    inlineStyle.styleSheetId = styleSheetId;
-    const cssText = node.getAttribute('style') || '';
-    inlineStyle.cssText = cssText;
+    const styleSheetId = stylesheet.getOrCreateInlineStyleSheetId(nodeId)
+    inlineStyle.styleSheetId = styleSheetId
+    const cssText = node.getAttribute('style') || ''
+    inlineStyle.cssText = cssText
     inlineStyle.range = {
       startLine: 0,
       startColumn: 0,
       endLine: getLineCount(cssText) - 1,
       endColumn: last(cssText.split('\n')).length,
-    };
-    let cssPropertiesWithRange = toCssProperties(parseCssText(cssText));
+    }
+    let cssPropertiesWithRange = toCssProperties(parseCssText(cssText))
     cssPropertiesWithRange = map(cssPropertiesWithRange, ({ name, value }) => {
-      const { text, range } = getInlineStyleRange(name, value, cssText);
+      const { text, range } = getInlineStyleRange(name, value, cssText)
 
       const ret: any = {
         name,
         value,
         text,
         range,
-      };
-
-      if (startWith(text, '/*')) {
-        ret.disabled = true;
-      } else {
-        ret.disabled = false;
-        ret.implicit = false;
-        ret.parsedOk = style[name] !== '';
       }
 
-      return ret;
-    });
-    const parsedStyle = stylesheet.formatStyle(style);
-    each(cssPropertiesWithRange, ({ name }) => delete parsedStyle[name]);
-    const cssPropertiesWithoutRange = toCssProperties(parsedStyle);
+      if (startWith(text, '/*')) {
+        ret.disabled = true
+      } else {
+        ret.disabled = false
+        ret.implicit = false
+        ret.parsedOk = style[name] !== ''
+      }
 
-    inlineStyle.shorthandEntries = getShorthandEntries(style);
+      return ret
+    })
+    const parsedStyle = stylesheet.formatStyle(style)
+    each(cssPropertiesWithRange, ({ name }) => delete parsedStyle[name])
+    const cssPropertiesWithoutRange = toCssProperties(parsedStyle)
+
+    inlineStyle.shorthandEntries = getShorthandEntries(style)
     inlineStyle.cssProperties = concat(
       cssPropertiesWithRange,
       cssPropertiesWithoutRange
-    );
+    )
   }
 
   return {
     inlineStyle,
-  };
+  }
 }
 
 export function getMatchedStylesForNode(params: any) {
-  const node = getNode(params.nodeId);
-  const matchedCSSRules = stylesheet.getMatchedCssRules(node);
+  const node = getNode(params.nodeId)
+  const matchedCSSRules = stylesheet.getMatchedCssRules(node)
 
   return {
     matchedCSSRules: map(matchedCSSRules, matchedCSSRule =>
       formatMatchedCssRule(node, matchedCSSRule)
     ),
     ...getInlineStylesForNode(params),
-  };
+  }
 }
 
 export function getBackgroundColors(params: any) {
-  const node = getNode(params.nodeId);
+  const node = getNode(params.nodeId)
 
   const computedStyle: any = stylesheet.formatStyle(
     window.getComputedStyle(node)
-  );
+  )
 
   return {
     backgroundColors: [computedStyle['background-color']],
     computedFontSize: computedStyle['font-size'],
     computedFontWeight: computedStyle['font-weight'],
-  };
+  }
 }
 
 export function getStyleSheetText(params: any) {
-  const nodeId = stylesheet.getInlineStyleNodeId(params.styleSheetId);
-  let text = '';
+  const nodeId = stylesheet.getInlineStyleNodeId(params.styleSheetId)
+  let text = ''
   if (nodeId) {
-    const node = getNode(nodeId);
-    text = node.getAttribute('style') || '';
+    const node = getNode(nodeId)
+    text = node.getAttribute('style') || ''
   }
 
   return {
     text,
-  };
+  }
 }
 
 export function setStyleTexts(params: any) {
-  const { edits } = params;
+  const { edits } = params
   const styles = map(edits, (edit: any) => {
-    const { styleSheetId, text, range } = edit;
-    const nodeId = stylesheet.getInlineStyleNodeId(styleSheetId);
+    const { styleSheetId, text, range } = edit
+    const nodeId = stylesheet.getInlineStyleNodeId(styleSheetId)
     // Only allow to edit inline style
     if (nodeId) {
-      const node = getNode(nodeId);
-      let cssText = node.getAttribute('style') || '';
-      const { start, end } = getPosFromRange(range, cssText);
-      cssText = cssText.slice(0, start) + text + cssText.slice(end);
+      const node = getNode(nodeId)
+      let cssText = node.getAttribute('style') || ''
+      const { start, end } = getPosFromRange(range, cssText)
+      cssText = cssText.slice(0, start) + text + cssText.slice(end)
 
-      node.setAttribute('style', cssText);
-      return getInlineStylesForNode({ nodeId }).inlineStyle;
+      node.setAttribute('style', cssText)
+      return getInlineStylesForNode({ nodeId }).inlineStyle
     }
 
-    return { styleSheetId };
-  });
+    return { styleSheetId }
+  })
 
   return {
     styles,
-  };
+  }
 }
 
 function formatMatchedCssRule(node: any, matchedCssRule: any) {
-  const { selectorText }: { selectorText: string } = matchedCssRule;
-  const selectors = map(selectorText.split(','), selector => trim(selector));
+  const { selectorText }: { selectorText: string } = matchedCssRule
+  const selectors = map(selectorText.split(','), selector => trim(selector))
 
-  const shorthandEntries = getShorthandEntries(matchedCssRule.style);
-  const style = stylesheet.formatStyle(matchedCssRule.style);
+  const shorthandEntries = getShorthandEntries(matchedCssRule.style)
+  const style = stylesheet.formatStyle(matchedCssRule.style)
 
   const rule: any = {
     styleSheetId: matchedCssRule.styleSheetId,
@@ -175,19 +175,19 @@ function formatMatchedCssRule(node: any, matchedCssRule: any) {
       cssProperties: toCssProperties(style),
       shorthandEntries,
     },
-  };
+  }
 
-  const matchingSelectors: number[] = [];
+  const matchingSelectors: number[] = []
   each(selectors, (selector, idx) => {
     if (stylesheet.matchesSelector(node, selector)) {
-      matchingSelectors.push(idx);
+      matchingSelectors.push(idx)
     }
-  });
+  })
 
   return {
     matchingSelectors: [0],
     rule,
-  };
+  }
 }
 
 stylesheet.onStyleSheetAdded((styleSheet: any) => {
@@ -200,91 +200,91 @@ stylesheet.onStyleSheetAdded((styleSheet: any) => {
       endColumn: 0,
       endLine: 0,
     },
-  });
-});
+  })
+})
 
 interface ICSSProperty {
-  name: string;
-  value: string;
-  disabled?: boolean;
-  implicit?: boolean;
-  parsedOk?: boolean;
-  text?: string;
+  name: string
+  value: string
+  disabled?: boolean
+  implicit?: boolean
+  parsedOk?: boolean
+  text?: string
 }
 
 function toCssProperties(style: any): ICSSProperty[] {
-  const cssProperties: any[] = [];
+  const cssProperties: any[] = []
 
   each(style, (value: string, name: string) => {
     cssProperties.push({
       name,
       value,
-    });
-  });
+    })
+  })
 
-  return cssProperties;
+  return cssProperties
 }
 
 function getLineCount(str: string) {
-  return str.split('\n').length;
+  return str.split('\n').length
 }
 
-const shortHandNames = ['background', 'font', 'border', 'margin', 'padding'];
+const shortHandNames = ['background', 'font', 'border', 'margin', 'padding']
 
 function getShorthandEntries(style: CSSStyleDeclaration) {
-  const ret: any[] = [];
+  const ret: any[] = []
 
   each(shortHandNames, name => {
-    const value = (style as any)[name];
+    const value = (style as any)[name]
     if (value) {
       ret.push({
         name,
         value,
-      });
+      })
     }
-  });
+  })
 
-  return ret;
+  return ret
 }
 
 function parseCssText(cssText: string) {
-  cssText = cssText.replace(/\/\*/g, '').replace(/\*\//g, '');
-  const properties = cssText.split(';');
-  const ret: any = {};
+  cssText = cssText.replace(/\/\*/g, '').replace(/\*\//g, '')
+  const properties = cssText.split(';')
+  const ret: any = {}
 
   each(properties, property => {
-    property = trim(property);
-    if (!property) return;
-    const colonPos = property.indexOf(':');
+    property = trim(property)
+    if (!property) return
+    const colonPos = property.indexOf(':')
     if (colonPos) {
-      const name = trim(property.slice(0, colonPos));
-      const value = trim(property.slice(colonPos + 1));
-      ret[name] = value;
+      const name = trim(property.slice(0, colonPos))
+      const value = trim(property.slice(colonPos + 1))
+      ret[name] = value
     }
-  });
+  })
 
-  return ret;
+  return ret
 }
 
 function getInlineStyleRange(name: string, value: string, cssText: string) {
-  const lines = cssText.split('\n');
-  let startLine = 0;
-  let endLine = 0;
-  let startColumn = 0;
-  let endColumn = 0;
-  let text = '';
+  const lines = cssText.split('\n')
+  let startLine = 0
+  let endLine = 0
+  let startColumn = 0
+  let endColumn = 0
+  let text = ''
 
-  const reg = new RegExp(`(\\/\\*)?\\s*${name}:\\s*${value};?\\s*(\\*\\/)?`);
+  const reg = new RegExp(`(\\/\\*)?\\s*${name}:\\s*${value};?\\s*(\\*\\/)?`)
   for (let i = 0, len = lines.length; i < len; i++) {
-    const line = lines[i];
-    const match = line.match(reg);
+    const line = lines[i]
+    const match = line.match(reg)
     if (match) {
-      text = match[0];
-      startLine = i;
-      startColumn = match.index || 0;
-      endLine = i;
-      endColumn = startColumn + text.length;
-      break;
+      text = match[0]
+      startLine = i
+      startColumn = match.index || 0
+      endLine = i
+      endColumn = startColumn + text.length
+      break
     }
   }
 
@@ -296,45 +296,45 @@ function getInlineStyleRange(name: string, value: string, cssText: string) {
       endColumn,
     },
     text,
-  };
+  }
 }
 
 function getPosFromRange(range: any, cssText: string) {
-  const { startLine, startColumn, endLine, endColumn } = range;
-  let start = 0;
-  let end = 0;
+  const { startLine, startColumn, endLine, endColumn } = range
+  let start = 0
+  let end = 0
 
-  const lines = cssText.split('\n');
+  const lines = cssText.split('\n')
   for (let i = 0; i <= endLine; i++) {
-    const line = lines[i] + 1;
-    const len = line.length;
+    const line = lines[i] + 1
+    const len = line.length
     if (i < startLine) {
-      start += len;
+      start += len
     } else if (i === startLine) {
-      start += startColumn;
+      start += startColumn
     }
     if (i < endLine) {
-      end += len;
+      end += len
     } else if (i === endLine) {
-      end += endColumn;
+      end += endColumn
     }
   }
 
   return {
     start,
     end,
-  };
+  }
 }
 
 mutationObserver.on('attributes', (target: any, name: string) => {
-  const nodeId = getNodeId(target);
-  if (!nodeId) return;
-  if (name !== 'style') return;
+  const nodeId = getNodeId(target)
+  if (!nodeId) return
+  if (name !== 'style') return
 
-  const styleSheetId = stylesheet.getInlineStyleSheetId(nodeId);
+  const styleSheetId = stylesheet.getInlineStyleSheetId(nodeId)
   if (styleSheetId) {
     connector.trigger('CSS.styleSheetChanged', {
       styleSheetId,
-    });
+    })
   }
-});
+})

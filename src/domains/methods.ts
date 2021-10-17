@@ -1,14 +1,14 @@
-import noop from 'licia/noop';
-import * as Runtime from './Runtime';
-import * as Page from './Page';
-import * as DOM from './DOM';
-import * as CSS from './CSS';
-import * as DOMStorage from './DOMStorage';
-import * as Network from './Network';
-import * as Overlay from './Overlay';
-import * as DOMDebugger from './DOMDebugger';
-import * as Debugger from './Debugger';
-import * as Storage from './Storage';
+import noop from 'licia/noop'
+import * as Runtime from './Runtime'
+import * as Page from './Page'
+import * as DOM from './DOM'
+import * as CSS from './CSS'
+import * as DOMStorage from './DOMStorage'
+import * as Network from './Network'
+import * as Overlay from './Overlay'
+import * as DOMDebugger from './DOMDebugger'
+import * as Debugger from './Debugger'
+import * as Storage from './Storage'
 
 const methods: any = {
   'Debugger.enable': Debugger.enable,
@@ -122,6 +122,6 @@ const methods: any = {
   'Storage.trackCacheStorageForOrigin': noop,
   'Storage.trackIndexedDBForOrigin': noop,
   'Storage.clearDataForOrigin': Storage.clearDataForOrigin,
-};
+}
 
-export default methods;
+export default methods
