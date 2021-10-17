@@ -114,7 +114,13 @@ export const enable = once(function () {
   };
 
   let isFetchSupported = false;
-  if (window.fetch) isFetchSupported = isNative(window.fetch);
+  if (window.fetch) {
+    isFetchSupported = isNative(window.fetch);
+  }
+  // #2 Probably not a fetch polyfill
+  if (!isFetchSupported && navigator.serviceWorker) {
+    isFetchSupported = true
+  }
   if (!isFetchSupported) return;
 
   const origFetch = window.fetch;
