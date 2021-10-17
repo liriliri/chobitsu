@@ -119,7 +119,7 @@ export const enable = once(function () {
   }
   // #2 Probably not a fetch polyfill
   if (!isFetchSupported && navigator.serviceWorker) {
-    isFetchSupported = true
+    isFetchSupported = true;
   }
   if (!isFetchSupported) return;
 

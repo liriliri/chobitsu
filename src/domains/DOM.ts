@@ -256,6 +256,13 @@ export function setOuterHTML(params: any) {
   node.outerHTML = outerHTML;
 }
 
+export function getDOMNodeId(params: any) {
+  const { node } = params;
+  return {
+    nodeId: stringifyNode.getOrCreateNodeId(node),
+  };
+}
+
 function parseAttributes(str: string) {
   str = `<div ${str}></div>`;
 

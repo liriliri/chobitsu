@@ -37,6 +37,7 @@ const methods: any = {
   'DOM.setNodeValue': DOM.setNodeValue,
   'DOM.setOuterHTML': DOM.setOuterHTML,
   'DOM.undo': noop,
+  'DOM.getNodeId': DOM.getDOMNodeId,
 
   'DOMDebugger.getEventListeners': DOMDebugger.getEventListeners,
 
