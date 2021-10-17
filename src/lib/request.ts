@@ -25,6 +25,14 @@ export class XhrRequest extends Emitter {
     this.url = fullUrl(url);
     this.id = createId();
   }
+  // #1
+  toJSON() {
+    return {
+      method: this.method,
+      url: this.url,
+      id: this.id,
+    };
+  }
   handleSend(data: any) {
     if (!isStr(data)) data = '';
 
