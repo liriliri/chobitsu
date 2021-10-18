@@ -11,7 +11,7 @@ import * as scripts from '../lib/scripts'
 export function getEventListeners(params: any) {
   const obj = stringifyObj.getObj(params.objectId)
 
-  const events = obj.chiiEvents || []
+  const events = obj.chobitsuEvents || []
   const listeners: any[] = []
 
   const script = scripts.get()
@@ -73,7 +73,7 @@ function addEvent(el: any, type: string, listener: any, options: any = false) {
     once: false,
   })
 
-  const events = (el.chiiEvents = el.chiiEvents || {})
+  const events = (el.chobitsuEvents = el.chobitsuEvents || {})
 
   events[type] = events[type] || []
   events[type].push({
@@ -87,7 +87,7 @@ function addEvent(el: any, type: string, listener: any, options: any = false) {
 function rmEvent(el: any, type: string, listener: any) {
   if (!isEl(el) || !isFn(listener)) return
 
-  const events = el.chiiEvents
+  const events = el.chobitsuEvents
 
   if (!(events && events[type])) return
 
@@ -101,5 +101,5 @@ function rmEvent(el: any, type: string, listener: any) {
   }
 
   if (listeners.length === 0) delete events[type]
-  if (keys(events).length === 0) delete el.chiiEvents
+  if (keys(events).length === 0) delete el.chobitsuEvents
 }

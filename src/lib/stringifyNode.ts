@@ -86,7 +86,7 @@ export function filterNodes(childNodes: any[]) {
 function isValidNode(node: Node) {
   if (node.nodeType === 1) {
     const className = (node as Element).getAttribute('class') || ''
-    if (contain(className, '__chii-hide__')) return false
+    if (contain(className, '__chobitsu-hide__')) return false
   }
 
   return !(node.nodeType === 3 && trim(node.nodeValue || '') === '')

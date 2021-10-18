@@ -42,7 +42,11 @@ export const enable = once(function () {
   winXhrProto.open = function (method: string, url: string) {
     const xhr = this
 
-    const req = ((xhr as any).chiiRequest = new XhrRequest(xhr, method, url))
+    const req = ((xhr as any).chobitsuRequest = new XhrRequest(
+      xhr,
+      method,
+      url
+    ))
 
     req.on('send', (id: string, data: any) => {
       const request: any = {
@@ -98,14 +102,14 @@ export const enable = once(function () {
   }
 
   winXhrProto.send = function (data) {
-    const req = (this as any).chiiRequest
+    const req = (this as any).chobitsuRequest
     if (req) req.handleSend(data)
 
     origSend.apply(this, arguments)
   }
 
   winXhrProto.setRequestHeader = function (key, val) {
-    const req = (this as any).chiiRequest
+    const req = (this as any).chobitsuRequest
     if (req) {
       req.handleReqHeadersSet(key, val)
     }

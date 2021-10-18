@@ -130,7 +130,7 @@ if (isMobile()) {
 }
 
 const viewportSize = h('div', {
-  class: '__chii-hide__',
+  class: '__chobitsu-hide__',
   style: {
     position: 'fixed',
     right: 0,
@@ -146,7 +146,7 @@ const $viewportSize: any = $(viewportSize)
 let viewportSizeTimer: any
 
 const container = h('div', {
-  class: '__chii-hide__',
+  class: '__chobitsu-hide__',
 })
 document.documentElement.appendChild(container)
 const domHighlighter = new LunaDomHighlighter(container)
