@@ -9,23 +9,38 @@ import connector from '../lib/connector'
 import LunaDomHighlighter from 'luna-dom-highlighter'
 import * as stringifyObj from '../lib/stringifyObj'
 
+let domHighlighter: LunaDomHighlighter
+let isCssLoaded = false
+let $container: $.$
+let isEnable = false
+
 export function enable() {
-  evalCss(require('luna-dom-highlighter/luna-dom-highlighter.css'))
+  if (isEnable) {
+    return
+  }
 
-  window.addEventListener('resize', () => {
-    if (!showViewportSizeOnResize) return
-
-    $viewportSize.text(`${window.innerWidth}px × ${window.innerHeight}px`)
-    if (viewportSizeTimer) {
-      clearTimeout(viewportSizeTimer)
-    } else {
-      document.documentElement.appendChild(viewportSize)
-    }
-    viewportSizeTimer = setTimeout(() => {
-      $viewportSize.remove()
-      viewportSizeTimer = null
-    }, 1000)
+  if (!isCssLoaded) {
+    evalCss(require('luna-dom-highlighter/luna-dom-highlighter.css'))
+    isCssLoaded = true
+  }
+  const container = h('div', {
+    class: '__chobitsu-hide__',
   })
+  $container = $(container)
+  document.documentElement.appendChild(container)
+  domHighlighter = new LunaDomHighlighter(container)
+
+  window.addEventListener('resize', resizeHandler)
+
+  isEnable = true
+}
+
+export function disable() {
+  domHighlighter.destroy()
+  $container.remove()
+  window.removeEventListener('resize', resizeHandler)
+
+  isEnable = false
 }
 
 export function highlightNode(params: any) {
@@ -141,12 +156,20 @@ const viewportSize = h('div', {
     padding: '4px 6px',
   },
 })
+
+function resizeHandler() {
+  if (!showViewportSizeOnResize) return
+
+  $viewportSize.text(`${window.innerWidth}px × ${window.innerHeight}px`)
+  if (viewportSizeTimer) {
+    clearTimeout(viewportSizeTimer)
+  } else {
+    document.documentElement.appendChild(viewportSize)
+  }
+  viewportSizeTimer = setTimeout(() => {
+    $viewportSize.remove()
+    viewportSizeTimer = null
+  }, 1000)
+}
 const $viewportSize: any = $(viewportSize)
-
 let viewportSizeTimer: any
-
-const container = h('div', {
-  class: '__chobitsu-hide__',
-})
-document.documentElement.appendChild(container)
-const domHighlighter = new LunaDomHighlighter(container)
