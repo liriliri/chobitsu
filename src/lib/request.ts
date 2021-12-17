@@ -1,13 +1,15 @@
-import Emitter from 'licia/Emitter'
-import isStr from 'licia/isStr'
-import last from 'licia/last'
-import Url from 'licia/Url'
-import isEmpty from 'licia/isEmpty'
-import trim from 'licia/trim'
-import now from 'licia/now'
-import each from 'licia/each'
-import startWith from 'licia/startWith'
-import toNum from 'licia/toNum'
+import {
+  Emitter,
+  isStr,
+  last,
+  Url,
+  isEmpty,
+  trim,
+  now,
+  each,
+  startWith,
+  toNum,
+} from 'licia-es'
 import { createId } from './util'
 
 export class XhrRequest extends Emitter {

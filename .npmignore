@@ -1,6 +1,6 @@
-tests/
+test/
 src/
-scripts/
+script/
 coverage/
 .gitignore
 .npmignore

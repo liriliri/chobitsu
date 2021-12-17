@@ -1,6 +1,4 @@
-import each from 'licia/each'
-import rmCookie from 'licia/rmCookie'
-import safeStorage from 'licia/safeStorage'
+import { each, rmCookie, safeStorage } from 'licia-es'
 import { getCookies } from './Network'
 
 const localStore = safeStorage('local')

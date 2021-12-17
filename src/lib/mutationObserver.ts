@@ -1,5 +1,4 @@
-import Emitter from 'licia/Emitter'
-import each from 'licia/each'
+import { Emitter, each } from 'licia-es'
 
 class Observer extends Emitter {
   private observer: MutationObserver

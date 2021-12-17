@@ -1,5 +1,4 @@
-import uniqId from 'licia/uniqId'
-import random from 'licia/random'
+import { uniqId, random } from 'licia-es'
 
 const prefix = random(1000, 9999) + '.'
 

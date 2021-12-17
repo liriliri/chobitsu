@@ -1,11 +1,6 @@
 import { getNode, getNodeId } from '../lib/stringifyNode'
 import * as stylesheet from '../lib/stylesheet'
-import map from 'licia/map'
-import last from 'licia/last'
-import each from 'licia/each'
-import trim from 'licia/trim'
-import startWith from 'licia/startWith'
-import concat from 'licia/concat'
+import { map, last, each, trim, startWith, concat } from 'licia-es'
 import connector from '../lib/connector'
 import mutationObserver from '../lib/mutationObserver'
 

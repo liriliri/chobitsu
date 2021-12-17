@@ -1,8 +1,4 @@
-import map from 'licia/map'
-import filter from 'licia/filter'
-import each from 'licia/each'
-import trim from 'licia/trim'
-import contain from 'licia/contain'
+import { map, filter, each, trim, contain } from 'licia-es'
 
 const nodes = new Map()
 const nodeIds = new Map()

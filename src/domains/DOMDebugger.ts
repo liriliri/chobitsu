@@ -1,10 +1,4 @@
-import safeGet from 'licia/safeGet'
-import isEl from 'licia/isEl'
-import isFn from 'licia/isFn'
-import isBool from 'licia/isBool'
-import keys from 'licia/keys'
-import each from 'licia/each'
-import defaults from 'licia/defaults'
+import { safeGet, isEl, isFn, isBool, keys, each, defaults } from 'licia-es'
 import * as stringifyObj from '../lib/stringifyObj'
 import * as scripts from '../lib/scripts'
 

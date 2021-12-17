@@ -1,9 +1,4 @@
-import isStr from 'licia/isStr'
-import copy from 'licia/copy'
-import toArr from 'licia/toArr'
-import keys from 'licia/keys'
-import xpath from 'licia/xpath'
-import each from 'licia/each'
+import { isStr, copy, toArr, keys, xpath, each } from 'licia-es'
 
 const global: any = {
   copy(value: any) {

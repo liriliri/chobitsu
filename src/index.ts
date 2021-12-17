@@ -1,9 +1,9 @@
-import connector from './lib/connector'
-import noop from 'licia/noop'
-import uuid from 'licia/uuid'
-import methods from './domains/methods'
-import each from 'licia/each'
-import Emitter from 'licia/Emitter'
+const connector = require('./lib/connector').default
+const methods = require('./domains/methods').default
+const noop = require('licia-es/noop').default
+const uuid = require('licia-es/uuid').default
+const each = require('licia-es/each').default
+const Emitter = require('licia-es/Emitter').default
 
 type OnMessage = (message: string) => void
 type DomainMethod = (...args: any[]) => any
@@ -14,7 +14,7 @@ class Chobitsu {
   private domains: Map<string, { [index: string]: DomainMethod }> = new Map()
   constructor() {
     this.onMessage = noop
-    connector.on('message', message => {
+    connector.on('message', (message: any) => {
       const parsedMessage = JSON.parse(message)
 
       const resolve = this.resolves.get(parsedMessage.id)

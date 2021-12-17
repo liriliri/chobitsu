@@ -9,7 +9,7 @@
     "build": "webpack --mode=production && node script/build.js",
     "lint": "tslint src/**/*.ts",
     "test": "karma start",
-    "format": "lsla prettier src/**/*.ts *.{js,json} test/*.js script/*.js --write"
+    "format": "lsla prettier 'src/**/*.ts' '*.{js,json}' 'test/*.js' 'script/*.js' --write"
   },
   "repository": {
     "type": "git",
@@ -33,7 +33,7 @@
     "karma-coverage-istanbul-reporter": "^3.0.3",
     "karma-mocha": "^2.0.1",
     "karma-webpack": "^4.0.2",
-    "licia": "^1.26.0",
+    "licia-es": "^1.32.2",
     "luna-dom-highlighter": "^0.3.2",
     "mocha": "^8.0.1",
     "raw-loader": "^4.0.2",
