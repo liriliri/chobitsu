@@ -16,6 +16,20 @@ const methods: any = {
   'Debugger.setBlackboxPatterns': noop,
   'Debugger.setPauseOnExceptions': noop,
 
+  "Debugger.removeBreakpoint": Debugger.removeBreakpoint,
+  "Debugger.setBreakpointsActive": noop,
+  "Debugger.setBreakpointByUrl": Debugger.setBreakpointByUrl,
+  'Debugger.stepOut': Debugger.stepOut,
+  'Debugger.stepInto': Debugger.stepInto,
+  'Debugger.setSkipAllPauses': Debugger.setSkipAllPauses,
+  'Debugger.pause': Debugger.pause,
+  'Debugger.stepOver': Debugger.stepOver,
+  'Debugger.resume': Debugger.resume,
+  'Debugger.getPossibleBreakpoints': Debugger.getPossibleBreakpoints,
+  'Debugger.evaluateOnCallFrame': Debugger.evaluateOnCallFrame,
+  
+
+
   'DOM.collectClassNamesFromSubtree': DOM.collectClassNamesFromSubtree,
   'DOM.copyTo': DOM.copyTo,
   'DOM.discardSearchResults': DOM.discardSearchResults,
@@ -51,7 +65,7 @@ const methods: any = {
   'Network.getCookies': Network.getCookies,
   'Network.getResponseBody': Network.getResponseBody,
 
-  'Page.getResourceContent': noop,
+  'Page.getResourceContent': Page.getResourceContent,
   'Page.getResourceTree': Page.getResourceTree,
 
   'Runtime.callFunctionOn': Runtime.callFunctionOn,

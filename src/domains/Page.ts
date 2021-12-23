@@ -56,3 +56,9 @@ export function getResourceTree() {
     },
   };
 }
+export function getResourceContent() {
+    return {
+        content: document.getElementsByTagName('html')[0].outerHTML,
+        base64Encoded: false
+    };
+}
