@@ -4,11 +4,12 @@
   "description": "Chrome devtools protocol JavaScript implementation",
   "main": "dist/chobitsu.js",
   "scripts": {
-    "ci": "npm run lint && npm test && npm run build",
+    "ci": "npm run lint && npm test && npm run build && npm run es5",
     "dev": "webpack --mode=development -w",
     "build": "webpack --mode=production && node script/build.js",
     "lint": "tslint src/**/*.ts",
     "test": "karma start",
+    "es5": "es-check es5 dist/chobitsu.js",
     "format": "lsla prettier 'src/**/*.ts' '*.{js,json}' 'test/*.js' 'script/*.js' --write"
   },
   "repository": {
@@ -25,8 +26,12 @@
   },
   "homepage": "https://github.com/liriliri/chobitsu#readme",
   "devDependencies": {
+    "@babel/core": "^7.17.10",
+    "@babel/preset-env": "^7.17.10",
     "@jsdevtools/coverage-istanbul-loader": "^3.0.5",
     "@types/node": "^14.0.13",
+    "babel-loader": "^8.2.5",
+    "es-check": "^6.2.1",
     "karma": "^5.1.0",
     "karma-chai-plugins": "^0.9.0",
     "karma-chrome-launcher": "^3.1.0",
