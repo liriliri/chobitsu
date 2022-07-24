@@ -40,8 +40,12 @@ const methods: any = {
   'DOM.getNodeId': DOM.getDOMNodeId,
 
   'DOMDebugger.getEventListeners': DOMDebugger.getEventListeners,
+  'DOMDebugger.setBreakOnCSPViolation': noop,
 
   'Emulation.setEmulatedMedia': noop,
+  'Emulation.setAutoDarkModeOverride': noop,
+  'Emulation.setEmulatedVisionDeficiency': noop,
+  'Emulation.setFocusEmulationEnabled': noop,
 
   'Log.clear': noop,
   'Log.enable': noop,
@@ -51,6 +55,8 @@ const methods: any = {
   'Network.enable': Network.enable,
   'Network.getCookies': Network.getCookies,
   'Network.getResponseBody': Network.getResponseBody,
+  'Network.setAttachDebugStack': noop,
+  'Network.clearAcceptedEncodingsOverride': noop,
 
   'Page.getResourceContent': noop,
   'Page.getResourceTree': Page.getResourceTree,
@@ -75,6 +81,7 @@ const methods: any = {
   'Page.enable': noop,
   'Page.getAppManifest': Page.getAppManifest,
   'Page.getInstallabilityErrors': noop,
+  'Page.setAdBlockingEnabled': noop,
 
   'Profiler.enable': noop,
 
@@ -92,6 +99,8 @@ const methods: any = {
   'CSS.getStyleSheetText': CSS.getStyleSheetText,
   'CSS.getBackgroundColors': CSS.getBackgroundColors,
   'CSS.setStyleTexts': CSS.setStyleTexts,
+  'CSS.trackComputedStyleUpdates': noop,
+  'CSS.takeComputedStyleUpdates': noop,
 
   'Database.enable': noop,
 
@@ -115,6 +124,11 @@ const methods: any = {
   'Overlay.highlightNode': Overlay.highlightNode,
   'Overlay.setInspectMode': Overlay.setInspectMode,
   'Overlay.setShowViewportSizeOnResize': Overlay.setShowViewportSizeOnResize,
+  'Overlay.setShowGridOverlays': noop,
+  'Overlay.setShowFlexOverlays': noop,
+  'Overlay.setShowScrollSnapOverlays': noop,
+  'Overlay.setShowContainerQueryOverlays': noop,
+  'Overlay.setShowIsolatedElements': noop,
 
   'ServiceWorker.enable': noop,
 
@@ -123,6 +137,10 @@ const methods: any = {
   'Storage.trackCacheStorageForOrigin': noop,
   'Storage.trackIndexedDBForOrigin': noop,
   'Storage.clearDataForOrigin': Storage.clearDataForOrigin,
+
+  'Target.setAutoAttach': noop,
+  'Target.setDiscoverTargets': noop,
+  'Target.setRemoteLocations': noop,
 }
 
 export default methods
