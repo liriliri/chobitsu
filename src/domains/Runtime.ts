@@ -62,7 +62,9 @@ export function evaluate(params: any) {
   try {
     result = evaluateJs(params.expression)
     setGlobal('$_', result)
-    ret.result = stringifyObj.wrap(result)
+    ret.result = stringifyObj.wrap(result, {
+      generatePreview: true,
+    })
   } catch (e) {
     ret.exceptionDetails = {
       exception: stringifyObj.wrap(e),

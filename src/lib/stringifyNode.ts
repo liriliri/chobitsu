@@ -93,7 +93,7 @@ export function isValidNode(node: Node): boolean {
     if (contain(className, '__chobitsu-hide__')) return false
   }
 
-  let isValid = !(node.nodeType === 3 && trim(node.nodeValue || '') === '')
+  const isValid = !(node.nodeType === 3 && trim(node.nodeValue || '') === '')
   if (isValid && node.parentNode) {
     return isValidNode(node.parentNode)
   }

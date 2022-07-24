@@ -5,6 +5,8 @@ import {
   isFn,
   isEl,
   isErr,
+  isMap,
+  isSet,
   isRegExp,
   type as getType,
   keys as getKeys,
@@ -58,40 +60,35 @@ export function wrap(
     return ret
   }
 
+  ret.description = getDescription(value, self)
   if (type === 'number') {
-    ret.description = toStr(value)
     ret.value = value
     return ret
   }
 
   if (type === 'symbol') {
     ret.objectId = getOrCreateObjId(value, self)
-    ret.description = toStr(value)
     return ret
   }
 
   if (type === 'function') {
     ret.className = 'Function'
-    ret.description = toSrc(value)
   } else if (subtype === 'array') {
     ret.className = 'Array'
-    ret.description = `Array(${value.length})`
+  } else if (subtype === 'map') {
+    ret.className = 'Map'
+  } else if (subtype === 'set') {
+    ret.className = 'Set'
   } else if (subtype === 'regexp') {
     ret.className = 'RegExp'
-    ret.description = toStr(value)
   } else if (subtype === 'error') {
     ret.className = value.name
-    ret.description = value.stack
   } else {
     ret.className = getType(value, false)
-    ret.description = ret.className
   }
 
   if (generatePreview) {
-    ret.preview = {
-      ...ret,
-      ...preview(value, self),
-    }
+    ret.preview = getPreview(value, self)
   }
 
   ret.objectId = getOrCreateObjId(value, self)
@@ -203,7 +200,9 @@ export function getProperties(params: any) {
 
 const MAX_PREVIEW_LEN = 5
 
-function preview(obj: any, self: any) {
+function getPreview(obj: any, self: any = obj) {
+  const ret = basic(obj)
+  ret.description = getDescription(obj, self)
   let overflow = false
   const properties = []
 
@@ -216,32 +215,90 @@ function preview(obj: any, self: any) {
 
   for (let i = 0; i < len; i++) {
     const name = keys[i]
-    const propVal = self[name]
-    const property: any = basic(propVal)
-    property.name = name
-    const { subtype, type } = property
 
-    let value
-    if (type === 'object') {
-      if (subtype === 'null') {
-        value = 'null'
-      } else if (subtype === 'array') {
-        value = `Array(${propVal.length})`
-      } else {
-        value = getType(propVal, false)
+    properties.push(getPropertyPreview(name, self[name]))
+  }
+  ret.properties = properties
+
+  if (isMap(obj)) {
+    const entries = []
+    let i = 0
+    const keys = obj.keys()
+    let key = keys.next().value
+    while (key) {
+      if (i > MAX_PREVIEW_LEN) {
+        overflow = true
+        break
       }
-    } else {
-      value = toStr(propVal)
+      entries.push({
+        key: getPreview(key),
+        value: getPreview(obj.get(key)),
+      })
+      i++
+      key = keys.next().value
     }
 
-    property.value = value
-    properties.push(property)
+    ret.entries = entries
   }
 
-  return {
-    overflow,
-    properties,
+  ret.overflow = overflow
+  return ret
+}
+
+function getPropertyPreview(name: string, propVal: any) {
+  const property: any = basic(propVal)
+  property.name = name
+  const { subtype, type } = property
+
+  let value
+  if (type === 'object') {
+    if (subtype === 'null') {
+      value = 'null'
+    } else if (subtype === 'array') {
+      value = `Array(${propVal.length})`
+    } else if (subtype === 'map') {
+      value = `Map(${propVal.size})`
+    } else if (subtype === 'set') {
+      value = `Set(${propVal.size})`
+    } else {
+      value = getType(propVal, false)
+    }
+  } else {
+    value = toStr(propVal)
   }
+
+  property.value = value
+
+  return property
+}
+
+function getDescription(obj: any, self: any = obj) {
+  let description = ''
+  const { type, subtype } = basic(obj)
+
+  if (type === 'string') {
+    description = obj
+  } else if (type === 'number') {
+    description = toStr(obj)
+  } else if (type === 'symbol') {
+    description = toStr(obj)
+  } else if (type === 'function') {
+    description = toSrc(obj)
+  } else if (subtype === 'array') {
+    description = `Array(${obj.length})`
+  } else if (subtype === 'map') {
+    description = `Map(${self.size})`
+  } else if (subtype === 'set') {
+    description = `Set(${self.size})`
+  } else if (subtype === 'regexp') {
+    description = toStr(obj)
+  } else if (subtype === 'error') {
+    description = obj.stack
+  } else {
+    description = getType(obj, false)
+  }
+
+  return description
 }
 
 function basic(value: any) {
@@ -256,6 +313,10 @@ function basic(value: any) {
     ret.subtype = 'regexp'
   } else if (isErr(value)) {
     ret.subtype = 'error'
+  } else if (isMap(value)) {
+    ret.subtype = 'map'
+  } else if (isSet(value)) {
+    ret.subtype = 'set'
   } else {
     try {
       // Accessing nodeType may throw exception
