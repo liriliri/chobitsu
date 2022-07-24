@@ -294,6 +294,9 @@ mutationObserver.on(
     const parentNodeId = getNodeId(target)
     if (!parentNodeId) return
 
+    addedNodes = stringifyNode.filterNodes(addedNodes)
+    removedNodes = stringifyNode.filterNodes(removedNodes)
+
     function childNodeCountUpdated() {
       connector.trigger('DOM.childNodeCountUpdated', {
         childNodeCount: stringifyNode.wrap(target, {

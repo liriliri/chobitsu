@@ -75,8 +75,8 @@ export function getPreviousNode(node: any) {
   }
 }
 
-export function filterNodes(childNodes: any[]) {
-  return filter(childNodes, (node: any) => isValidNode(node))
+export function filterNodes<T>(childNodes: T): T {
+  return (filter as any)(childNodes, (node: any) => isValidNode(node))
 }
 
 function isValidNode(node: Node) {
