@@ -11,6 +11,7 @@ module.exports = {
     filename: 'chobitsu.js',
     path: path.resolve(__dirname, 'dist'),
     library: 'chobitsu',
+    libraryExport: 'default',
     libraryTarget: 'umd',
   },
   resolve: {

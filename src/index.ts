@@ -1,9 +1,7 @@
-const connector = require('./lib/connector').default
-const methods = require('./domains/methods').default
-const noop = require('licia-es/noop').default
-const uuid = require('licia-es/uuid').default
-const each = require('licia-es/each').default
-const Emitter = require('licia-es/Emitter').default
+import connector from './lib/connector'
+import methods from './domains/methods'
+import { noop, uuid, each, Emitter } from 'licia-es'
+import { ErrorWithCode } from './lib/util'
 
 type OnMessage = (message: string) => void
 type DomainMethod = (...args: any[]) => any
@@ -68,8 +66,15 @@ class Chobitsu {
     try {
       resultMsg.result = await this.callMethod(method, params)
     } catch (e) {
-      resultMsg.error = {
-        message: e.message,
+      if (e instanceof ErrorWithCode) {
+        resultMsg.error = {
+          message: e.message,
+          code: e.code,
+        }
+      } else if (e instanceof Error) {
+        resultMsg.error = {
+          message: e.message,
+        }
       }
     }
 
@@ -98,4 +103,4 @@ class Chobitsu {
   }
 }
 
-module.exports = new Chobitsu()
+export default new Chobitsu()

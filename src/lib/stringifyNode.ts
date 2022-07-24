@@ -1,4 +1,5 @@
-import { map, filter, each, trim, contain } from 'licia-es'
+import { map, filter, each, trim, contain, extend } from 'licia-es'
+import { createErr } from './util'
 
 const nodes = new Map()
 const nodeIds = new Map()
@@ -40,6 +41,13 @@ export function wrap(node: any, { depth = 1 } = {}) {
     ret.parentId = getOrCreateNodeId(node.parentNode)
   }
 
+  if (node.nodeType === 10) {
+    return extend(ret, {
+      publicId: '',
+      systemId: '',
+    })
+  }
+
   if (node.attributes) {
     const attributes: string[] = []
     each(node.attributes, ({ name, value }) => attributes.push(name, value))
@@ -79,15 +87,26 @@ export function filterNodes<T>(childNodes: T): T {
   return (filter as any)(childNodes, (node: any) => isValidNode(node))
 }
 
-function isValidNode(node: Node) {
+export function isValidNode(node: Node): boolean {
   if (node.nodeType === 1) {
     const className = (node as Element).getAttribute('class') || ''
     if (contain(className, '__chobitsu-hide__')) return false
   }
 
-  return !(node.nodeType === 3 && trim(node.nodeValue || '') === '')
+  let isValid = !(node.nodeType === 3 && trim(node.nodeValue || '') === '')
+  if (isValid && node.parentNode) {
+    return isValidNode(node.parentNode)
+  }
+
+  return isValid
 }
 
 export function getNode(nodeId: number) {
-  return nodes.get(nodeId)
+  const node = nodes.get(nodeId)
+
+  if (!node || node.nodeType === 10) {
+    throw createErr(-32000, 'Could not find node with given id')
+  }
+
+  return node
 }

@@ -1,4 +1,4 @@
-import { getNode, getNodeId } from '../lib/stringifyNode'
+import { getNode, getNodeId, isValidNode } from '../lib/stringifyNode'
 import { pushNodesToFrontend } from './DOM'
 import { $, h, isMobile, evalCss, defaults } from 'licia-es'
 import connector from '../lib/connector'
@@ -86,11 +86,15 @@ function getElementFromPoint(e: any) {
   return document.elementFromPoint(e.clientX, e.clientY)
 }
 
+let lastNodeId: number = -1
+
 function moveListener(e: any) {
   if (inspectMode === 'none') return
 
   const node = getElementFromPoint(e)
-  if (!node) return
+  if (!node || !isValidNode(node)) {
+    return
+  }
   let nodeId = getNodeId(node)
 
   if (!nodeId) {
@@ -101,10 +105,12 @@ function moveListener(e: any) {
     nodeId,
     highlightConfig,
   })
-
-  connector.trigger('Overlay.nodeHighlightRequested', {
-    nodeId,
-  })
+  if (nodeId !== lastNodeId) {
+    connector.trigger('Overlay.nodeHighlightRequested', {
+      nodeId,
+    })
+    lastNodeId = nodeId
+  }
 }
 
 function outListener() {
@@ -124,6 +130,7 @@ function clickListener(e: any) {
     backendNodeId: getNodeId(node),
   })
 
+  lastNodeId = -1
   hideHighlight()
 }
 
