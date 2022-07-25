@@ -72,6 +72,7 @@ const methods: any = {
   'Runtime.releaseObject': noop,
   'Runtime.releaseObjectGroup': noop,
   'Runtime.runIfWaitingForDebugger': noop,
+  'Runtime.globalLexicalScopeNames': Runtime.globalLexicalScopeNames,
 
   'ApplicationCache.enable': noop,
   'ApplicationCache.getFramesWithManifests': noop,

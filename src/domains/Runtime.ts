@@ -82,6 +82,12 @@ export function releaseObject(params: any) {
   stringifyObj.releaseObj(params.objectId)
 }
 
+export function globalLexicalScopeNames() {
+  return {
+    names: [],
+  }
+}
+
 declare const console: any
 
 function monitorConsole() {

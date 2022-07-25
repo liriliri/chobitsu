@@ -239,6 +239,24 @@ function getPreview(obj: any, self: any = obj) {
     }
 
     ret.entries = entries
+  } else if (isSet(obj)) {
+    const entries = []
+    let i = 0
+    const keys = obj.keys()
+    let key = keys.next().value
+    while (key) {
+      if (i > MAX_PREVIEW_LEN) {
+        overflow = true
+        break
+      }
+      entries.push({
+        value: getPreview(key),
+      })
+      i++
+      key = keys.next().value
+    }
+
+    ret.entries = entries
   }
 
   ret.overflow = overflow
