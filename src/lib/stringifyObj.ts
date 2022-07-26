@@ -21,6 +21,7 @@ import {
 const objects = new Map()
 const objectIds = new Map()
 const selfs = new Map()
+const entries = new Map()
 let id = 1
 
 function getOrCreateObjId(obj: any, self: any) {
@@ -180,7 +181,7 @@ export function getProperties(params: any) {
 
     properties.push(property)
   }
-  if (proto) {
+  if (proto && !ownProperties && !noPrototype(obj)) {
     properties.push({
       name: '__proto__',
       configurable: true,
@@ -193,7 +194,31 @@ export function getProperties(params: any) {
     })
   }
 
+  if (accessorPropertiesOnly) {
+    return {
+      result: properties,
+    }
+  }
+
+  const internalProperties = []
+  if (proto && !noPrototype(obj)) {
+    internalProperties.push({
+      name: '[[Prototype]]',
+      value: wrap(proto, {
+        self,
+      }),
+    })
+  }
+  if (isMap(obj) || isSet(obj)) {
+    const internalEntries = createInternalEntries(obj)
+    internalProperties.push({
+      name: '[[Entries]]',
+      value: wrap(internalEntries),
+    })
+  }
+
   return {
+    internalProperties,
     result: properties,
   }
 }
@@ -312,6 +337,12 @@ function getDescription(obj: any, self: any = obj) {
     description = toStr(obj)
   } else if (subtype === 'error') {
     description = obj.stack
+  } else if (subtype === 'internal#entry') {
+    if (obj.name) {
+      description = `{"${toStr(obj.name)}" => "${toStr(obj.value)}"}`
+    } else {
+      description = `"${toStr(obj.value)}"`
+    }
   } else {
     description = getType(obj, false)
   }
@@ -319,32 +350,76 @@ function getDescription(obj: any, self: any = obj) {
   return description
 }
 
-function basic(value: any) {
+function basic(value: any): any {
   const type = typeof value
-  const ret: any = { type }
+  let subtype = 'object'
 
-  if (isNull(value)) {
-    ret.subtype = 'null'
+  if (value instanceof InternalEntry) {
+    subtype = 'internal#entry'
+  } else if (isNull(value)) {
+    subtype = 'null'
   } else if (isArr(value)) {
-    ret.subtype = 'array'
+    subtype = 'array'
   } else if (isRegExp(value)) {
-    ret.subtype = 'regexp'
+    subtype = 'regexp'
   } else if (isErr(value)) {
-    ret.subtype = 'error'
+    subtype = 'error'
   } else if (isMap(value)) {
-    ret.subtype = 'map'
+    subtype = 'map'
   } else if (isSet(value)) {
-    ret.subtype = 'set'
+    subtype = 'set'
   } else {
     try {
       // Accessing nodeType may throw exception
       if (isEl(value)) {
-        ret.subtype = 'node'
+        subtype = 'node'
       }
     } catch (e) {
       /* tslint:disable-next-line */
     }
   }
 
-  return ret
+  return {
+    type,
+    subtype,
+  }
+}
+
+class InternalEntry {
+  name: any
+  value: any
+  constructor(value: any, name?: any) {
+    if (name) {
+      this.name = name
+    }
+    this.value = value
+  }
+}
+
+function noPrototype(obj: any) {
+  if (obj instanceof InternalEntry) {
+    return true
+  }
+
+  if (obj[0] && obj[0] instanceof InternalEntry) {
+    return true
+  }
+
+  return false
+}
+
+function createInternalEntries(obj: any) {
+  const entryId = entries.get(obj)
+  const internalEntries: InternalEntry[] = entryId ? getObj(entryId) : []
+  const objEntries = obj.entries()
+  let entry = objEntries.next().value
+  while (entry) {
+    if (isMap(obj)) {
+      internalEntries.push(new InternalEntry(entry[1], entry[0]))
+    } else {
+      internalEntries.push(new InternalEntry(entry[1]))
+    }
+    entry = objEntries.next().value
+  }
+  return internalEntries
 }
