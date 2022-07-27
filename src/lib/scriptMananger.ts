@@ -14,15 +14,15 @@ scripts.set('1', {
 const sources = new Map()
 sources.set('1', '')
 
-export function get(scriptId: string) {
+export function getScript(scriptId: string) {
   return scripts.get(scriptId)
 }
 
-export async function getSource(scriptId: string) {
+export async function getScriptSource(scriptId: string) {
   if (sources.get(scriptId)) {
     return sources.get(scriptId)
   }
-  const script = get(scriptId)
+  const script = getScript(scriptId)
   try {
     const result = await fetch(script.url)
     const source = await result.text()

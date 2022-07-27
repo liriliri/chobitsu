@@ -1,4 +1,4 @@
-import { each, Emitter } from 'licia-es'
+import { each, Emitter, strHash, toStr } from 'licia-es'
 import { createId } from './util'
 
 const elProto: any = Element.prototype
@@ -30,7 +30,7 @@ export function getMatchedCssRules(node: any) {
   each(document.styleSheets, (styleSheet: any) => {
     let styleSheetId = styleSheet.styleSheetId
     if (!styleSheetId) {
-      styleSheetId = createId()
+      styleSheetId = getStyleSheetId(styleSheet.sourceURL)
       styleSheet.styleSheetId = styleSheetId
       emitter.emit('styleSheetAdded', styleSheet)
     }
@@ -83,7 +83,7 @@ export function getOrCreateInlineStyleSheetId(nodeId: any) {
   let styleSheetId = inlineStyleSheetIds.get(nodeId)
   if (styleSheetId) return styleSheetId
 
-  styleSheetId = createId()
+  styleSheetId = getStyleSheetId()
   inlineStyleSheetIds.set(nodeId, styleSheetId)
   inlineStyleNodeIds.set(styleSheetId, nodeId)
 
@@ -96,4 +96,12 @@ export function getInlineStyleSheetId(nodeId: any) {
 
 export function getInlineStyleNodeId(styleSheetId: string) {
   return inlineStyleNodeIds.get(styleSheetId)
+}
+
+function getStyleSheetId(sourceUrl = '') {
+  if (sourceUrl) {
+    return toStr(strHash(sourceUrl))
+  }
+
+  return createId()
 }

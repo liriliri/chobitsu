@@ -12,6 +12,6 @@ export function enable() {
 
 export async function getScriptSource(params: any) {
   return {
-    scriptSource: await scriptMananger.getSource(params.scriptId),
+    scriptSource: await scriptMananger.getScriptSource(params.scriptId),
   }
 }
