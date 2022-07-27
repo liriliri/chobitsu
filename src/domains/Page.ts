@@ -1,6 +1,8 @@
 import { $, fetch } from 'licia-es'
 import { fullUrl } from '../lib/request'
 
+const MAIN_FRAME_ID = '1'
+
 export async function getAppManifest() {
   const $links = $('link')
   const ret: any = {
@@ -29,12 +31,32 @@ export function getResourceTree() {
   return {
     frameTree: {
       frame: {
-        id: '',
+        id: MAIN_FRAME_ID,
         mimeType: 'text/html',
         securityOrigin: location.origin,
         url: location.href,
       },
       resources: [],
     },
+  }
+}
+
+let content = ''
+
+export async function getResourceContent(params: any) {
+  const { frameId, url } = params
+
+  if (frameId === MAIN_FRAME_ID) {
+    if (!content) {
+      try {
+        const result = await fetch(url)
+        content = await result.text()
+      } catch (e) {
+        content = document.documentElement.outerHTML
+      }
+    }
+    return {
+      content,
+    }
   }
 }

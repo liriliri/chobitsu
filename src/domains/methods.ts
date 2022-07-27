@@ -58,7 +58,7 @@ const methods: any = {
   'Network.setAttachDebugStack': noop,
   'Network.clearAcceptedEncodingsOverride': noop,
 
-  'Page.getResourceContent': noop,
+  'Page.getResourceContent': Page.getResourceContent,
   'Page.getResourceTree': Page.getResourceTree,
 
   'Runtime.callFunctionOn': Runtime.callFunctionOn,
