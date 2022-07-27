@@ -21,6 +21,12 @@ export function onStyleSheetAdded(fn: any) {
 }
 
 export function getStyleSheets() {
+  each(document.styleSheets, (styleSheet: any) => {
+    if (!styleSheet.styleSheetId) {
+      styleSheet.styleSheetId = getStyleSheetId(styleSheet.href)
+    }
+  })
+
   return document.styleSheets
 }
 
@@ -30,7 +36,7 @@ export function getMatchedCssRules(node: any) {
   each(document.styleSheets, (styleSheet: any) => {
     let styleSheetId = styleSheet.styleSheetId
     if (!styleSheetId) {
-      styleSheetId = getStyleSheetId(styleSheet.sourceURL)
+      styleSheetId = getStyleSheetId(styleSheet.href)
       styleSheet.styleSheetId = styleSheetId
       emitter.emit('styleSheetAdded', styleSheet)
     }
@@ -96,6 +102,28 @@ export function getInlineStyleSheetId(nodeId: any) {
 
 export function getInlineStyleNodeId(styleSheetId: string) {
   return inlineStyleNodeIds.get(styleSheetId)
+}
+
+const styleSheetTexts = new Map()
+
+export async function getStyleSheetText(styleSheetId: string) {
+  if (styleSheetTexts.get(styleSheetId)) {
+    return styleSheetTexts
+  }
+  for (let i = 0, len = document.styleSheets.length; i < len; i++) {
+    const styleSheet: any = document.styleSheets[i]
+    if (styleSheet.styleSheetId === styleSheetId) {
+      try {
+        const result = await fetch(styleSheet.href)
+        const text = await result.text()
+        styleSheetTexts.set(styleSheetId, text)
+      } catch (e) {
+        styleSheetTexts.set(styleSheetId, '')
+      }
+      break
+    }
+  }
+  return styleSheetTexts.get(styleSheetId) || ''
 }
 
 function getStyleSheetId(sourceUrl = '') {

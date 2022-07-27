@@ -3,14 +3,17 @@ import * as stylesheet from '../lib/stylesheet'
 import { map, last, each, trim, startWith, concat } from 'licia-es'
 import connector from '../lib/connector'
 import mutationObserver from '../lib/mutationObserver'
+import { MAIN_FRAME_ID } from '../lib/constants'
 
 export function enable() {
   each(stylesheet.getStyleSheets(), (styleSheet: any) => {
     if (styleSheet.styleSheetId) {
       connector.trigger('CSS.styleSheetAdded', {
         header: {
+          frameId: MAIN_FRAME_ID,
+          isInline: false,
           styleSheetId: styleSheet.styleSheetId,
-          sourceURL: '',
+          sourceURL: styleSheet.href || '',
           startColumn: 0,
           startLine: 0,
           endColumn: 0,
@@ -116,12 +119,16 @@ export function getBackgroundColors(params: any) {
   }
 }
 
-export function getStyleSheetText(params: any) {
-  const nodeId = stylesheet.getInlineStyleNodeId(params.styleSheetId)
+export async function getStyleSheetText(params: any) {
+  const { styleSheetId } = params
+
+  const nodeId = stylesheet.getInlineStyleNodeId(styleSheetId)
   let text = ''
   if (nodeId) {
     const node = getNode(nodeId)
     text = node.getAttribute('style') || ''
+  } else {
+    text = await stylesheet.getStyleSheetText(styleSheetId)
   }
 
   return {

@@ -1,7 +1,6 @@
 import { $, fetch } from 'licia-es'
 import { fullUrl } from '../lib/request'
-
-const MAIN_FRAME_ID = '1'
+import { MAIN_FRAME_ID } from '../lib/constants'
 
 export async function getAppManifest() {
   const $links = $('link')

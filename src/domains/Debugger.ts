@@ -3,9 +3,7 @@ import * as scriptMananger from '../lib/scriptMananger'
 import { each } from 'licia-es'
 
 export function enable() {
-  const scripts = scriptMananger.collect()
-
-  each(scripts, script => {
+  each(scriptMananger.getScripts(), script => {
     connector.trigger('Debugger.scriptParsed', script)
   })
 }

@@ -34,7 +34,7 @@ export async function getScriptSource(scriptId: string) {
   return sources.get(scriptId)
 }
 
-export function collect() {
+export function getScripts() {
   const elements = document.querySelectorAll('script')
   const ret: any[] = []
 

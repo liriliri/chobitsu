@@ -25,3 +25,9 @@ export function clearDataForOrigin(params: any) {
     }
   })
 }
+
+export function getTrustTokens(params: any) {
+  return {
+    tokens: []
+  }
+}

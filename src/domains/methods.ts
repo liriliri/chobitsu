@@ -84,6 +84,7 @@ const methods: any = {
   'Page.getAppManifest': Page.getAppManifest,
   'Page.getInstallabilityErrors': noop,
   'Page.setAdBlockingEnabled': noop,
+  'Page.getAppId': noop,
 
   'Profiler.enable': noop,
 
@@ -139,6 +140,7 @@ const methods: any = {
   'Storage.trackCacheStorageForOrigin': noop,
   'Storage.trackIndexedDBForOrigin': noop,
   'Storage.clearDataForOrigin': Storage.clearDataForOrigin,
+  'Storage.getTrustTokens': Storage.getTrustTokens,
 
   'Target.setAutoAttach': noop,
   'Target.setDiscoverTargets': noop,
