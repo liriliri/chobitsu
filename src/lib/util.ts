@@ -6,6 +6,12 @@ export function createId() {
   return uniqId(prefix)
 }
 
+export function getAbsoluteUrl(url: string) {
+  const a = document.createElement('a')
+  a.href = url
+  return a.href
+}
+
 export class ErrorWithCode extends Error {
   code: number
   constructor(code: number, message: string) {

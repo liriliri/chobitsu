@@ -12,6 +12,7 @@ import * as Storage from './Storage'
 
 const methods: any = {
   'Debugger.enable': Debugger.enable,
+  'Debugger.getScriptSource': Debugger.getScriptSource,
   'Debugger.setAsyncCallStackDepth': noop,
   'Debugger.setBlackboxPatterns': noop,
   'Debugger.setPauseOnExceptions': noop,
