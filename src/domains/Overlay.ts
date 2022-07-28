@@ -1,4 +1,4 @@
-import { getNode, getNodeId, isValidNode } from '../lib/stringifyNode'
+import { getNode, getNodeId, isValidNode } from '../lib/nodeManager'
 import { pushNodesToFrontend } from './DOM'
 import { $, h, isMobile, evalCss, defaults } from 'licia-es'
 import connector from '../lib/connector'

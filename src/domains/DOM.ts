@@ -1,6 +1,6 @@
 import connector from '../lib/connector'
-import * as stringifyNode from '../lib/stringifyNode'
-import { getNode, getNodeId } from '../lib/stringifyNode'
+import * as nodeManager from '../lib/nodeManager'
+import { getNode, getNodeId } from '../lib/nodeManager'
 import * as stringifyObj from '../lib/stringifyObj'
 import mutationObserver from '../lib/mutationObserver'
 import { $, isNull, isEmpty, html, map, unique } from 'licia-es'
@@ -39,12 +39,12 @@ export function copyTo(params: any) {
 
 export function enable() {
   mutationObserver.observe()
-  stringifyNode.clear()
+  nodeManager.clear()
 }
 
 export function getDocument() {
   return {
-    root: stringifyNode.wrap(document, {
+    root: nodeManager.wrap(document, {
       depth: 2,
     }),
   }
@@ -157,7 +157,7 @@ export function pushNodesToFrontend(node: any) {
     const nodeId = getNodeId(node)
     connector.trigger('DOM.setChildNodes', {
       parentId: nodeId,
-      nodes: stringifyNode.getChildNodes(node, 1),
+      nodes: nodeManager.getChildNodes(node, 1),
     })
   }
 
@@ -186,7 +186,7 @@ export function requestChildNodes(params: any) {
 
   connector.trigger('DOM.setChildNodes', {
     parentId: nodeId,
-    nodes: stringifyNode.getChildNodes(node, depth),
+    nodes: nodeManager.getChildNodes(node, depth),
   })
 }
 
@@ -249,7 +249,7 @@ export function setOuterHTML(params: any) {
 export function getDOMNodeId(params: any) {
   const { node } = params
   return {
-    nodeId: stringifyNode.getOrCreateNodeId(node),
+    nodeId: nodeManager.getOrCreateNodeId(node),
   }
 }
 
@@ -260,7 +260,7 @@ function parseAttributes(str: string) {
 }
 
 function traverseNode(node: any, cb: Function) {
-  const childNodes = stringifyNode.filterNodes(node.childNodes)
+  const childNodes = nodeManager.filterNodes(node.childNodes)
   for (let i = 0, len = childNodes.length; i < len; i++) {
     const child = childNodes[i]
     cb(child)
@@ -294,12 +294,12 @@ mutationObserver.on(
     const parentNodeId = getNodeId(target)
     if (!parentNodeId) return
 
-    addedNodes = stringifyNode.filterNodes(addedNodes)
-    removedNodes = stringifyNode.filterNodes(removedNodes)
+    addedNodes = nodeManager.filterNodes(addedNodes)
+    removedNodes = nodeManager.filterNodes(removedNodes)
 
     function childNodeCountUpdated() {
       connector.trigger('DOM.childNodeCountUpdated', {
-        childNodeCount: stringifyNode.wrap(target, {
+        childNodeCount: nodeManager.wrap(target, {
           depth: 0,
         }).childNodeCount,
         nodeId: parentNodeId,
@@ -310,10 +310,10 @@ mutationObserver.on(
       childNodeCountUpdated()
       for (let i = 0, len = addedNodes.length; i < len; i++) {
         const node = addedNodes[i]
-        const previousNode = stringifyNode.getPreviousNode(node)
+        const previousNode = nodeManager.getPreviousNode(node)
         const previousNodeId = previousNode ? getNodeId(previousNode) : 0
         const params: any = {
-          node: stringifyNode.wrap(node, {
+          node: nodeManager.wrap(node, {
             depth: 0,
           }),
           parentNodeId,

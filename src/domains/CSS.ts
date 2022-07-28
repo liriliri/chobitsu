@@ -1,4 +1,4 @@
-import { getNode, getNodeId } from '../lib/stringifyNode'
+import { getNode, getNodeId } from '../lib/nodeManager'
 import * as stylesheet from '../lib/stylesheet'
 import { map, last, each, trim, startWith, concat } from 'licia-es'
 import connector from '../lib/connector'
