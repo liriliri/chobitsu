@@ -1,7 +1,7 @@
 import connector from '../lib/connector'
 import * as nodeManager from '../lib/nodeManager'
 import { getNode, getNodeId } from '../lib/nodeManager'
-import * as stringifyObj from '../lib/stringifyObj'
+import * as objManager from '../lib/objManager'
 import mutationObserver from '../lib/mutationObserver'
 import { $, isNull, isEmpty, html, map, unique } from 'licia-es'
 import { setGlobal } from '../lib/evaluate'
@@ -191,7 +191,7 @@ export function requestChildNodes(params: any) {
 }
 
 export function requestNode(params: any) {
-  const node = stringifyObj.getObj(params.objectId)
+  const node = objManager.getObj(params.objectId)
 
   return {
     nodeId: getNodeId(node),
@@ -202,7 +202,7 @@ export function resolveNode(params: any) {
   const node = getNode(params.nodeId)
 
   return {
-    object: stringifyObj.wrap(node),
+    object: objManager.wrap(node),
   }
 }
 

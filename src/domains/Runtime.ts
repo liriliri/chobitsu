@@ -10,7 +10,7 @@ import {
   stackTrace,
   trim,
 } from 'licia-es'
-import * as stringifyObj from '../lib/stringifyObj'
+import * as objManager from '../lib/objManager'
 import evaluateJs, { setGlobal } from '../lib/evaluate'
 
 const executionContext = {
@@ -26,7 +26,7 @@ export async function callFunctionOn(params: any) {
   args = map(args, (arg: any) => {
     const { objectId, value } = arg
     if (objectId) {
-      const obj = stringifyObj.getObj(objectId)
+      const obj = objManager.getObj(objectId)
       if (obj) return obj
     }
 
@@ -35,11 +35,11 @@ export async function callFunctionOn(params: any) {
 
   let ctx = null
   if (objectId) {
-    ctx = stringifyObj.getObj(objectId)
+    ctx = objManager.getObj(objectId)
   }
 
   return {
-    result: stringifyObj.wrap(await callFn(functionDeclaration, args, ctx)),
+    result: objManager.wrap(await callFn(functionDeclaration, args, ctx)),
   }
 }
 
@@ -52,7 +52,7 @@ export function enable() {
 }
 
 export function getProperties(params: any) {
-  return stringifyObj.getProperties(params)
+  return objManager.getProperties(params)
 }
 
 export function evaluate(params: any) {
@@ -62,15 +62,15 @@ export function evaluate(params: any) {
   try {
     result = evaluateJs(params.expression)
     setGlobal('$_', result)
-    ret.result = stringifyObj.wrap(result, {
+    ret.result = objManager.wrap(result, {
       generatePreview: true,
     })
   } catch (e) {
     ret.exceptionDetails = {
-      exception: stringifyObj.wrap(e),
+      exception: objManager.wrap(e),
       text: 'Uncaught',
     }
-    ret.result = stringifyObj.wrap(e, {
+    ret.result = objManager.wrap(e, {
       generatePreview: true,
     })
   }
@@ -79,7 +79,7 @@ export function evaluate(params: any) {
 }
 
 export function releaseObject(params: any) {
-  stringifyObj.releaseObj(params.objectId)
+  objManager.releaseObj(params.objectId)
 }
 
 export function globalLexicalScopeNames() {
@@ -111,7 +111,7 @@ function monitorConsole() {
       origin(...args)
 
       args = map(args, arg =>
-        stringifyObj.wrap(arg, {
+        objManager.wrap(arg, {
           generatePreview: true,
         })
       )
@@ -166,7 +166,7 @@ async function callFn(
 uncaught.addListener(err => {
   connector.trigger('Runtime.exceptionThrown', {
     exceptionDetails: {
-      exception: stringifyObj.wrap(err),
+      exception: objManager.wrap(err),
       stackTrace: { callFrames: getCallFrames(err) },
       text: 'Uncaught',
     },

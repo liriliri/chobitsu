@@ -1,8 +1,8 @@
 import { safeGet, isEl, isFn, isBool, keys, each, defaults } from 'licia-es'
-import * as stringifyObj from '../lib/stringifyObj'
+import * as objManager from '../lib/objManager'
 
 export function getEventListeners(params: any) {
-  const obj = stringifyObj.getObj(params.objectId)
+  const obj = objManager.getObj(params.objectId)
 
   const events = obj.chobitsuEvents || []
   const listeners: any[] = []
@@ -12,7 +12,7 @@ export function getEventListeners(params: any) {
       listeners.push({
         type,
         useCapture: event.useCapture,
-        handler: stringifyObj.wrap(event.listener),
+        handler: objManager.wrap(event.listener),
         passive: event.passive,
         once: event.once,
         scriptId: '1',

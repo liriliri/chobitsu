@@ -3,7 +3,7 @@ import { pushNodesToFrontend } from './DOM'
 import { $, h, isMobile, evalCss, defaults } from 'licia-es'
 import connector from '../lib/connector'
 import LunaDomHighlighter from 'luna-dom-highlighter'
-import * as stringifyObj from '../lib/stringifyObj'
+import * as objManager from '../lib/objManager'
 
 let domHighlighter: LunaDomHighlighter
 let isCssLoaded = false
@@ -47,7 +47,7 @@ export function highlightNode(params: any) {
     node = getNode(nodeId)
   }
   if (objectId) {
-    node = stringifyObj.getObj(objectId)
+    node = objManager.getObj(objectId)
   }
 
   if (node.nodeType !== 1 && node.nodeType !== 3) return
