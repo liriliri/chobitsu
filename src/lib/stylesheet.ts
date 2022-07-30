@@ -1,5 +1,5 @@
 import { each, Emitter, strHash, toStr } from 'licia-es'
-import { createId } from './util'
+import { createId, getContent } from './util'
 
 const elProto: any = Element.prototype
 
@@ -114,8 +114,7 @@ export async function getStyleSheetText(styleSheetId: string) {
     const styleSheet: any = document.styleSheets[i]
     if (styleSheet.styleSheetId === styleSheetId) {
       try {
-        const result = await fetch(styleSheet.href)
-        const text = await result.text()
+        const text = await getContent(styleSheet.href)
         styleSheetTexts.set(styleSheetId, text)
       } catch (e) {
         styleSheetTexts.set(styleSheetId, '')

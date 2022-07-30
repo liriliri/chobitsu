@@ -1,7 +1,7 @@
 import { $, fetch } from 'licia-es'
 import { fullUrl } from '../lib/request'
 import { MAIN_FRAME_ID } from '../lib/constants'
-import { getOrigin, getUrl } from '../lib/util'
+import { getContent, getOrigin, getUrl } from '../lib/util'
 
 export async function getAppManifest() {
   const $links = $('link')
@@ -49,8 +49,7 @@ export async function getResourceContent(params: any) {
   if (frameId === MAIN_FRAME_ID) {
     if (!content) {
       try {
-        const result = await fetch(url)
-        content = await result.text()
+        content = await getContent(url)
       } catch (e) {
         content = document.documentElement.outerHTML
       }

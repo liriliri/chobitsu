@@ -1,4 +1,4 @@
-import { uniqId, random, startWith } from 'licia-es'
+import { uniqId, random, startWith, Url, fetch } from 'licia-es'
 
 const prefix = random(1000, 9999) + '.'
 
@@ -40,4 +40,17 @@ export function getOrigin() {
     return parent.location.origin
   }
   return origin
+}
+
+export async function getContent(url: string) {
+  const urlObj = new Url(url)
+  urlObj.setQuery('__chobitsu-hide__', 'true')
+  url = urlObj.toString()
+
+  try {
+    const result = await fetch(url)
+    return await result.text()
+  } catch (e) {
+    return ''
+  }
 }

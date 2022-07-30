@@ -5,6 +5,7 @@ import {
   rmCookie,
   once,
   isNative,
+  contain,
 } from 'licia-es'
 import { XhrRequest, FetchRequest } from '../lib/request'
 import connector from '../lib/connector'
@@ -42,6 +43,10 @@ export const enable = once(function () {
   const origSetRequestHeader: any = winXhrProto.setRequestHeader
 
   winXhrProto.open = function (method: string, url: string) {
+    if (!isValidUrl(url)) {
+      return origOpen.apply(this, arguments)
+    }
+
     const xhr = this
 
     const req = ((xhr as any).chobitsuRequest = new XhrRequest(
@@ -181,4 +186,8 @@ export function getResponseBody(params: any) {
     base64Encoded: false,
     body: resTxtMap.get(params.requestId),
   }
+}
+
+function isValidUrl(url: string) {
+  return !contain(url, '__chobitsu-hide__=true')
 }

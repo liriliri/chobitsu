@@ -1,5 +1,5 @@
 import { each, strHash, toStr } from 'licia-es'
-import { getAbsoluteUrl } from './util'
+import { getAbsoluteUrl, getContent } from './util'
 
 const scripts = new Map()
 scripts.set('1', {
@@ -24,8 +24,7 @@ export async function getScriptSource(scriptId: string) {
   }
   const script = getScript(scriptId)
   try {
-    const result = await fetch(script.url)
-    const source = await result.text()
+    const source = await getContent(script.url)
     sources.set(scriptId, source)
   } catch (e) {
     sources.set(scriptId, '')
