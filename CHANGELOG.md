@@ -1,3 +1,7 @@
+## 1.1.1 (30 Jul 2022)
+
+* fix: Page.getResourceTree url
+
 ## 1.1.0 (27 Jul 2022)
 
 * feat: sources support
