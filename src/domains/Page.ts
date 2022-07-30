@@ -1,6 +1,7 @@
 import { $, fetch } from 'licia-es'
 import { fullUrl } from '../lib/request'
 import { MAIN_FRAME_ID } from '../lib/constants'
+import { getOrigin, getUrl } from '../lib/util'
 
 export async function getAppManifest() {
   const $links = $('link')
@@ -32,8 +33,8 @@ export function getResourceTree() {
       frame: {
         id: MAIN_FRAME_ID,
         mimeType: 'text/html',
-        securityOrigin: location.origin,
-        url: location.href,
+        securityOrigin: getOrigin(),
+        url: getUrl(),
       },
       resources: [],
     },

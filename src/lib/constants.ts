@@ -1,1 +1,1 @@
-export const MAIN_FRAME_ID = ''
+export const MAIN_FRAME_ID = '1'
