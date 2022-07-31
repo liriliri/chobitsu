@@ -47,6 +47,8 @@ const methods: any = {
   'Emulation.setAutoDarkModeOverride': noop,
   'Emulation.setEmulatedVisionDeficiency': noop,
   'Emulation.setFocusEmulationEnabled': noop,
+  'Emulation.setTouchEmulationEnabled': noop,
+  'Emulation.setEmitTouchEventsForMouse': noop,
 
   'Log.clear': noop,
   'Log.enable': noop,
@@ -80,11 +82,17 @@ const methods: any = {
 
   'Page.getManifestIcons': noop,
   'Page.bringToFront': noop,
-  'Page.enable': noop,
+  'Page.enable': Page.enable,
   'Page.getAppManifest': Page.getAppManifest,
   'Page.getInstallabilityErrors': noop,
   'Page.setAdBlockingEnabled': noop,
   'Page.getAppId': noop,
+  'Page.startScreencast': Page.startScreencast,
+  'Page.stopScreencast': Page.stopScreencast,
+  'Page.screencastFrameAck': Page.screencastFrameAck,
+  'Page.getNavigationHistory': Page.getNavigationHistory,
+  'Page.reload': Page.reload,
+  'Page.navigate': Page.navigate,
 
   'Profiler.enable': noop,
 
@@ -145,6 +153,8 @@ const methods: any = {
   'Target.setAutoAttach': noop,
   'Target.setDiscoverTargets': noop,
   'Target.setRemoteLocations': noop,
+
+  'Input.emulateTouchFromMouseEvent': noop,
 }
 
 export default methods
