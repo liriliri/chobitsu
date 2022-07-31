@@ -1,3 +1,7 @@
+## 1.2.0 (31 Jul 2022)
+
+* feat: support screencast
+
 ## 1.1.1 (30 Jul 2022)
 
 * fix: Page.getResourceTree url
