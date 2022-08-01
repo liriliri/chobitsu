@@ -147,6 +147,7 @@ async function captureScreenshot() {
     imageTimeout: 10000,
     scale: 1,
     width,
+    logging: false,
     ignoreElements(node) {
       return !isValidNode(node)
     },

@@ -39,6 +39,7 @@ const methods: any = {
   'DOM.setOuterHTML': DOM.setOuterHTML,
   'DOM.undo': noop,
   'DOM.getNodeId': DOM.getDOMNodeId,
+  'DOM.getBoxModel': noop,
 
   'DOMDebugger.getEventListeners': DOMDebugger.getEventListeners,
   'DOMDebugger.setBreakOnCSPViolation': noop,
