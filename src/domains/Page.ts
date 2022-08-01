@@ -2,9 +2,9 @@ import { $, contain, fetch, now, Readiness } from 'licia-es'
 import { fullUrl } from '../lib/request'
 import { MAIN_FRAME_ID } from '../lib/constants'
 import { getContent, getOrigin, getUrl } from '../lib/util'
-import domToImage from 'dom-to-image'
 import connector from '../lib/connector'
 import { isValidNode } from '../lib/nodeManager'
+import html2canvas from 'html2canvas'
 
 export function enable() {
   stopScreencast()
@@ -141,16 +141,20 @@ async function captureScreenshot() {
     width = deviceWidth
   }
 
-  const data = (
-    await domToImage.toJpeg(document.body, {
-      filter(node) {
-        return isValidNode(node)
-      },
-      width,
-      quality: 0.6,
-      bgcolor: '#fff',
-    })
-  ).replace(/^data:image\/jpeg;base64,/, '')
+  const canvas = await html2canvas(document.body, {
+    useCORS: true,
+    foreignObjectRendering: true,
+    imageTimeout: 10000,
+    scale: 1,
+    width,
+    ignoreElements(node) {
+      return !isValidNode(node)
+    },
+  })
+
+  const data = canvas
+    .toDataURL('image/jpeg')
+    .replace(/^data:image\/jpeg;base64,/, '')
 
   if (ack) {
     await ack.ready('ack')

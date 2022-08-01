@@ -184,7 +184,7 @@ function getCallFrames(error?: Error) {
     }
     callFrames.shift()
     callFrames = map(callFrames, val => ({ functionName: trim(val) }))
-  } else {
+  } else if (callSites) {
     callSites.shift()
     callFrames = map(callSites, (callSite: any) => {
       return {

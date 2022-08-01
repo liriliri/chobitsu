@@ -90,7 +90,12 @@ export function filterNodes<T>(childNodes: T): T {
 export function isValidNode(node: Node): boolean {
   if (node.nodeType === 1) {
     const className = (node as Element).getAttribute('class') || ''
-    if (contain(className, '__chobitsu-hide__')) return false
+    if (
+      contain(className, '__chobitsu-hide__') ||
+      contain(className, 'html2canvas-container')
+    ) {
+      return false
+    }
   }
 
   const isValid = !(node.nodeType === 3 && trim(node.nodeValue || '') === '')
