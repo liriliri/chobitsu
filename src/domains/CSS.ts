@@ -1,6 +1,14 @@
 import { getNode, getNodeId } from '../lib/nodeManager'
 import * as stylesheet from '../lib/stylesheet'
-import { map, last, each, trim, startWith, concat } from 'licia-es'
+import {
+  map,
+  last,
+  each,
+  trim,
+  startWith,
+  concat,
+  escapeRegExp,
+} from 'licia-es'
 import connector from '../lib/connector'
 import mutationObserver from '../lib/mutationObserver'
 import { MAIN_FRAME_ID } from '../lib/constants'
@@ -276,7 +284,11 @@ function getInlineStyleRange(name: string, value: string, cssText: string) {
   let endColumn = 0
   let text = ''
 
-  const reg = new RegExp(`(\\/\\*)?\\s*${name}:\\s*${value};?\\s*(\\*\\/)?`)
+  const reg = new RegExp(
+    `(\\/\\*)?\\s*${escapeRegExp(name)}:\\s*${escapeRegExp(
+      value
+    )};?\\s*(\\*\\/)?`
+  )
   for (let i = 0, len = lines.length; i < len; i++) {
     const line = lines[i]
     const match = line.match(reg)
