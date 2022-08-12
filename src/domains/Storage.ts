@@ -26,7 +26,7 @@ export function clearDataForOrigin(params: any) {
   })
 }
 
-export function getTrustTokens(params: any) {
+export function getTrustTokens() {
   return {
     tokens: [],
   }

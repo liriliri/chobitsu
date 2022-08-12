@@ -1,5 +1,5 @@
 import { each, Emitter, strHash, toStr } from 'licia-es'
-import { createId, getContent } from './util'
+import { createId, getTextContent } from './util'
 
 const elProto: any = Element.prototype
 
@@ -106,19 +106,15 @@ export function getInlineStyleNodeId(styleSheetId: string) {
 
 const styleSheetTexts = new Map()
 
-export async function getStyleSheetText(styleSheetId: string) {
+export async function getStyleSheetText(styleSheetId: string, proxy = '') {
   if (styleSheetTexts.get(styleSheetId)) {
-    return styleSheetTexts
+    return styleSheetTexts.get(styleSheetId)
   }
   for (let i = 0, len = document.styleSheets.length; i < len; i++) {
     const styleSheet: any = document.styleSheets[i]
     if (styleSheet.styleSheetId === styleSheetId) {
-      try {
-        const text = await getContent(styleSheet.href)
-        styleSheetTexts.set(styleSheetId, text)
-      } catch (e) {
-        styleSheetTexts.set(styleSheetId, '')
-      }
+      const text = await getTextContent(styleSheet.href, proxy)
+      styleSheetTexts.set(styleSheetId, text)
       break
     }
   }

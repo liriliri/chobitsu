@@ -3,7 +3,7 @@ import * as nodeManager from '../lib/nodeManager'
 import { getNode, getNodeId } from '../lib/nodeManager'
 import * as objManager from '../lib/objManager'
 import mutationObserver from '../lib/mutationObserver'
-import { $, isNull, isEmpty, html, map, unique } from 'licia-es'
+import { $, isNull, isEmpty, html, map, unique, types } from 'licia-es'
 import { setGlobal } from '../lib/evaluate'
 import { contain, lowerCase, each, toArr, xpath, concat } from 'licia-es'
 import { createId } from '../lib/util'
@@ -259,7 +259,7 @@ function parseAttributes(str: string) {
   return html.parse(str)[0].attrs
 }
 
-function traverseNode(node: any, cb: Function) {
+function traverseNode(node: any, cb: types.AnyFn) {
   const childNodes = nodeManager.filterNodes(node.childNodes)
   for (let i = 0, len = childNodes.length; i < len; i++) {
     const child = childNodes[i]

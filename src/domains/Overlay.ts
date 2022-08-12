@@ -71,7 +71,7 @@ export function setShowViewportSizeOnResize(params: any) {
 }
 
 let highlightConfig: any = {}
-let inspectMode: string = 'none'
+let inspectMode = 'none'
 export function setInspectMode(params: any) {
   highlightConfig = params.highlightConfig
   inspectMode = params.mode
@@ -86,7 +86,7 @@ function getElementFromPoint(e: any) {
   return document.elementFromPoint(e.clientX, e.clientY)
 }
 
-let lastNodeId: number = -1
+let lastNodeId = -1
 
 function moveListener(e: any) {
   if (inspectMode === 'none') return

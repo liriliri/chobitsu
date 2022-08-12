@@ -1,4 +1,5 @@
-import { uniqId, random, startWith, Url, fetch } from 'licia-es'
+import { uniqId, random, startWith, Url, convertBin } from 'licia-es'
+import axios from 'axios'
 
 const prefix = random(1000, 9999) + '.'
 
@@ -42,15 +43,41 @@ export function getOrigin() {
   return origin
 }
 
-export async function getContent(url: string) {
-  const urlObj = new Url(url)
-  urlObj.setQuery('__chobitsu-hide__', 'true')
-  url = urlObj.toString()
+export async function getTextContent(url: string, proxy = '') {
+  return await getContent(url, 'text', proxy)
+}
 
+export async function getBase64Content(url: string, proxy = '') {
+  return convertBin(await getContent(url, 'arraybuffer', proxy), 'base64')
+}
+
+async function getContent(url: string, responseType: any, proxy = '') {
   try {
-    const result = await fetch(url)
-    return await result.text()
+    const urlObj = new Url(url)
+    urlObj.setQuery('__chobitsu-hide__', 'true')
+    const result = await axios.get(urlObj.toString(), {
+      responseType,
+    })
+    return result.data
   } catch (e) {
-    return ''
+    if (proxy) {
+      try {
+        const result = await axios.get(proxyUrl(proxy, url), {
+          responseType,
+        })
+        return await result.data
+      } catch (e) {
+        /* eslint-disable */
+      }
+    }
   }
+
+  return responseType === 'arraybuffer' ? new ArrayBuffer(0) : ''
+}
+
+function proxyUrl(proxy: string, url: string) {
+  const urlObj = new Url(proxy)
+  urlObj.setQuery('url', url)
+  urlObj.setQuery('__chobitsu-hide__', 'true')
+  return urlObj.toString()
 }

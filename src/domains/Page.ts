@@ -1,10 +1,22 @@
-import { $, contain, fetch, now, Readiness } from 'licia-es'
+import { $, contain, fetch, now, Readiness, map } from 'licia-es'
 import { fullUrl } from '../lib/request'
 import { MAIN_FRAME_ID } from '../lib/constants'
-import { getContent, getOrigin, getUrl } from '../lib/util'
+import {
+  getBase64Content,
+  getTextContent,
+  getOrigin,
+  getUrl,
+} from '../lib/util'
 import connector from '../lib/connector'
 import { isValidNode } from '../lib/nodeManager'
-import html2canvas from 'html2canvas'
+import html2canvas, { Options as html2canvasOptions } from 'html2canvas'
+import * as resources from '../lib/resources'
+
+let proxy = ''
+
+export function setProxy(params: any) {
+  proxy = params.proxy
+}
 
 export function enable() {
   stopScreencast()
@@ -58,6 +70,21 @@ export async function getAppManifest() {
 }
 
 export function getResourceTree() {
+  const images = map(resources.getImages(), url => {
+    let mimeType = 'image/jpg'
+    if (contain(url, 'png')) {
+      mimeType = 'image/png'
+    } else if (contain(url, 'gif')) {
+      mimeType = 'image/gif'
+    }
+
+    return {
+      url,
+      mimeType,
+      type: 'Image',
+    }
+  })
+
   return {
     frameTree: {
       frame: {
@@ -66,26 +93,37 @@ export function getResourceTree() {
         securityOrigin: getOrigin(),
         url: getUrl(),
       },
-      resources: [],
+      resources: [...images],
     },
   }
 }
 
-let content = ''
-
 export async function getResourceContent(params: any) {
   const { frameId, url } = params
+  let base64Encoded = false
 
   if (frameId === MAIN_FRAME_ID) {
-    if (!content) {
-      try {
-        content = await getContent(url)
-      } catch (e) {
+    let content = ''
+
+    if (url === location.href) {
+      content = await getTextContent(url)
+      if (!content) {
         content = document.documentElement.outerHTML
       }
+    } else if (resources.isImage(url)) {
+      content = await getBase64Content(url, proxy)
+      base64Encoded = true
     }
-    return {
-      content,
+
+    if (base64Encoded) {
+      return {
+        base64Encoded,
+        content,
+      }
+    } else {
+      return {
+        content,
+      }
     }
   }
 }
@@ -141,17 +179,24 @@ async function captureScreenshot() {
     width = deviceWidth
   }
 
-  const canvas = await html2canvas(document.body, {
-    useCORS: true,
-    foreignObjectRendering: true,
-    imageTimeout: 10000,
+  const options: Partial<html2canvasOptions> = {
+    imageTimeout: 5000,
     scale: 1,
     width,
     logging: false,
     ignoreElements(node) {
       return !isValidNode(node)
     },
-  })
+  }
+
+  if (proxy) {
+    options.proxy = proxy
+  } else {
+    options.foreignObjectRendering = true
+    options.useCORS = true
+  }
+
+  const canvas = await html2canvas(document.body, options)
 
   const data = canvas
     .toDataURL('image/jpeg')

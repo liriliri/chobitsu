@@ -16,6 +16,7 @@ const methods: any = {
   'Debugger.setAsyncCallStackDepth': noop,
   'Debugger.setBlackboxPatterns': noop,
   'Debugger.setPauseOnExceptions': noop,
+  'Debugger.setProxy': Debugger.setProxy,
 
   'DOM.collectClassNamesFromSubtree': DOM.collectClassNamesFromSubtree,
   'DOM.copyTo': DOM.copyTo,
@@ -62,9 +63,6 @@ const methods: any = {
   'Network.setAttachDebugStack': noop,
   'Network.clearAcceptedEncodingsOverride': noop,
 
-  'Page.getResourceContent': Page.getResourceContent,
-  'Page.getResourceTree': Page.getResourceTree,
-
   'Runtime.callFunctionOn': Runtime.callFunctionOn,
   'Runtime.compileScript': noop,
   'Runtime.discardConsoleEntries': noop,
@@ -81,6 +79,8 @@ const methods: any = {
   'ApplicationCache.enable': noop,
   'ApplicationCache.getFramesWithManifests': noop,
 
+  'Page.getResourceContent': Page.getResourceContent,
+  'Page.getResourceTree': Page.getResourceTree,
   'Page.getManifestIcons': noop,
   'Page.bringToFront': noop,
   'Page.enable': Page.enable,
@@ -94,6 +94,7 @@ const methods: any = {
   'Page.getNavigationHistory': Page.getNavigationHistory,
   'Page.reload': Page.reload,
   'Page.navigate': Page.navigate,
+  'Page.setProxy': Page.setProxy,
 
   'Profiler.enable': noop,
 
@@ -113,6 +114,7 @@ const methods: any = {
   'CSS.setStyleTexts': CSS.setStyleTexts,
   'CSS.trackComputedStyleUpdates': noop,
   'CSS.takeComputedStyleUpdates': noop,
+  'CSS.setProxy': CSS.setProxy,
 
   'Database.enable': noop,
 

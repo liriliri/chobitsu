@@ -13,6 +13,11 @@ import connector from '../lib/connector'
 import mutationObserver from '../lib/mutationObserver'
 import { MAIN_FRAME_ID } from '../lib/constants'
 
+let proxy = ''
+export function setProxy(params: any) {
+  proxy = params.proxy
+}
+
 export function enable() {
   each(stylesheet.getStyleSheets(), (styleSheet: any) => {
     if (styleSheet.styleSheetId) {
@@ -136,7 +141,7 @@ export async function getStyleSheetText(params: any) {
     const node = getNode(nodeId)
     text = node.getAttribute('style') || ''
   } else {
-    text = await stylesheet.getStyleSheetText(styleSheetId)
+    text = await stylesheet.getStyleSheetText(styleSheetId, proxy)
   }
 
   return {

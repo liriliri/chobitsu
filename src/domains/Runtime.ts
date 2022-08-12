@@ -131,7 +131,7 @@ function monitorConsole() {
 }
 
 const Function = window.Function
-/* tslint:disable-next-line */
+/* eslint-disable-next-line */
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor
 
 function parseFn(fnStr: string) {
