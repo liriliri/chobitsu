@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "module": "es6",
+    "moduleResolution": "node",
+    "strictPropertyInitialization": false,
+    "removeComments": true,
+    "noUnusedLocals": true,
+    "target": "ES5",
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "lib": ["DOM", "ES2015"]
+  },
+  "include": ["src/**/*"]
+}
