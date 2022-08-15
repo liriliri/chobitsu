@@ -130,7 +130,7 @@ export async function getResourceContent(params: any) {
 
 let screenshotTimer: any
 let ack: Readiness
-const screencastInterval = 2000
+let screencastInterval = 2000
 let isCapturingScreenshot = false
 
 export function screencastFrameAck() {
@@ -196,7 +196,13 @@ async function captureScreenshot() {
     options.useCORS = true
   }
 
+  const time = now()
   const canvas = await html2canvas(document.body, options)
+  const duration = now() - time
+  screencastInterval = 2000
+  if (duration * 5 > screencastInterval) {
+    screencastInterval = duration * 5
+  }
 
   const data = canvas
     .toDataURL('image/jpeg')

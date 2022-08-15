@@ -1,3 +1,7 @@
+## 1.3.0 (15 Aug 2022)
+
+* feat: proxy support
+
 ## 1.2.1 (7 Aug 2022)
 
 * fix: css text empty if value contains special char
