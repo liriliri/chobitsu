@@ -76,7 +76,7 @@ export function formatStyle(style: any) {
   for (let i = 0, len = style.length; i < len; i++) {
     const name = style[i]
 
-    ret[name] = style[name]
+    ret[name] = style[name] || 'unsupported'
   }
 
   return ret

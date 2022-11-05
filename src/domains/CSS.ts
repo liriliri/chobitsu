@@ -194,8 +194,12 @@ function formatMatchedCssRule(node: any, matchedCssRule: any) {
 
   const matchingSelectors: number[] = []
   each(selectors, (selector, idx) => {
-    if (stylesheet.matchesSelector(node, selector)) {
-      matchingSelectors.push(idx)
+    try {
+      if (stylesheet.matchesSelector(node, selector)) {
+        matchingSelectors.push(idx)
+      }
+    } catch (e) {
+      /* tslint:disable-next-line */
     }
   })
 
