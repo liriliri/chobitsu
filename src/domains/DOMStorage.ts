@@ -1,4 +1,8 @@
-import { safeStorage, each, isStr, once, jsonClone } from 'licia-es'
+import safeStorage from 'licia/safeStorage'
+import each from 'licia/each'
+import isStr from 'licia/isStr'
+import once from 'licia/once'
+import jsonClone from 'licia/jsonClone'
 import connector from '../lib/connector'
 
 const localStore = safeStorage('local')

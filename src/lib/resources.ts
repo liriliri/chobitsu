@@ -1,4 +1,7 @@
-import { map, filter, compact, contain } from 'licia-es'
+import map from 'licia/map'
+import filter from 'licia/filter'
+import compact from 'licia/compact'
+import contain from 'licia/contain'
 
 let isPerformanceSupported = false
 const performance = (window as any).webkitPerformance || window.performance

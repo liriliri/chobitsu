@@ -1,4 +1,4 @@
-import { noop } from 'licia-es'
+import noop from 'licia/noop'
 import * as Runtime from './Runtime'
 import * as Page from './Page'
 import * as DOM from './DOM'

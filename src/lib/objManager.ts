@@ -1,22 +1,20 @@
-import {
-  toStr,
-  isNull,
-  isArr,
-  isFn,
-  isEl,
-  isErr,
-  isMap,
-  isSet,
-  isRegExp,
-  type as getType,
-  keys as getKeys,
-  toSrc,
-  allKeys,
-  isNative,
-  getProto,
-  isSymbol,
-  has,
-} from 'licia-es'
+import toStr from 'licia/toStr'
+import isNull from 'licia/isNull'
+import isArr from 'licia/isArr'
+import isFn from 'licia/isFn'
+import isEl from 'licia/isEl'
+import isErr from 'licia/isErr'
+import isMap from 'licia/isMap'
+import isSet from 'licia/isSet'
+import isRegExp from 'licia/isRegExp'
+import getType from 'licia/type'
+import getKeys from 'licia/keys'
+import toSrc from 'licia/toSrc'
+import allKeys from 'licia/allKeys'
+import isNative from 'licia/isNative'
+import getProto from 'licia/getProto'
+import isSymbol from 'licia/isSymbol'
+import has from 'licia/has'
 
 const objects = new Map()
 const objectIds = new Map()

@@ -1,6 +1,9 @@
 import connector from './lib/connector'
 import methods from './domains/methods'
-import { noop, uuid, each, Emitter } from 'licia-es'
+import noop from 'licia/noop'
+import uuid from 'licia/uuid'
+import each from 'licia/each'
+import Emitter from 'licia/Emitter'
 import { ErrorWithCode } from './lib/util'
 
 type OnMessage = (message: string) => void

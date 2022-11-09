@@ -1,4 +1,9 @@
-import { map, filter, each, trim, contain, extend } from 'licia-es'
+import map from 'licia/map'
+import filter from 'licia/filter'
+import each from 'licia/each'
+import trim from 'licia/trim'
+import contain from 'licia/contain'
+import extend from 'licia/extend'
 import { createErr } from './util'
 
 const nodes = new Map()

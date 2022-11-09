@@ -1,14 +1,12 @@
 import { getNode, getNodeId } from '../lib/nodeManager'
 import * as stylesheet from '../lib/stylesheet'
-import {
-  map,
-  last,
-  each,
-  trim,
-  startWith,
-  concat,
-  escapeRegExp,
-} from 'licia-es'
+import map from 'licia/map'
+import last from 'licia/last'
+import each from 'licia/each'
+import trim from 'licia/trim'
+import startWith from 'licia/startWith'
+import concat from 'licia/concat'
+import escapeRegExp from 'licia/escapeRegExp'
 import connector from '../lib/connector'
 import mutationObserver from '../lib/mutationObserver'
 import { MAIN_FRAME_ID } from '../lib/constants'

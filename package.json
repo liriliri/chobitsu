@@ -47,7 +47,7 @@
     "karma-coverage-istanbul-reporter": "^3.0.3",
     "karma-mocha": "^2.0.1",
     "karma-webpack": "^4.0.2",
-    "licia-es": "^1.32.2",
+    "licia": "^1.37.0",
     "luna-dom-highlighter": "^0.3.2",
     "mocha": "^8.0.1",
     "raw-loader": "^4.0.2",

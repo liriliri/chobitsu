@@ -1,4 +1,8 @@
-import { uniqId, random, startWith, Url, convertBin } from 'licia-es'
+import uniqId from 'licia/uniqId'
+import random from 'licia/random'
+import startWith from 'licia/startWith'
+import Url from 'licia/Url'
+import convertBin from 'licia/convertBin'
 import axios from 'axios'
 
 const prefix = random(1000, 9999) + '.'

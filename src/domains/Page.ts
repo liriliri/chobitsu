@@ -1,4 +1,9 @@
-import { $, contain, fetch, now, Readiness, map } from 'licia-es'
+import $ from 'licia/$'
+import contain from 'licia/contain'
+import fetch from 'licia/fetch'
+import now from 'licia/now'
+import Readiness from 'licia/Readiness'
+import map from 'licia/map'
 import { fullUrl } from '../lib/request'
 import { MAIN_FRAME_ID } from '../lib/constants'
 import {

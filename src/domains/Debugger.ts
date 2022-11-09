@@ -1,6 +1,6 @@
 import connector from '../lib/connector'
 import * as scriptMananger from '../lib/scriptMananger'
-import { each } from 'licia-es'
+import each from 'licia/each'
 
 let proxy = ''
 

@@ -1,4 +1,6 @@
-import { each, strHash, toStr } from 'licia-es'
+import each from 'licia/each'
+import strHash from 'licia/strHash'
+import toStr from 'licia/toStr'
 import { getAbsoluteUrl, getTextContent } from './util'
 import * as resources from './resources'
 

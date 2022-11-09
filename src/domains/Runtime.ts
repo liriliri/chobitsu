@@ -1,15 +1,13 @@
 import connector from '../lib/connector'
-import {
-  each,
-  map,
-  now,
-  isStr,
-  fnParams,
-  uncaught,
-  startWith,
-  stackTrace,
-  trim,
-} from 'licia-es'
+import each from 'licia/each'
+import map from 'licia/map'
+import now from 'licia/now'
+import isStr from 'licia/isStr'
+import fnParams from 'licia/fnParams'
+import uncaught from 'licia/uncaught'
+import startWith from 'licia/startWith'
+import stackTrace from 'licia/stackTrace'
+import trim from 'licia/trim'
 import * as objManager from '../lib/objManager'
 import evaluateJs, { setGlobal } from '../lib/evaluate'
 

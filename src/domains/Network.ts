@@ -1,12 +1,10 @@
-import {
-  trim,
-  each,
-  decodeUriComponent,
-  rmCookie,
-  once,
-  isNative,
-  contain,
-} from 'licia-es'
+import trim from 'licia/trim'
+import each from 'licia/each'
+import decodeUriComponent from 'licia/decodeUriComponent'
+import rmCookie from 'licia/rmCookie'
+import once from 'licia/once'
+import isNative from 'licia/isNative'
+import contain from 'licia/contain'
 import { XhrRequest, FetchRequest } from '../lib/request'
 import connector from '../lib/connector'
 

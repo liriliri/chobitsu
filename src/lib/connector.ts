@@ -1,4 +1,4 @@
-import { Emitter } from 'licia-es'
+import Emitter from 'licia/Emitter'
 
 class Connector extends Emitter {
   trigger(method: string, params: any) {

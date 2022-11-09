@@ -1,4 +1,7 @@
-import { each, Emitter, strHash, toStr } from 'licia-es'
+import each from 'licia/each'
+import Emitter from 'licia/Emitter'
+import strHash from 'licia/strHash'
+import toStr from 'licia/toStr'
 import { createId, getTextContent } from './util'
 
 const elProto: any = Element.prototype
