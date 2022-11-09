@@ -2,6 +2,7 @@ import each from 'licia/each'
 import Emitter from 'licia/Emitter'
 import strHash from 'licia/strHash'
 import toStr from 'licia/toStr'
+import trim from 'licia/trim'
 import { createId, getTextContent } from './util'
 
 const elProto: any = Element.prototype
@@ -79,7 +80,7 @@ export function formatStyle(style: any) {
   for (let i = 0, len = style.length; i < len; i++) {
     const name = style[i]
 
-    ret[name] = style[name]
+    ret[name] = style[name] || trim(style.getPropertyValue(name))
   }
 
   return ret

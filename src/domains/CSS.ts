@@ -4,6 +4,7 @@ import map from 'licia/map'
 import last from 'licia/last'
 import each from 'licia/each'
 import trim from 'licia/trim'
+import selector from 'licia/selector'
 import startWith from 'licia/startWith'
 import concat from 'licia/concat'
 import escapeRegExp from 'licia/escapeRegExp'
@@ -171,9 +172,15 @@ export function setStyleTexts(params: any) {
   }
 }
 
+function splitSelector(selectorText: string) {
+  const groups = selector.parse(selectorText)
+
+  return map(groups, group => trim(selector.stringify([group])))
+}
+
 function formatMatchedCssRule(node: any, matchedCssRule: any) {
   const { selectorText }: { selectorText: string } = matchedCssRule
-  const selectors = map(selectorText.split(','), selector => trim(selector))
+  const selectors = splitSelector(selectorText)
 
   const shorthandEntries = getShorthandEntries(matchedCssRule.style)
   const style = stylesheet.formatStyle(matchedCssRule.style)
@@ -198,7 +205,7 @@ function formatMatchedCssRule(node: any, matchedCssRule: any) {
   })
 
   return {
-    matchingSelectors: [0],
+    matchingSelectors,
     rule,
   }
 }
