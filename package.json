@@ -48,7 +48,7 @@
     "karma-mocha": "^2.0.1",
     "karma-webpack": "^4.0.2",
     "licia": "^1.37.0",
-    "luna-dom-highlighter": "^0.3.2",
+    "luna-dom-highlighter": "^1.0.0",
     "mocha": "^8.0.1",
     "raw-loader": "^4.0.2",
     "ts-loader": "^7.0.5",
