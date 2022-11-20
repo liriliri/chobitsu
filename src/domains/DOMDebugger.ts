@@ -5,6 +5,7 @@ import isBool from 'licia/isBool'
 import keys from 'licia/keys'
 import each from 'licia/each'
 import defaults from 'licia/defaults'
+import isObj from 'licia/isObj'
 import * as objManager from '../lib/objManager'
 
 export function getEventListeners(params: any) {
@@ -63,6 +64,8 @@ function addEvent(el: any, type: string, listener: any, options: any = false) {
     options = {
       capture: options,
     }
+  } else if (!isObj(options)) {
+    options = {}
   }
   defaults(options, {
     capture: false,
