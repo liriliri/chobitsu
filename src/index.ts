@@ -1,109 +1,132 @@
-import connector from './lib/connector'
-import methods from './domains/methods'
+import Chobitsu from './Chobitsu'
 import noop from 'licia/noop'
-import uuid from 'licia/uuid'
-import each from 'licia/each'
-import Emitter from 'licia/Emitter'
-import { ErrorWithCode } from './lib/util'
+import * as Runtime from './domains/Runtime'
+import * as Page from './domains/Page'
+import * as DOM from './domains/DOM'
+import * as CSS from './domains/CSS'
+import * as DOMStorage from './domains/DOMStorage'
+import * as Network from './domains/Network'
+import * as Overlay from './domains/Overlay'
+import * as DOMDebugger from './domains/DOMDebugger'
+import * as Debugger from './domains/Debugger'
+import * as Storage from './domains/Storage'
 
-type OnMessage = (message: string) => void
-type DomainMethod = (...args: any[]) => any
+const chobitsu = new Chobitsu()
+chobitsu.register('Network', {
+  ...Network,
+  setAttachDebugStack: noop,
+  clearAcceptedEncodingsOverride: noop, 
+})
+chobitsu.register('Page', {
+  ...Page,
+  getManifestIcons: noop,
+  bringToFront: noop,
+  getInstallabilityErrors: noop,
+  setAdBlockingEnabled: noop,
+  getAppId: noop,
+})
+chobitsu.register('Runtime', {
+  ...Runtime,
+  compileScript: noop,
+  discardConsoleEntries: noop,
+  getHeapUsage: noop,
+  getIsolateId: noop,
+  releaseObject: noop,
+  releaseObjectGroup: noop,
+  runIfWaitingForDebugger: noop,
+})
+chobitsu.register('DOM', {
+  ...DOM,
+  getNodeId: DOM.getDOMNodeId,
+  markUndoableState: noop,
+  undo: noop,
+  getBoxModel: noop,
+})
+chobitsu.register('CSS', {
+  ...CSS,
+  getPlatformFontsForNode: noop,
+  trackComputedStyleUpdates: noop,
+  takeComputedStyleUpdates: noop,
+})
+chobitsu.register('Debugger', {
+  ...Debugger,
+  setAsyncCallStackDepth: noop,
+  setBlackboxPatterns: noop,
+  setPauseOnExceptions: noop,
+})
+chobitsu.register('Overlay', {
+  ...Overlay,
+  highlightFrame: noop,
+  setShowGridOverlays: noop,
+  setShowFlexOverlays: noop,
+  setShowScrollSnapOverlays: noop,
+  setShowContainerQueryOverlays: noop,
+  setShowIsolatedElements: noop,
+})
+chobitsu.register('Profiler', {
+  enable: noop,
+})
+chobitsu.register('Log', {
+  clear: noop,
+  enable: noop,
+  startViolationsReport: noop,
+})
+chobitsu.register('Emulation', {
+  setEmulatedMedia: noop,
+  setAutoDarkModeOverride: noop,
+  setEmulatedVisionDeficiency: noop,
+  setFocusEmulationEnabled: noop,
+  setTouchEmulationEnabled: noop,
+  setEmitTouchEventsForMouse: noop,
+})
+chobitsu.register('Audits', {
+  enable: noop,
+})
+chobitsu.register('ServiceWorker', {
+  enable: noop,
+})
+chobitsu.register('Inspector', {
+  enable: noop,
+})
+chobitsu.register('Target', {
+  setAutoAttach: noop,
+  setDiscoverTargets: noop,
+  setRemoteLocations: noop,
+})
+chobitsu.register('DOMDebugger', {
+  ...DOMDebugger,
+  setBreakOnCSPViolation: noop,
+})
+chobitsu.register('Database', {
+  enable: noop,
+})
+chobitsu.register('CacheStorage', {
+  requestCacheNames: noop,
+})
+chobitsu.register('Storage', {
+  ...Storage,
+  trackCacheStorageForOrigin: noop,
+  trackIndexedDBForOrigin: noop,
+})
+chobitsu.register('DOMStorage', {
+  ...DOMStorage
+})
+chobitsu.register('IndexedDB', {
+  enable: noop,
+  requestDatabaseNames: noop,
+})
+chobitsu.register('ApplicationCache', {
+  enable: noop,
+  getFramesWithManifests: noop,
+})
+chobitsu.register('BackgroundService', {
+  startObserving: noop,
+})
+chobitsu.register('HeapProfiler', {
+  enable: noop,
+})
+chobitsu.register('Input', {
+  emulateTouchFromMouseEvent: noop,
+})
 
-class Chobitsu {
-  private onMessage: OnMessage
-  private resolves: Map<string, (value?: any) => void> = new Map()
-  private domains: Map<string, { [index: string]: DomainMethod }> = new Map()
-  constructor() {
-    this.onMessage = noop
-    connector.on('message', (message: any) => {
-      const parsedMessage = JSON.parse(message)
-
-      const resolve = this.resolves.get(parsedMessage.id)
-      if (resolve) {
-        resolve(parsedMessage.result)
-      }
-
-      if (!parsedMessage.id) {
-        const [name, method] = parsedMessage.method.split('.')
-        const domain = this.domains.get(name)
-        if (domain) {
-          domain.emit(method, parsedMessage.params)
-        }
-      }
-
-      this.onMessage(message)
-    })
-
-    this.initDomains()
-  }
-  domain(name: string) {
-    return this.domains.get(name)
-  }
-  setOnMessage(onMessage: OnMessage) {
-    this.onMessage = onMessage
-  }
-  sendMessage(method: string, params: any = {}) {
-    const id = uuid()
-
-    this.sendRawMessage(
-      JSON.stringify({
-        id,
-        method,
-        params,
-      })
-    )
-
-    return new Promise(resolve => {
-      this.resolves.set(id, resolve)
-    })
-  }
-  async sendRawMessage(message: string) {
-    const parsedMessage = JSON.parse(message)
-
-    const { method, params, id } = parsedMessage
-
-    const resultMsg: any = {
-      id,
-    }
-
-    try {
-      resultMsg.result = await this.callMethod(method, params)
-    } catch (e) {
-      if (e instanceof ErrorWithCode) {
-        resultMsg.error = {
-          message: e.message,
-          code: e.code,
-        }
-      } else if (e instanceof Error) {
-        resultMsg.error = {
-          message: e.message,
-        }
-      }
-    }
-
-    connector.emit('message', JSON.stringify(resultMsg))
-  }
-  private initDomains() {
-    const domains = this.domains
-
-    each(methods, (fn: any, key: string) => {
-      const [name, method] = key.split('.')
-      let domain = domains.get(name)
-      if (!domain) {
-        domain = {}
-        Emitter.mixin(domain)
-      }
-      domain[method] = fn
-      domains.set(name, domain)
-    })
-  }
-  private async callMethod(method: string, params: any) {
-    if (methods[method]) {
-      return methods[method](params) || {}
-    } else {
-      throw Error(`${method} unimplemented`)
-    }
-  }
-}
-
-export default new Chobitsu()
+export default chobitsu

@@ -1,3 +1,7 @@
+## 1.3.1 (21 Nov 2022)
+
+* fix: css variable and selector with comma #7
+
 ## 1.3.0 (15 Aug 2022)
 
 * feat: proxy support

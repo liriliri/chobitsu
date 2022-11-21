@@ -1,18 +1,23 @@
 {
   "name": "chobitsu",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Chrome devtools protocol JavaScript implementation",
   "main": "dist/chobitsu.js",
+  "exports": {
+    ".": "./dist/chobitsu.js",
+    "./Chobitsu": "./dist/cjs/Chobitsu.js",
+    "./domains/*": "./dist/cjs/domains/*"
+  },
   "files": [
     "dist/*"
   ],
   "scripts": {
     "ci": "npm run lint && npm test && npm run build && npm run es5",
-    "dev": "webpack --mode=development -w",
-    "build": "webpack --mode=production && node script/build.js",
+    "dev": "node script/build.js && concurrently 'tsc -w --inlineSourceMap' 'webpack --mode=development -w'",
+    "build": "rm -rf dist && tsc && webpack --mode=production && node script/build.js",
     "lint": "eslint src/**/*.ts",
     "test": "karma start",
-    "es5": "es-check es5 dist/chobitsu.js",
+    "es5": "es-check es5 dist/**/*.js",
     "format": "lsla prettier 'src/**/*.ts' '*.{js,json}' 'test/*.js' 'script/*.js' --write"
   },
   "repository": {
@@ -28,6 +33,12 @@
     "url": "https://github.com/liriliri/chobitsu/issues"
   },
   "homepage": "https://github.com/liriliri/chobitsu#readme",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "html2canvas": "^1.4.1",
+    "licia": "^1.37.0",
+    "luna-dom-highlighter": "^1.0.0"
+  },
   "devDependencies": {
     "@babel/core": "^7.17.10",
     "@babel/preset-env": "^7.17.10",
@@ -35,20 +46,17 @@
     "@types/node": "^14.0.13",
     "@typescript-eslint/eslint-plugin": "^5.33.0",
     "@typescript-eslint/parser": "^5.33.0",
-    "axios": "^0.27.2",
     "babel-loader": "^8.2.5",
+    "concurrently": "^7.6.0",
     "es-check": "^6.2.1",
     "eslint": "^8.21.0",
     "eslint-config-prettier": "^8.5.0",
-    "html2canvas": "^1.4.1",
     "karma": "^6.3.19",
     "karma-chai-plugins": "^0.9.0",
     "karma-chrome-launcher": "^3.1.1",
     "karma-coverage-istanbul-reporter": "^3.0.3",
     "karma-mocha": "^2.0.1",
     "karma-webpack": "^4.0.2",
-    "licia": "^1.37.0",
-    "luna-dom-highlighter": "^1.0.0",
     "mocha": "^8.0.1",
     "raw-loader": "^4.0.2",
     "ts-loader": "^7.0.5",
