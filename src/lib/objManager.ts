@@ -107,8 +107,12 @@ export function releaseObj(objectId: number) {
 }
 
 export function getProperties(params: any) {
-  const { accessorPropertiesOnly, objectId, ownProperties, generatePreview } =
-    params
+  const {
+    accessorPropertiesOnly,
+    objectId,
+    ownProperties,
+    generatePreview,
+  } = params
   const properties = []
 
   const options = {

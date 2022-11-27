@@ -1,3 +1,7 @@
+## 1.4.0 (27 Nov 2022)
+
+* feat: support ie11
+
 ## 1.3.1 (21 Nov 2022)
 
 * fix: css variable and selector with comma #7

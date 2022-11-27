@@ -1,3 +1,5 @@
+import './lib/objectAssign'
+import 'es6-promise/auto'
 import Chobitsu from './Chobitsu'
 import noop from 'licia/noop'
 import * as Runtime from './domains/Runtime'
@@ -15,7 +17,7 @@ const chobitsu = new Chobitsu()
 chobitsu.register('Network', {
   ...Network,
   setAttachDebugStack: noop,
-  clearAcceptedEncodingsOverride: noop, 
+  clearAcceptedEncodingsOverride: noop,
 })
 chobitsu.register('Page', {
   ...Page,
@@ -109,7 +111,7 @@ chobitsu.register('Storage', {
   trackIndexedDBForOrigin: noop,
 })
 chobitsu.register('DOMStorage', {
-  ...DOMStorage
+  ...DOMStorage,
 })
 chobitsu.register('IndexedDB', {
   enable: noop,

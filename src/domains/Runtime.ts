@@ -104,6 +104,9 @@ function monitorConsole() {
   }
 
   each(methods, (type, name) => {
+    if (!console[name]) {
+      return
+    }
     const origin = console[name].bind(console)
     console[name] = (...args: any[]) => {
       origin(...args)

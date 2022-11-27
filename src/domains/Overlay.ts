@@ -5,7 +5,11 @@ import h from 'licia/h'
 import isMobile from 'licia/isMobile'
 import evalCss from 'licia/evalCss'
 import defaults from 'licia/defaults'
+import extend from 'licia/extend'
 import connector from '../lib/connector'
+import root from 'licia/root'
+import toBool from 'licia/toBool'
+import cssSupports from 'licia/cssSupports'
 import LunaDomHighlighter from 'luna-dom-highlighter'
 import * as objManager from '../lib/objManager'
 
@@ -13,6 +17,10 @@ let domHighlighter: LunaDomHighlighter
 let isCssLoaded = false
 let $container: $.$
 let isEnable = false
+const showInfo = cssSupports(
+  'clip-path',
+  'polygon(50% 0px, 0px 100%, 100% 100%)'
+)
 
 export function enable() {
   if (isEnable) {
@@ -20,7 +28,12 @@ export function enable() {
   }
 
   if (!isCssLoaded) {
-    evalCss(require('luna-dom-highlighter/luna-dom-highlighter.css'))
+    evalCss(
+      require('luna-dom-highlighter/luna-dom-highlighter.css').replace(
+        '/*# sourceMappingURL=luna-dom-highlighter.css.map*/',
+        ''
+      )
+    )
     isCssLoaded = true
   }
   const container = h('div', {
@@ -28,7 +41,10 @@ export function enable() {
   })
   $container = $(container)
   document.documentElement.appendChild(container)
-  domHighlighter = new LunaDomHighlighter(container)
+  domHighlighter = new LunaDomHighlighter(container, {
+    monitorResize: toBool(root.ResizeObserver),
+    showInfo,
+  })
 
   window.addEventListener('resize', resizeHandler)
 
@@ -62,6 +78,11 @@ export function highlightNode(params: any) {
     borderColor: 'transparent',
     marginColor: 'transparent',
   })
+  if (!showInfo) {
+    extend(highlightConfig, {
+      showInfo: false,
+    })
+  }
   domHighlighter.highlight(node, highlightConfig)
 }
 

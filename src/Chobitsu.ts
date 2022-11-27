@@ -84,6 +84,7 @@ export default class Chobitsu {
   register(name: string, methods: types.PlainObj<types.AnyFn>) {
     const domains = this.domains
 
+    /* eslint-disable-next-line */
     let domain = domains.get(name)!
     if (!domain) {
       domain = {}
@@ -95,14 +96,14 @@ export default class Chobitsu {
     domains.set(name, domain)
   }
   private async callMethod(method: string, params: any) {
-    const [ domainName, methodName ] = method.split('.')
+    const [domainName, methodName] = method.split('.')
     const domain = this.domain(domainName)
     if (domain) {
       if (domain[methodName]) {
         return domain[methodName](params) || {}
-      }  
+      }
     }
-    
+
     throw Error(`${method} unimplemented`)
   }
 }

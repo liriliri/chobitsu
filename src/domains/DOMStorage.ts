@@ -4,9 +4,11 @@ import isStr from 'licia/isStr'
 import once from 'licia/once'
 import jsonClone from 'licia/jsonClone'
 import connector from '../lib/connector'
+import detectBrowser from 'licia/detectBrowser'
 
 const localStore = safeStorage('local')
 const sessionStore = safeStorage('session')
+const browser = detectBrowser()
 
 export function clear(params: any) {
   const store = getStore(params.storageId)
@@ -47,6 +49,10 @@ export function setDOMStorageItem(params: any) {
 }
 
 export const enable = once(function () {
+  // IE localStorage is incorrectly implemented.
+  if (browser.name === 'ie') {
+    return
+  }
   each(['local', 'session'], type => {
     const store = type === 'local' ? localStore : sessionStore
     const storageId = getStorageId(type)

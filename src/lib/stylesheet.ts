@@ -13,6 +13,8 @@ if (elProto.webkitMatchesSelector) {
   matchesSel = (el: any, selText: string) => el.webkitMatchesSelector(selText)
 } else if (elProto.mozMatchesSelector) {
   matchesSel = (el: any, selText: string) => el.mozMatchesSelector(selText)
+} else if (elProto.msMatchesSelector) {
+  matchesSel = (el: any, selText: string) => el.msMatchesSelector(selText)
 }
 
 export function matchesSelector(el: any, selText: string) {
