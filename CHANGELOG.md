@@ -1,3 +1,7 @@
+## 1.4.1 (2 Dec 2022)
+
+* feat: support android 5.0
+
 ## 1.4.0 (27 Nov 2022)
 
 * feat: support ie11

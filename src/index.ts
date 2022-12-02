@@ -1,5 +1,6 @@
 import 'core-js/stable/object/assign'
 import 'core-js/stable/promise'
+import 'core-js/modules/es.map'
 import Chobitsu from './Chobitsu'
 import noop from 'licia/noop'
 import * as Runtime from './domains/Runtime'
