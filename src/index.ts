@@ -1,5 +1,5 @@
-import './lib/objectAssign'
-import 'es6-promise/auto'
+import 'core-js/stable/object/assign'
+import 'core-js/stable/promise'
 import Chobitsu from './Chobitsu'
 import noop from 'licia/noop'
 import * as Runtime from './domains/Runtime'

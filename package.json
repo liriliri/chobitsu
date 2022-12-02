@@ -35,7 +35,7 @@
   "homepage": "https://github.com/liriliri/chobitsu#readme",
   "dependencies": {
     "axios": "^0.27.2",
-    "es6-promise": "^4.2.8",
+    "core-js": "^3.26.1",
     "html2canvas": "^1.4.1",
     "licia": "^1.37.0",
     "luna-dom-highlighter": "^1.0.2"
