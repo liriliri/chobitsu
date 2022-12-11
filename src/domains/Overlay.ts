@@ -22,26 +22,49 @@ const showInfo = cssSupports(
   'polygon(50% 0px, 0px 100%, 100% 100%)'
 )
 
+const css = require('luna-dom-highlighter/luna-dom-highlighter.css').replace(
+  '/*# sourceMappingURL=luna-dom-highlighter.css.map*/',
+  ''
+)
+
 export function enable() {
   if (isEnable) {
     return
   }
 
-  if (!isCssLoaded) {
-    evalCss(
-      require('luna-dom-highlighter/luna-dom-highlighter.css').replace(
-        '/*# sourceMappingURL=luna-dom-highlighter.css.map*/',
-        ''
-      )
-    )
-    isCssLoaded = true
-  }
   const container = h('div', {
     class: '__chobitsu-hide__',
+    style: {
+      all: 'initial',
+    },
   })
   $container = $(container)
   document.documentElement.appendChild(container)
-  domHighlighter = new LunaDomHighlighter(container, {
+
+  let domHighlighterContainer: HTMLDivElement | null = null
+  let shadowRoot: ShadowRoot | null = null
+  if (container.attachShadow) {
+    shadowRoot = container.attachShadow({ mode: 'open' })
+  } else if ((container as any).createShadowRoot) {
+    shadowRoot = (container as any).createShadowRoot()
+  }
+  if (shadowRoot) {
+    const style = document.createElement('style')
+    style.textContent = css
+    style.type = 'text/css'
+    shadowRoot.appendChild(style)
+    domHighlighterContainer = document.createElement('div')
+    shadowRoot.appendChild(domHighlighterContainer)
+  } else {
+    domHighlighterContainer = document.createElement('div')
+    container.appendChild(domHighlighterContainer)
+    if (!isCssLoaded) {
+      evalCss(css)
+      isCssLoaded = true
+    }
+  }
+
+  domHighlighter = new LunaDomHighlighter(domHighlighterContainer, {
     monitorResize: toBool(root.ResizeObserver),
     showInfo,
   })

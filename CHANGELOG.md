@@ -1,3 +1,7 @@
+## 1.4.2 (11 Dec 2022)
+
+* fix: dom highlighter style encapsulation
+
 ## 1.4.1 (2 Dec 2022)
 
 * feat: support android 5.0
