@@ -7,7 +7,7 @@
 
 [npm-image]: https://img.shields.io/npm/v/chobitsu?style=flat-square 
 [npm-url]: https://npmjs.org/package/chobitsu
-[ci-image]: https://img.shields.io/github/workflow/status/liriliri/chobitsu/CI?style=flat-square
+[ci-image]: https://img.shields.io/github/actions/workflow/status/liriliri/chobitsu/main.yml?branch=master&style=flat-square 
 [ci-url]: https://github.com/liriliri/chobitsu/actions/workflows/main.yml
 [codecov-image]: https://img.shields.io/codecov/c/github/liriliri/chobitsu?style=flat-square
 [codecov-url]: https://codecov.io/github/liriliri/chobitsu?branch=master
