@@ -41,6 +41,7 @@ chobitsu.register('Runtime', {
 chobitsu.register('DOM', {
   ...DOM,
   getNodeId: DOM.getDOMNodeId,
+  getNode: DOM.getDOMNode,
   markUndoableState: noop,
   undo: noop,
   getBoxModel: noop,

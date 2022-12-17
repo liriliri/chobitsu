@@ -1,3 +1,7 @@
+## 1.4.3 (17 Dec 2022)
+
+* feat: support DOM.getNode
+
 ## 1.4.2 (11 Dec 2022)
 
 * fix: dom highlighter style encapsulation

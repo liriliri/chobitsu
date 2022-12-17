@@ -264,6 +264,14 @@ export function getDOMNodeId(params: any) {
   }
 }
 
+export function getDOMNode(params: any) {
+  const { nodeId } = params
+
+  return {
+    node: getNode(nodeId),
+  }
+}
+
 function parseAttributes(str: string) {
   str = `<div ${str}></div>`
 
