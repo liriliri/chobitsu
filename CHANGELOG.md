@@ -1,3 +1,7 @@
+## 1.4.4 (20 Dec 2022)
+
+* fix: select element on mobile
+
 ## 1.4.3 (17 Dec 2022)
 
 * feat: support DOM.getNode

@@ -2,7 +2,6 @@ import { getNode, getNodeId, isValidNode } from '../lib/nodeManager'
 import { pushNodesToFrontend } from './DOM'
 import $ from 'licia/$'
 import h from 'licia/h'
-import isMobile from 'licia/isMobile'
 import evalCss from 'licia/evalCss'
 import defaults from 'licia/defaults'
 import extend from 'licia/extend'
@@ -21,6 +20,7 @@ const showInfo = cssSupports(
   'clip-path',
   'polygon(50% 0px, 0px 100%, 100% 100%)'
 )
+const hasTouchSupport = 'ontouchstart' in root
 
 const css = require('luna-dom-highlighter/luna-dom-highlighter.css').replace(
   '/*# sourceMappingURL=luna-dom-highlighter.css.map*/',
@@ -126,9 +126,9 @@ export function setInspectMode(params: any) {
 }
 
 function getElementFromPoint(e: any) {
-  if (isMobile()) {
+  if (hasTouchSupport) {
     const touch = e.touches[0] || e.changedTouches[0]
-    return document.elementFromPoint(touch.pageX, touch.pageY)
+    return document.elementFromPoint(touch.clientX, touch.clientY)
   }
 
   return document.elementFromPoint(e.clientX, e.clientY)
@@ -185,7 +185,7 @@ function clickListener(e: any) {
 function addEvent(type: string, listener: any) {
   document.documentElement.addEventListener(type, listener, true)
 }
-if (isMobile()) {
+if (hasTouchSupport) {
   addEvent('touchstart', moveListener)
   addEvent('touchmove', moveListener)
   addEvent('touchend', clickListener)
