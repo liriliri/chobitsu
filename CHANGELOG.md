@@ -1,6 +1,6 @@
 ## 1.4.5 (1 Apr 2023)
 
-* fix: some console error
+* fix: some console errors
 
 ## 1.4.4 (20 Dec 2022)
 
