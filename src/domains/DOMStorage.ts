@@ -21,7 +21,7 @@ export function getDOMStorageItems(params: any) {
 
   const entries: string[][] = []
 
-  each(jsonClone(store), (val, key) => {
+  each(jsonClone(store), (val, key: string) => {
     if (!isStr(val)) return
 
     entries.push([key, val])

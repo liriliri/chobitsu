@@ -73,7 +73,7 @@ function addEvent(el: any, type: string, listener: any, options: any = false) {
     once: false,
   })
 
-  const events = (el.chobitsuEvents = el.chobitsuEvents || {})
+  const events = ((el as any).chobitsuEvents = (el as any).chobitsuEvents || {})
 
   events[type] = events[type] || []
   events[type].push({
@@ -87,7 +87,7 @@ function addEvent(el: any, type: string, listener: any, options: any = false) {
 function rmEvent(el: any, type: string, listener: any) {
   if (!isEl(el) || !isFn(listener)) return
 
-  const events = el.chobitsuEvents
+  const events = (el as any).chobitsuEvents
 
   if (!(events && events[type])) return
 
@@ -101,5 +101,5 @@ function rmEvent(el: any, type: string, listener: any) {
   }
 
   if (listeners.length === 0) delete events[type]
-  if (keys(events).length === 0) delete el.chobitsuEvents
+  if (keys(events).length === 0) delete (el as any).chobitsuEvents
 }
