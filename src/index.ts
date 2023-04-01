@@ -13,6 +13,7 @@ import * as Overlay from './domains/Overlay'
 import * as DOMDebugger from './domains/DOMDebugger'
 import * as Debugger from './domains/Debugger'
 import * as Storage from './domains/Storage'
+import * as CacheStorage from './domains/CacheStorage'
 
 const chobitsu = new Chobitsu()
 chobitsu.register('Network', {
@@ -40,6 +41,7 @@ chobitsu.register('Runtime', {
 })
 chobitsu.register('DOM', {
   ...DOM,
+  pushNodeByPathToFrontend: noop,
   getNodeId: DOM.getDOMNodeId,
   getNode: DOM.getDOMNode,
   markUndoableState: noop,
@@ -60,6 +62,7 @@ chobitsu.register('Debugger', {
 })
 chobitsu.register('Overlay', {
   ...Overlay,
+  setPausedInDebuggerMessage: noop,
   highlightFrame: noop,
   setShowGridOverlays: noop,
   setShowFlexOverlays: noop,
@@ -105,10 +108,12 @@ chobitsu.register('Database', {
   enable: noop,
 })
 chobitsu.register('CacheStorage', {
-  requestCacheNames: noop,
+  ...CacheStorage,
 })
 chobitsu.register('Storage', {
   ...Storage,
+  untrackCacheStorageForOrigin: noop,
+  untrackIndexedDBForOrigin: noop,
   trackCacheStorageForOrigin: noop,
   trackIndexedDBForOrigin: noop,
 })

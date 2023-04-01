@@ -1,3 +1,7 @@
+## 1.4.5 (1 Apr 2023)
+
+* fix: some console error
+
 ## 1.4.4 (20 Dec 2022)
 
 * fix: select element on mobile

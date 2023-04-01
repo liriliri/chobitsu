@@ -1,6 +1,6 @@
 {
   "name": "chobitsu",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "description": "Chrome devtools protocol JavaScript implementation",
   "main": "dist/chobitsu.js",
   "exports": {
