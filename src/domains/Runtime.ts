@@ -8,6 +8,7 @@ import uncaught from 'licia/uncaught'
 import startWith from 'licia/startWith'
 import stackTrace from 'licia/stackTrace'
 import trim from 'licia/trim'
+import types from 'licia/types'
 import * as objManager from '../lib/objManager'
 import evaluateJs, { setGlobal } from '../lib/evaluate'
 
@@ -41,9 +42,13 @@ export async function callFunctionOn(params: any) {
   }
 }
 
+let isEnable = false
+
 export function enable() {
-  uncaught.start()
-  monitorConsole()
+  isEnable = true
+  each(triggers, trigger => trigger())
+  triggers = []
+
   connector.trigger('Runtime.executionContextCreated', {
     context: executionContext,
   })
@@ -117,7 +122,7 @@ function monitorConsole() {
         })
       )
 
-      connector.trigger('Runtime.consoleAPICalled', {
+      trigger('Runtime.consoleAPICalled', {
         type,
         args,
         stackTrace: {
@@ -165,7 +170,7 @@ async function callFn(
 }
 
 uncaught.addListener(err => {
-  connector.trigger('Runtime.exceptionThrown', {
+  trigger('Runtime.exceptionThrown', {
     exceptionDetails: {
       exception: objManager.wrap(err),
       stackTrace: { callFrames: getCallFrames(err) },
@@ -198,3 +203,16 @@ function getCallFrames(error?: Error) {
   }
   return callFrames
 }
+
+let triggers: types.AnyFn[] = []
+
+function trigger(method: string, params: any) {
+  if (isEnable) {
+    connector.trigger(method, params)
+  } else {
+    triggers.push(() => connector.trigger(method, params))
+  }
+}
+
+uncaught.start()
+monitorConsole()
