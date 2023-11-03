@@ -63,6 +63,9 @@ export function evaluate(params: any) {
 
   let result: any
   try {
+    if (params.throwOnSideEffect && hasSideEffect(params.expression)) {
+      throw EvalError('Possible side-effect in debug-evaluate')
+    }
     result = evaluateJs(params.expression)
     setGlobal('$_', result)
     ret.result = objManager.wrap(result, {
@@ -179,6 +182,10 @@ uncaught.addListener(err => {
     timestamp: now,
   })
 })
+
+function hasSideEffect(code: string) {
+  return !/^[a-zA-Z0-9]*$/.test(code)
+}
 
 function getCallFrames(error?: Error) {
   let callFrames: any[] = []
