@@ -1,3 +1,8 @@
+## 1.4.6 (4 Nov 2023)
+
+* fix: cache console logs before enable
+* fix: console complete
+
 ## 1.4.5 (1 Apr 2023)
 
 * fix: some console errors
