@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Target</title>
+    <style>
+      .motto {
+        display: inline-block;
+      }
+    </style>
+    <script src="chobitsu.js"></script>
+  </head>
+  <body>
+    <div class="motto">Hello Chii!</div>
+    <button onclick="reload()">Reload</button>
+    <script>
+      console.log('Page loaded!')
+      setTimeout(function () {
+        console.log('Hello Chii')
+        fetch(location.href)
+      }, 1000)
+      window.reload = function () {
+        location.reload()
+      }
+
+      const targetOrigin = location.protocol + '//' + location.host
+      function sendToDevtools(message) {
+        devtoolsIframe.contentWindow.postMessage(
+          JSON.stringify(message),
+          targetOrigin
+        )
+      }
+      let id = 1
+      function sendToChobitsu(message) {
+        message.id = 'tmp' + id++
+        chobitsu.sendRawMessage(JSON.stringify(message))
+      }
+      chobitsu.setOnMessage(message => {
+        if (message.indexOf('"id":"tmp') > -1) {
+          return
+        }
+        devtoolsIframe.contentWindow.postMessage(message, targetOrigin)
+      })
+      window.addEventListener('message', event => {
+        if (event.origin !== targetOrigin) {
+          return
+        }
+        if (event.data && typeof event.data === 'string') {
+          chobitsu.sendRawMessage(event.data)
+        }
+      })
+      window.onload = function () {
+        setTimeout(function () {
+          if (
+            typeof devtoolsIframe !== 'undefined' &&
+            devtoolsIframe.contentWindow.runtime
+          ) {
+            resetDevtools()
+          }
+        }, 0)
+      }
+      function resetDevtools() {
+        const window = devtoolsIframe.contentWindow
+        setTimeout(() => {
+          window.runtime.loadLegacyModule('core/sdk/sdk-legacy.js').then(() => {
+            const SDK = window.SDK
+            for (const resourceTreeModel of SDK.TargetManager.instance().models(
+              SDK.ResourceTreeModel
+            )) {
+              resourceTreeModel.dispatchEventToListeners(
+                SDK.ResourceTreeModel.Events.WillReloadPage,
+                resourceTreeModel
+              )
+            }
+          })
+          sendToDevtools({
+            method: 'Page.frameNavigated',
+            params: {
+              frame: {
+                id: '1',
+                mimeType: 'text/html',
+                securityOrigin: location.origin,
+                url: location.href,
+              },
+              type: 'Navigation',
+            },
+          })
+          sendToChobitsu({ method: 'Network.enable' })
+          sendToDevtools({ method: 'Runtime.executionContextsCleared' })
+          sendToChobitsu({ method: 'Runtime.enable' })
+          sendToChobitsu({ method: 'Debugger.enable' })
+          sendToChobitsu({ method: 'DOMStorage.enable' })
+          sendToChobitsu({ method: 'DOM.enable' })
+          sendToChobitsu({ method: 'CSS.enable' })
+          sendToChobitsu({ method: 'Overlay.enable' })
+          sendToDevtools({ method: 'DOM.documentUpdated' })
+        }, 0)
+      }
+      console.log('console right after target injected')
+      throw Error('exception right after target injected')
+    </script>
+  </body>
+</html>

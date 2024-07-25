@@ -1,10 +1,7 @@
 const webpackCfg = require('./webpack.config')
 webpackCfg.devtool = 'inline-source-map'
 webpackCfg.mode = 'development'
-webpackCfg.module.rules[0].loader = [
-  '@jsdevtools/coverage-istanbul-loader',
-  'ts-loader',
-]
+webpackCfg.module.rules[0].use.unshift('@jsdevtools/coverage-istanbul-loader')
 
 module.exports = function (config) {
   config.set({

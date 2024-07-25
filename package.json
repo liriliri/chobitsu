@@ -13,12 +13,14 @@
   ],
   "scripts": {
     "ci": "npm run lint && npm test && npm run build && npm run es5",
-    "dev": "node script/build.js && concurrently \"tsc -w --inlineSourceMap\" \"webpack --mode=development -w\"",
+    "dev": "node script/build.js && concurrently \"tsc -w --inlineSourceMap\" \"webpack-dev-server --mode=development\"",
     "build": "rm -rf dist && tsc && webpack --mode=production && node script/build.js",
+    "build:front_end": "cd devtools/devtools-frontend && gn gen out/Default --args=\"is_debug=false\" && autoninja -C out/Default",
     "lint": "eslint src/**/*.ts",
     "test": "karma start",
     "es5": "es-check es5 dist/**/*.js",
-    "format": "lsla prettier \"src/**/*.ts\" \"*.{js,json}\" \"test/*.js\" \"script/*.js\" --write"
+    "format": "lsla prettier \"src/**/*.ts\" \"*.{js,json}\" \"devtools/*.{js,html}\" \"test/*.js\" \"script/*.js\" --write",
+    "init:front_end": "cd devtools && rm -rf devtools-frontend && gclient sync --with_branch_heads --verbose"
   },
   "repository": {
     "type": "git",
@@ -57,13 +59,14 @@
     "karma-chrome-launcher": "^3.1.1",
     "karma-coverage-istanbul-reporter": "^3.0.3",
     "karma-mocha": "^2.0.1",
-    "karma-webpack": "^4.0.2",
+    "karma-webpack": "^5.0.1",
     "mocha": "^8.0.1",
     "raw-loader": "^4.0.2",
     "ts-loader": "^7.0.5",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^5.2.2",
-    "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11"
+    "webpack": "^5.93.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.4"
   }
 }

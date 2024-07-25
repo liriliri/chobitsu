@@ -14,6 +14,12 @@ module.exports = {
     libraryExport: 'default',
     libraryTarget: 'umd',
   },
+  devServer: {
+    static: {
+      directory: path.join(__dirname, 'devtools'),
+    },
+    port: 8080,
+  },
   resolve: {
     extensions: ['.ts', '.js'],
   },
@@ -21,7 +27,7 @@ module.exports = {
     rules: [
       {
         test: /\.ts$/,
-        loader: 'ts-loader',
+        use: ['ts-loader'],
       },
       {
         test: /\.js$/,

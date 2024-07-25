@@ -1,4 +1,7 @@
 node_modules/
 dist/
 coverage/
+devtools/.cipd
+devtools/devtools-frontend
+devtools/.gclient_entries
 package-lock.json
