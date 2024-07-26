@@ -14,6 +14,7 @@ import * as DOMDebugger from './domains/DOMDebugger'
 import * as Debugger from './domains/Debugger'
 import * as Storage from './domains/Storage'
 import * as CacheStorage from './domains/CacheStorage'
+import * as IndexedDB from './domains/IndexedDB'
 
 const chobitsu = new Chobitsu()
 chobitsu.register('Network', {
@@ -122,7 +123,7 @@ chobitsu.register('DOMStorage', {
 })
 chobitsu.register('IndexedDB', {
   enable: noop,
-  requestDatabaseNames: noop,
+  ...IndexedDB,
 })
 chobitsu.register('ApplicationCache', {
   enable: noop,
