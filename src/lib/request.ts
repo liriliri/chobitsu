@@ -106,16 +106,17 @@ export class FetchRequest extends Emitter {
   private method: string
   private options: any
   private reqHeaders: any
-  constructor(url: any, options: any = {}) {
+  constructor(input: any, options: any = {}) {
     super()
 
-    if (url instanceof window.Request) url = url.url
+    const isRequest = input instanceof window.Request
+    const url = isRequest ? input.url : input
 
     this.url = fullUrl(url)
     this.id = createId()
     this.options = options
-    this.reqHeaders = options.headers || {}
-    this.method = options.method || 'GET'
+    this.reqHeaders = options.headers || (isRequest ? input.headers : {})
+    this.method = options.method || (isRequest ? input.method : 'GET')
   }
   send(fetchResult: any) {
     const options = this.options
