@@ -1,3 +1,8 @@
+## 1.5.0 (31 Jul 2024)
+
+* feat: support IndexedDB
+* feat: support WebSocket
+
 ## 1.4.6 (4 Nov 2023)
 
 * fix: cache console logs before enable
