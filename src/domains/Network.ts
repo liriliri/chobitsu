@@ -5,8 +5,12 @@ import rmCookie from 'licia/rmCookie'
 import once from 'licia/once'
 import isNative from 'licia/isNative'
 import contain from 'licia/contain'
+import now from 'licia/now'
+import isStr from 'licia/isStr'
+import convertBin from 'licia/convertBin'
 import { XhrRequest, FetchRequest } from '../lib/request'
 import connector from '../lib/connector'
+import { createId } from '../lib/util'
 
 export function deleteCookies(params: any) {
   rmCookie(params.name)
@@ -34,6 +38,12 @@ export function getCookies() {
 const resTxtMap = new Map()
 
 export const enable = once(function () {
+  enableXhr()
+  enableFetch()
+  enableWebSocket()
+})
+
+function enableXhr() {
   const winXhrProto = window.XMLHttpRequest.prototype
 
   const origSend: any = winXhrProto.send
@@ -121,7 +131,9 @@ export const enable = once(function () {
 
     origSetRequestHeader.apply(this, arguments)
   }
+}
 
+function enableFetch() {
   let isFetchSupported = false
   if (window.fetch) {
     isFetchSupported = isNative(window.fetch)
@@ -177,7 +189,98 @@ export const enable = once(function () {
 
     return fetchResult
   }
-})
+}
+
+function enableWebSocket() {
+  const origWebSocket = window.WebSocket
+  function WebSocket(url: string, protocols?: string | string[]) {
+    const ws = new origWebSocket(url, protocols)
+    const requestId = createId()
+
+    connector.trigger('Network.webSocketCreated', {
+      requestId,
+      url,
+    })
+
+    ws.addEventListener('open', function () {
+      connector.trigger('Network.webSocketWillSendHandshakeRequest', {
+        requestId,
+        timestamp: now() / 1000,
+        request: {
+          headers: {},
+        },
+      })
+      connector.trigger('Network.webSocketHandshakeResponseReceived', {
+        requestId,
+        timeStamp: now() / 1000,
+        response: {
+          status: 101,
+          statusText: 'Switching Protocols',
+        },
+      })
+    })
+
+    ws.addEventListener('message', function (e) {
+      let payloadData = e.data
+      let opcode = 1
+      if (!isStr(payloadData)) {
+        opcode = 2
+        payloadData = convertBin(payloadData, 'base64')
+      }
+
+      connector.trigger('Network.webSocketFrameReceived', {
+        requestId,
+        timestamp: now() / 1000,
+        response: {
+          opcode,
+          payloadData,
+        },
+      })
+    })
+
+    const origSend = ws.send
+    ws.send = function (data: any) {
+      let opcode = 1
+      if (!isStr(data)) {
+        opcode = 2
+        data = convertBin(data, 'base64')
+      }
+
+      connector.trigger('Network.webSocketFrameSent', {
+        requestId,
+        timestamp: now() / 1000,
+        response: {
+          opcode,
+          payloadData: data,
+        },
+      })
+      return origSend.call(this, data)
+    }
+
+    ws.addEventListener('close', function () {
+      connector.trigger('Network.webSocketClosed', {
+        requestId,
+        timestamp: now() / 1000,
+      })
+    })
+
+    ws.addEventListener('error', function () {
+      connector.trigger('Network.webSocketFrameError', {
+        requestId,
+        timestamp: now() / 1000,
+        errorMessage: 'WebSocket error',
+      })
+    })
+
+    return ws
+  }
+  WebSocket.prototype = origWebSocket.prototype
+  WebSocket.CLOSED = origWebSocket.CLOSED
+  WebSocket.CLOSING = origWebSocket.CLOSING
+  WebSocket.CONNECTING = origWebSocket.CONNECTING
+  WebSocket.OPEN = origWebSocket.OPEN
+  window.WebSocket = WebSocket as any
+}
 
 export function getResponseBody(params: any) {
   return {
