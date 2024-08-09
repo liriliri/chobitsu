@@ -7,8 +7,12 @@ import each from 'licia/each'
 import defaults from 'licia/defaults'
 import isObj from 'licia/isObj'
 import * as objManager from '../lib/objManager'
+import Protocol from 'devtools-protocol'
+import DOMDebugger = Protocol.DOMDebugger
 
-export function getEventListeners(params: any) {
+export function getEventListeners(
+  params: DOMDebugger.GetEventListenersRequest
+): DOMDebugger.GetEventListenersResponse {
   const obj = objManager.getObj(params.objectId)
 
   const events = obj.chobitsuEvents || []

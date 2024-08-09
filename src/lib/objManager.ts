@@ -95,11 +95,11 @@ export function wrap(
   return ret
 }
 
-export function getObj(objectId: number) {
+export function getObj(objectId: string) {
   return objects.get(objectId)
 }
 
-export function releaseObj(objectId: number) {
+export function releaseObj(objectId: string) {
   const object = getObj(objectId)
   objectIds.delete(object)
   selfs.delete(objectId)

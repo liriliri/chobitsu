@@ -3,12 +3,14 @@ import map from 'licia/map'
 import isStr from 'licia/isStr'
 import isArr from 'licia/isArr'
 import * as objManager from '../lib/objManager'
+import Protocol from 'devtools-protocol'
+import IndexedDB = Protocol.IndexedDB
 
 const indexedDB = window.indexedDB
 
 let databaseVersions: any = {}
 
-export async function requestDatabaseNames() {
+export async function requestDatabaseNames(): Promise<IndexedDB.RequestDatabaseNamesResponse> {
   const databases = await indexedDB.databases()
   const databaseNames: string[] = []
 
@@ -26,7 +28,9 @@ export async function requestDatabaseNames() {
   }
 }
 
-export async function requestDatabase(params: any) {
+export async function requestDatabase(
+  params: IndexedDB.RequestDatabaseRequest
+): Promise<IndexedDB.RequestDatabaseResponse> {
   const { databaseName } = params
   const version = databaseVersions[databaseName]
   const objectStores: any[] = []
@@ -65,7 +69,9 @@ export async function requestDatabase(params: any) {
   }
 }
 
-export async function requestData(params: any) {
+export async function requestData(
+  params: IndexedDB.RequestDataRequest
+): Promise<IndexedDB.RequestDataResponse> {
   const { databaseName, objectStoreName, indexName, pageSize, skipCount } =
     params
 
@@ -112,7 +118,9 @@ export async function requestData(params: any) {
   })
 }
 
-export async function getMetadata(params: any) {
+export async function getMetadata(
+  params: IndexedDB.GetMetadataRequest
+): Promise<IndexedDB.GetMetadataResponse> {
   const { databaseName, objectStoreName } = params
 
   const objectStore = await getObjectStore(databaseName, objectStoreName)
@@ -123,7 +131,9 @@ export async function getMetadata(params: any) {
   }
 }
 
-export async function deleteObjectStoreEntries(params: any) {
+export async function deleteObjectStoreEntries(
+  params: IndexedDB.DeleteObjectStoreEntriesRequest
+) {
   const { databaseName, objectStoreName, keyRange } = params
 
   const objectStore = await getObjectStore(databaseName, objectStoreName)
@@ -139,14 +149,16 @@ export async function deleteObjectStoreEntries(params: any) {
   )
 }
 
-export async function clearObjectStore(params: any) {
+export async function clearObjectStore(
+  params: IndexedDB.ClearObjectStoreRequest
+) {
   const { databaseName, objectStoreName } = params
 
   const objectStore = await getObjectStore(databaseName, objectStoreName)
   await promisify(objectStore.clear())
 }
 
-export async function deleteDatabase(params: any) {
+export async function deleteDatabase(params: IndexedDB.DeleteDatabaseRequest) {
   await promisify(indexedDB.deleteDatabase(params.databaseName))
 }
 

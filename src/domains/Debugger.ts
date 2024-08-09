@@ -1,6 +1,8 @@
 import connector from '../lib/connector'
 import * as scriptMananger from '../lib/scriptMananger'
 import each from 'licia/each'
+import Protocol from 'devtools-protocol'
+import Debugger = Protocol.Debugger
 
 let proxy = ''
 
@@ -14,7 +16,9 @@ export function enable() {
   })
 }
 
-export async function getScriptSource(params: any) {
+export async function getScriptSource(
+  params: Debugger.GetScriptSourceRequest
+): Promise<Debugger.GetScriptSourceResponse> {
   return {
     scriptSource: await scriptMananger.getScriptSource(params.scriptId, proxy),
   }

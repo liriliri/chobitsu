@@ -11,6 +11,8 @@ import escapeRegExp from 'licia/escapeRegExp'
 import connector from '../lib/connector'
 import mutationObserver from '../lib/mutationObserver'
 import { MAIN_FRAME_ID } from '../lib/constants'
+import Protocol from 'devtools-protocol'
+import CSS = Protocol.CSS
 
 let proxy = ''
 export function setProxy(params: any) {
@@ -36,7 +38,9 @@ export function enable() {
   })
 }
 
-export function getComputedStyleForNode(params: any) {
+export function getComputedStyleForNode(
+  params: CSS.GetComputedStyleForNodeRequest
+): CSS.GetComputedStyleForNodeResponse {
   const node = getNode(params.nodeId)
 
   const computedStyle: any = stylesheet.formatStyle(
@@ -48,7 +52,9 @@ export function getComputedStyleForNode(params: any) {
   }
 }
 
-export function getInlineStylesForNode(params: any) {
+export function getInlineStylesForNode(
+  params: CSS.GetInlineStylesForNodeRequest
+) {
   const { nodeId } = params
   const node = getNode(nodeId)
   const { style } = node
@@ -105,7 +111,9 @@ export function getInlineStylesForNode(params: any) {
   }
 }
 
-export function getMatchedStylesForNode(params: any) {
+export function getMatchedStylesForNode(
+  params: CSS.GetMatchedStylesForNodeRequest
+): CSS.GetMatchedStylesForNodeResponse {
   const node = getNode(params.nodeId)
   const matchedCSSRules = stylesheet.getMatchedCssRules(node)
 
@@ -117,7 +125,9 @@ export function getMatchedStylesForNode(params: any) {
   }
 }
 
-export function getBackgroundColors(params: any) {
+export function getBackgroundColors(
+  params: CSS.GetBackgroundColorsRequest
+): CSS.GetBackgroundColorsResponse {
   const node = getNode(params.nodeId)
 
   const computedStyle: any = stylesheet.formatStyle(
@@ -131,7 +141,9 @@ export function getBackgroundColors(params: any) {
   }
 }
 
-export async function getStyleSheetText(params: any) {
+export async function getStyleSheetText(
+  params: CSS.GetStyleSheetTextRequest
+): Promise<CSS.GetStyleSheetTextResponse> {
   const { styleSheetId } = params
 
   const nodeId = stylesheet.getInlineStyleNodeId(styleSheetId)
@@ -148,7 +160,9 @@ export async function getStyleSheetText(params: any) {
   }
 }
 
-export function setStyleTexts(params: any) {
+export function setStyleTexts(
+  params: CSS.SetStyleTextsRequest
+): CSS.SetStyleTextsResponse {
   const { edits } = params
   const styles = map(edits, (edit: any) => {
     const { styleSheetId, text, range } = edit

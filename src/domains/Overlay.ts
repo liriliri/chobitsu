@@ -11,6 +11,8 @@ import toBool from 'licia/toBool'
 import cssSupports from 'licia/cssSupports'
 import LunaDomHighlighter from 'luna-dom-highlighter'
 import * as objManager from '../lib/objManager'
+import Protocol from 'devtools-protocol'
+import Overlay = Protocol.Overlay
 
 let domHighlighter: LunaDomHighlighter
 let isCssLoaded = false
@@ -82,7 +84,7 @@ export function disable() {
   isEnable = false
 }
 
-export function highlightNode(params: any) {
+export function highlightNode(params: Overlay.HighlightNodeRequest) {
   const { nodeId, highlightConfig, objectId } = params
 
   let node: any
@@ -106,7 +108,7 @@ export function highlightNode(params: any) {
       showInfo: false,
     })
   }
-  domHighlighter.highlight(node, highlightConfig)
+  domHighlighter.highlight(node, highlightConfig as any)
 }
 
 export function hideHighlight() {
@@ -114,13 +116,15 @@ export function hideHighlight() {
 }
 
 let showViewportSizeOnResize = false
-export function setShowViewportSizeOnResize(params: any) {
+export function setShowViewportSizeOnResize(
+  params: Overlay.SetShowViewportSizeOnResizeRequest
+) {
   showViewportSizeOnResize = params.show
 }
 
 let highlightConfig: any = {}
 let inspectMode = 'none'
-export function setInspectMode(params: any) {
+export function setInspectMode(params: Overlay.SetInspectModeRequest) {
   highlightConfig = params.highlightConfig
   inspectMode = params.mode
 }

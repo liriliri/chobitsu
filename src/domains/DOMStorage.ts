@@ -5,18 +5,22 @@ import once from 'licia/once'
 import jsonClone from 'licia/jsonClone'
 import connector from '../lib/connector'
 import detectBrowser from 'licia/detectBrowser'
+import Protocol from 'devtools-protocol'
+import DOMStorage = Protocol.DOMStorage
 
 const localStore = safeStorage('local')
 const sessionStore = safeStorage('session')
 const browser = detectBrowser()
 
-export function clear(params: any) {
+export function clear(params: DOMStorage.ClearRequest) {
   const store = getStore(params.storageId)
 
   store.clear()
 }
 
-export function getDOMStorageItems(params: any) {
+export function getDOMStorageItems(
+  params: DOMStorage.GetDOMStorageItemsRequest
+): DOMStorage.GetDOMStorageItemsResponse {
   const store = getStore(params.storageId)
 
   const entries: string[][] = []
@@ -32,7 +36,9 @@ export function getDOMStorageItems(params: any) {
   }
 }
 
-export function removeDOMStorageItem(params: any) {
+export function removeDOMStorageItem(
+  params: DOMStorage.RemoveDOMStorageItemRequest
+) {
   const { key, storageId } = params
 
   const store = getStore(storageId)
@@ -40,7 +46,7 @@ export function removeDOMStorageItem(params: any) {
   store.removeItem(key)
 }
 
-export function setDOMStorageItem(params: any) {
+export function setDOMStorageItem(params: DOMStorage.SetDOMStorageItemRequest) {
   const { key, value, storageId } = params
 
   const store = getStore(storageId)

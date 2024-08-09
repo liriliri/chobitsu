@@ -16,6 +16,8 @@ import connector from '../lib/connector'
 import { isValidNode } from '../lib/nodeManager'
 import html2canvas, { Options as html2canvasOptions } from 'html2canvas'
 import * as resources from '../lib/resources'
+import Protocol from 'devtools-protocol'
+import Page = Protocol.Page
 
 let proxy = ''
 
@@ -31,8 +33,12 @@ export function reload() {
   location.reload()
 }
 
-export function navigate(params: any) {
+export function navigate(params: Page.NavigateRequest): Page.NavigateResponse {
   location.href = params.url
+
+  return {
+    frameId: MAIN_FRAME_ID,
+  }
 }
 
 export function getNavigationHistory() {
@@ -103,7 +109,9 @@ export function getResourceTree() {
   }
 }
 
-export async function getResourceContent(params: any) {
+export async function getResourceContent(
+  params: Page.GetResourceContentRequest
+): Promise<Page.GetResourceContentResponse> {
   const { frameId, url } = params
   let base64Encoded = false
 
@@ -120,16 +128,15 @@ export async function getResourceContent(params: any) {
       base64Encoded = true
     }
 
-    if (base64Encoded) {
-      return {
-        base64Encoded,
-        content,
-      }
-    } else {
-      return {
-        content,
-      }
+    return {
+      base64Encoded,
+      content,
     }
+  }
+
+  return {
+    base64Encoded,
+    content: '',
   }
 }
 

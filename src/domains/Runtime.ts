@@ -11,6 +11,8 @@ import trim from 'licia/trim'
 import types from 'licia/types'
 import * as objManager from '../lib/objManager'
 import evaluateJs, { setGlobal } from '../lib/evaluate'
+import Protocol from 'devtools-protocol'
+import Runtime = Protocol.Runtime
 
 const executionContext = {
   id: 1,
@@ -18,7 +20,9 @@ const executionContext = {
   origin: location.origin,
 }
 
-export async function callFunctionOn(params: any) {
+export async function callFunctionOn(
+  params: Runtime.CallFunctionOnRequest
+): Promise<Runtime.CallFunctionOnResponse> {
   const { functionDeclaration, objectId } = params
   let args = params.arguments || []
 
@@ -54,11 +58,15 @@ export function enable() {
   })
 }
 
-export function getProperties(params: any) {
+export function getProperties(
+  params: Runtime.GetPropertiesRequest
+): Runtime.GetPropertiesResponse {
   return objManager.getProperties(params)
 }
 
-export function evaluate(params: any) {
+export function evaluate(
+  params: Runtime.EvaluateRequest
+): Runtime.EvaluateResponse {
   const ret: any = {}
 
   let result: any
@@ -84,7 +92,7 @@ export function evaluate(params: any) {
   return ret
 }
 
-export function releaseObject(params: any) {
+export function releaseObject(params: Runtime.ReleaseObjectRequest) {
   objManager.releaseObj(params.objectId)
 }
 

@@ -18,8 +18,12 @@ import xpath from 'licia/xpath'
 import concat from 'licia/concat'
 import { setGlobal } from '../lib/evaluate'
 import { createId } from '../lib/util'
+import Protocol from 'devtools-protocol'
+import DOM = Protocol.DOM
 
-export function collectClassNamesFromSubtree(params: any) {
+export function collectClassNamesFromSubtree(
+  params: DOM.CollectClassNamesFromSubtreeRequest
+): DOM.CollectClassNamesFromSubtreeResponse {
   const node = getNode(params.nodeId)
 
   const classNames: string[] = []
@@ -38,7 +42,7 @@ export function collectClassNamesFromSubtree(params: any) {
   }
 }
 
-export function copyTo(params: any) {
+export function copyTo(params: DOM.CopyToRequest): DOM.CopyToResponse {
   const { nodeId, targetNodeId } = params
 
   const node = getNode(nodeId)
@@ -46,6 +50,10 @@ export function copyTo(params: any) {
 
   const cloneNode = node.cloneNode(true)
   targetNode.appendChild(cloneNode)
+
+  return {
+    nodeId: getNodeId(cloneNode),
+  }
 }
 
 export function enable() {
@@ -61,26 +69,39 @@ export function getDocument() {
   }
 }
 
-export function getOuterHTML(params: any) {
-  const node = getNode(params.nodeId)
+export function getOuterHTML(
+  params: DOM.GetOuterHTMLRequest
+): DOM.GetOuterHTMLResponse {
+  let outerHTML = ''
+
+  if (params.nodeId) {
+    const node = getNode(params.nodeId)
+    outerHTML = node.outerHTML
+  }
 
   return {
-    outerHTML: node.outerHTML,
+    outerHTML,
   }
 }
 
-export function moveTo(params: any) {
+export function moveTo(params: DOM.MoveToRequest): DOM.MoveToResponse {
   const { nodeId, targetNodeId } = params
 
   const node = getNode(nodeId)
   const targetNode = getNode(targetNodeId)
 
   targetNode.appendChild(node)
+
+  return {
+    nodeId: getNodeId(node),
+  }
 }
 
 const searchResults = new Map()
 
-export function performSearch(params: any) {
+export function performSearch(
+  params: DOM.PerformSearchRequest
+): DOM.PerformSearchResponse {
   const query = lowerCase(params.query)
   let result: any[] = []
 
@@ -130,7 +151,9 @@ export function performSearch(params: any) {
   }
 }
 
-export function getSearchResults(params: any) {
+export function getSearchResults(
+  params: DOM.GetSearchResultsRequest
+): DOM.GetSearchResultsResponse {
   const { searchId, fromIndex, toIndex } = params
 
   const searchResult = searchResults.get(searchId)
@@ -175,23 +198,25 @@ export function pushNodesToFrontend(node: any) {
   return getNodeId(node)
 }
 
-export function discardSearchResults(params: any) {
+export function discardSearchResults(params: DOM.DiscardSearchResultsRequest) {
   searchResults.delete(params.searchId)
 }
 
-export function pushNodesByBackendIdsToFrontend(params: any) {
+export function pushNodesByBackendIdsToFrontend(
+  params: DOM.PushNodesByBackendIdsToFrontendRequest
+): DOM.PushNodesByBackendIdsToFrontendResponse {
   return {
     nodeIds: params.backendNodeIds,
   }
 }
 
-export function removeNode(params: any) {
+export function removeNode(params: DOM.RemoveNodeRequest) {
   const node = getNode(params.nodeId)
 
   $(node).remove()
 }
 
-export function requestChildNodes(params: any) {
+export function requestChildNodes(params: DOM.RequestChildNodesRequest) {
   const { nodeId, depth = 1 } = params
   const node = getNode(nodeId)
 
@@ -201,7 +226,9 @@ export function requestChildNodes(params: any) {
   })
 }
 
-export function requestNode(params: any) {
+export function requestNode(
+  params: DOM.RequestNodeRequest
+): DOM.RequestNodeResponse {
   const node = objManager.getObj(params.objectId)
 
   return {
@@ -209,15 +236,17 @@ export function requestNode(params: any) {
   }
 }
 
-export function resolveNode(params: any) {
-  const node = getNode(params.nodeId)
+export function resolveNode(
+  params: DOM.ResolveNodeRequest
+): DOM.ResolveNodeResponse {
+  const node = getNode(params.nodeId as number)
 
   return {
     object: objManager.wrap(node),
   }
 }
 
-export function setAttributesAsText(params: any) {
+export function setAttributesAsText(params: DOM.SetAttributesAsTextRequest) {
   const { name, text, nodeId } = params
 
   const node = getNode(nodeId)
@@ -227,7 +256,7 @@ export function setAttributesAsText(params: any) {
   $(node).attr(parseAttributes(text))
 }
 
-export function setAttributeValue(params: any) {
+export function setAttributeValue(params: DOM.SetAttributeValueRequest) {
   const { nodeId, name, value } = params
   const node = getNode(nodeId)
   node.setAttribute(name, value)
@@ -235,7 +264,7 @@ export function setAttributeValue(params: any) {
 
 const history: any[] = []
 
-export function setInspectedNode(params: any) {
+export function setInspectedNode(params: DOM.SetInspectedNodeRequest) {
   const node = getNode(params.nodeId)
   history.unshift(node)
   if (history.length > 5) history.pop()
@@ -244,13 +273,13 @@ export function setInspectedNode(params: any) {
   }
 }
 
-export function setNodeValue(params: any) {
+export function setNodeValue(params: DOM.SetNodeValueRequest) {
   const { nodeId, value } = params
   const node = getNode(nodeId)
   node.nodeValue = value
 }
 
-export function setOuterHTML(params: any) {
+export function setOuterHTML(params: DOM.SetOuterHTMLRequest) {
   const { nodeId, outerHTML } = params
 
   const node = getNode(nodeId)

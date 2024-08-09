@@ -11,12 +11,14 @@ import convertBin from 'licia/convertBin'
 import { XhrRequest, FetchRequest } from '../lib/request'
 import connector from '../lib/connector'
 import { createId } from '../lib/util'
+import Protocol from 'devtools-protocol'
+import Network = Protocol.Network
 
-export function deleteCookies(params: any) {
+export function deleteCookies(params: Network.DeleteCookiesRequest) {
   rmCookie(params.name)
 }
 
-export function getCookies() {
+export function getCookies(): Network.GetCookiesResponse {
   const cookies: any[] = []
 
   const cookie = document.cookie
@@ -282,7 +284,9 @@ function enableWebSocket() {
   window.WebSocket = WebSocket as any
 }
 
-export function getResponseBody(params: any) {
+export function getResponseBody(
+  params: Network.GetResponseBodyRequest
+): Network.GetResponseBodyResponse {
   return {
     base64Encoded: false,
     body: resTxtMap.get(params.requestId),
