@@ -7,6 +7,8 @@ import isNative from 'licia/isNative'
 import contain from 'licia/contain'
 import now from 'licia/now'
 import isStr from 'licia/isStr'
+import isBlob from 'licia/isBlob'
+import isUndef from 'licia/isUndef'
 import convertBin from 'licia/convertBin'
 import { XhrRequest, FetchRequest } from '../lib/request'
 import connector from '../lib/connector'
@@ -222,11 +224,18 @@ function enableWebSocket() {
       })
     })
 
-    ws.addEventListener('message', function (e) {
+    ws.addEventListener('message', async function (e) {
       let payloadData = e.data
+      if (isUndef(payloadData)) {
+        return
+      }
+
       let opcode = 1
       if (!isStr(payloadData)) {
         opcode = 2
+        if (isBlob(payloadData)) {
+          payloadData = await convertBin.blobToArrBuffer(payloadData)
+        }
         payloadData = convertBin(payloadData, 'base64')
       }
 
@@ -242,10 +251,22 @@ function enableWebSocket() {
 
     const origSend = ws.send
     ws.send = function (data: any) {
+      if (!isUndef(data)) {
+        frameSent(data)
+      }
+
+      return origSend.call(this, data)
+    }
+
+    async function frameSent(data: any) {
       let opcode = 1
+      let payloadData = data
       if (!isStr(data)) {
         opcode = 2
-        data = convertBin(data, 'base64')
+        if (isBlob(payloadData)) {
+          payloadData = await convertBin.blobToArrBuffer(payloadData)
+        }
+        payloadData = convertBin(data, 'base64')
       }
 
       connector.trigger('Network.webSocketFrameSent', {
@@ -253,10 +274,9 @@ function enableWebSocket() {
         timestamp: now() / 1000,
         response: {
           opcode,
-          payloadData: data,
+          payloadData,
         },
       })
-      return origSend.call(this, data)
     }
 
     ws.addEventListener('close', function () {

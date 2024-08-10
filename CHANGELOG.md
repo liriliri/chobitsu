@@ -1,3 +1,7 @@
+## 1.5.1 (10 Aug 2024)
+
+* fix: WebSocket message base64 encoded
+
 ## 1.5.0 (31 Jul 2024)
 
 * feat: support IndexedDB
