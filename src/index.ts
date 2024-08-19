@@ -15,6 +15,7 @@ import * as Debugger from './domains/Debugger'
 import * as Storage from './domains/Storage'
 import * as CacheStorage from './domains/CacheStorage'
 import * as IndexedDB from './domains/IndexedDB'
+import * as Input from './domains/Input'
 
 const chobitsu = new Chobitsu()
 chobitsu.register('Network', {
@@ -136,7 +137,7 @@ chobitsu.register('HeapProfiler', {
   enable: noop,
 })
 chobitsu.register('Input', {
-  emulateTouchFromMouseEvent: noop,
+  ...Input,
 })
 
 export default chobitsu
