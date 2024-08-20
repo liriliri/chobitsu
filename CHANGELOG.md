@@ -1,3 +1,7 @@
+## 1.6.0 (20 Aug 2024)
+
+* feat: emulateTouchFromMouseEvent
+
 ## 1.5.1 (10 Aug 2024)
 
 * fix: WebSocket message base64 encoded
