@@ -36,3 +36,20 @@ export function getTrustTokens(): Storage.GetTrustTokensResponse {
     tokens: [],
   }
 }
+
+export function getStorageKeyForFrame(): Storage.GetStorageKeyForFrameResponse {
+  return {
+    storageKey: 'chobitsu',
+  }
+}
+
+export function getSharedStorageMetadata(): Storage.GetSharedStorageMetadataResponse {
+  return {
+    metadata: {
+      creationTime: 0,
+      length: 0,
+      remainingBudget: 0,
+      bytesUsed: 0,
+    },
+  }
+}

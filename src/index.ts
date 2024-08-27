@@ -33,6 +33,7 @@ chobitsu.register('Page', {
 })
 chobitsu.register('Runtime', {
   ...Runtime,
+  getExceptionDetails: noop,
   compileScript: noop,
   discardConsoleEntries: noop,
   getHeapUsage: noop,
@@ -114,6 +115,9 @@ chobitsu.register('CacheStorage', {
 })
 chobitsu.register('Storage', {
   ...Storage,
+  setInterestGroupTracking: noop,
+  setSharedStorageTracking: noop,
+  setStorageBucketTracking: noop,
   untrackCacheStorageForOrigin: noop,
   untrackIndexedDBForOrigin: noop,
   trackCacheStorageForOrigin: noop,
@@ -138,6 +142,9 @@ chobitsu.register('HeapProfiler', {
 })
 chobitsu.register('Input', {
   ...Input,
+})
+chobitsu.register('Autofill', {
+  enable: noop,
 })
 
 export default chobitsu

@@ -301,6 +301,12 @@ export function getDOMNode(params: any) {
   }
 }
 
+export function getTopLayerElements(): DOM.GetTopLayerElementsResponse {
+  return {
+    nodeIds: [],
+  }
+}
+
 function parseAttributes(str: string) {
   str = `<div ${str}></div>`
 
