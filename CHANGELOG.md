@@ -1,3 +1,7 @@
+## 1.7.0 (28 Aug 2024)
+
+* feat: support latest devtools
+
 ## 1.6.0 (20 Aug 2024)
 
 * feat: emulateTouchFromMouseEvent
