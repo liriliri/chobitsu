@@ -307,6 +307,12 @@ export function getTopLayerElements(): DOM.GetTopLayerElementsResponse {
   }
 }
 
+export function getNodesForSubtreeByStyle(): DOM.GetNodesForSubtreeByStyleResponse {
+  return {
+    nodeIds: [],
+  }
+}
+
 function parseAttributes(str: string) {
   str = `<div ${str}></div>`
 

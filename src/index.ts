@@ -117,7 +117,7 @@ chobitsu.register('Storage', {
   ...Storage,
   setInterestGroupTracking: noop,
   setSharedStorageTracking: noop,
-  setStorageBucketTracking: noop,
+  trackIndexedDBForStorageKey: noop,
   untrackCacheStorageForOrigin: noop,
   untrackIndexedDBForOrigin: noop,
   trackCacheStorageForOrigin: noop,

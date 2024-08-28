@@ -24,13 +24,7 @@ export function emulateTouchFromMouseEvent(
     case 'mouseReleased':
       triggerTouchEvent('touchend', el, x, y)
       if (isClick) {
-        el.dispatchEvent(
-          new MouseEvent('click', {
-            bubbles: true,
-            cancelable: true,
-            view: window,
-          })
-        )
+        triggerMouseEvent('click', el, x, y)
       }
       isClick = false
       break
@@ -40,6 +34,47 @@ export function emulateTouchFromMouseEvent(
       }
       break
   }
+}
+
+export function dispatchMouseEvent(params: Input.DispatchMouseEventRequest) {
+  const { type, x, y, deltaX, deltaY } = params
+
+  const el = document.elementFromPoint(x, y) || document.documentElement
+
+  switch (type) {
+    case 'mousePressed':
+      isClick = true
+      triggerMouseEvent('mousedown', el, x, y)
+      break
+    case 'mouseMoved':
+      isClick = false
+      triggerMouseEvent('mousemove', el, x, y)
+      break
+    case 'mouseReleased':
+      triggerMouseEvent('mouseup', el, x, y)
+      if (isClick) {
+        triggerMouseEvent('click', el, x, y)
+      }
+      isClick = false
+      break
+    case 'mouseWheel':
+      if (!isUndef(deltaX) && !isUndef(deltaY)) {
+        triggerScroll(el, deltaX, deltaY)
+      }
+      break
+  }
+}
+
+function triggerMouseEvent(type: string, el: Element, x: number, y: number) {
+  el.dispatchEvent(
+    new MouseEvent(type, {
+      bubbles: true,
+      cancelable: true,
+      view: window,
+      clientX: x,
+      clientY: y,
+    })
+  )
 }
 
 function triggerTouchEvent(type: string, el: Element, x: number, y: number) {

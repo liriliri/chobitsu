@@ -1,6 +1,7 @@
 import each from 'licia/each'
 import rmCookie from 'licia/rmCookie'
 import safeStorage from 'licia/safeStorage'
+import connector from '../lib/connector'
 import { getCookies } from './Network'
 import Protocol from 'devtools-protocol'
 import Storage = Protocol.Storage
@@ -39,7 +40,7 @@ export function getTrustTokens(): Storage.GetTrustTokensResponse {
 
 export function getStorageKeyForFrame(): Storage.GetStorageKeyForFrameResponse {
   return {
-    storageKey: 'chobitsu',
+    storageKey: location.origin,
   }
 }
 
@@ -52,4 +53,19 @@ export function getSharedStorageMetadata(): Storage.GetSharedStorageMetadataResp
       bytesUsed: 0,
     },
   }
+}
+
+export function setStorageBucketTracking() {
+  connector.trigger('Storage.storageBucketCreatedOrUpdated', {
+    bucketInfo: {
+      bucket: {
+        storageKey: location.origin,
+      },
+      durability: 'relaxed',
+      expiration: 0,
+      id: '0',
+      persistent: false,
+      quota: 0,
+    },
+  })
 }

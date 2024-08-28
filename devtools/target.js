@@ -37,13 +37,12 @@ window.onload = function () {
 function resetDevtools() {
   const window = devtoolsIframe.contentWindow
   setTimeout(() => {
-    window.runtime.loadLegacyModule('core/sdk/sdk-legacy.js').then(() => {
-      const SDK = window.SDK
-      for (const resourceTreeModel of SDK.TargetManager.instance().models(
-        SDK.ResourceTreeModel
+    window.runtime.loadLegacyModule('core/sdk/sdk.js').then(SDKModule => {
+      for (const resourceTreeModel of SDKModule.TargetManager.TargetManager.instance().models(
+        SDKModule.ResourceTreeModel.ResourceTreeModel
       )) {
         resourceTreeModel.dispatchEventToListeners(
-          SDK.ResourceTreeModel.Events.WillReloadPage,
+          SDKModule.ResourceTreeModel.Events.WillReloadPage,
           resourceTreeModel
         )
       }
@@ -69,5 +68,7 @@ function resetDevtools() {
     sendToChobitsu({ method: 'CSS.enable' })
     sendToChobitsu({ method: 'Overlay.enable' })
     sendToDevtools({ method: 'DOM.documentUpdated' })
+    sendToChobitsu({ method: 'Page.enable' })
+    sendToDevtools({ method: 'Page.loadEventFired' })
   }, 0)
 }
