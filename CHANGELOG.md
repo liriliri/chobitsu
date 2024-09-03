@@ -1,3 +1,7 @@
+## 1.7.1 (3 Sep 2024)
+
+* fix: error caused by accessing object properties
+
 ## 1.7.0 (28 Aug 2024)
 
 * feat: support latest devtools

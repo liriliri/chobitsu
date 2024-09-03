@@ -7,14 +7,13 @@ import isErr from 'licia/isErr'
 import isMap from 'licia/isMap'
 import isSet from 'licia/isSet'
 import isRegExp from 'licia/isRegExp'
-import getType from 'licia/type'
 import getKeys from 'licia/keys'
 import toSrc from 'licia/toSrc'
 import allKeys from 'licia/allKeys'
 import isNative from 'licia/isNative'
 import getProto from 'licia/getProto'
 import isSymbol from 'licia/isSymbol'
-import has from 'licia/has'
+import { getType, has } from './util'
 
 const objects = new Map()
 const objectIds = new Map()

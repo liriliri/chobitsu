@@ -4,6 +4,8 @@ import startWith from 'licia/startWith'
 import Url from 'licia/Url'
 import convertBin from 'licia/convertBin'
 import axios from 'axios'
+import _type from 'licia/type'
+import _has from 'licia/has'
 
 const prefix = random(1000, 9999) + '.'
 
@@ -53,6 +55,22 @@ export async function getTextContent(url: string, proxy = '') {
 
 export async function getBase64Content(url: string, proxy = '') {
   return convertBin(await getContent(url, 'arraybuffer', proxy), 'base64')
+}
+
+export function getType(val: any, lowerCase: boolean) {
+  try {
+    return _type.apply(null, [val, lowerCase])
+  } catch (e) {
+    return 'Error'
+  }
+}
+
+export function has(obj: any, key: string) {
+  try {
+    return _has.apply(null, [obj, key])
+  } catch (e) {
+    return false
+  }
 }
 
 async function getContent(url: string, responseType: any, proxy = '') {

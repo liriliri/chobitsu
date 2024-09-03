@@ -59,6 +59,9 @@ chobitsu.register('CSS', {
 })
 chobitsu.register('Debugger', {
   ...Debugger,
+  getPossibleBreakpoints: noop,
+  setBreakpointByUrl: noop,
+  setBreakpointsActive: noop,
   setAsyncCallStackDepth: noop,
   setBlackboxPatterns: noop,
   setPauseOnExceptions: noop,
