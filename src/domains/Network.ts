@@ -141,10 +141,15 @@ function enableFetch() {
   let isFetchSupported = false
   if (window.fetch) {
     isFetchSupported = isNative(window.fetch)
-  }
-  // #2 Probably not a fetch polyfill
-  if (!isFetchSupported && navigator.serviceWorker) {
-    isFetchSupported = true
+    // #2 Probably not a fetch polyfill
+    if (!isFetchSupported) {
+      if (navigator.serviceWorker) {
+        isFetchSupported = true
+      }
+      if (window.Request && isNative(window.Request)) {
+        isFetchSupported = true
+      }
+    }
   }
   if (!isFetchSupported) return
 
