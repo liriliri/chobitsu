@@ -1,3 +1,7 @@
+## 1.8.0 (26 Sep 2024)
+
+* feat: support shadow dom
+
 ## 1.7.1 (3 Sep 2024)
 
 * fix: error caused by accessing object properties
