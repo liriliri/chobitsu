@@ -9,16 +9,16 @@ class Observer extends Emitter {
       each(mutations, mutation => this.handleMutation(mutation))
     })
   }
-  observe() {
-    const { observer } = this
-
-    observer.disconnect()
-    observer.observe(document.documentElement, {
+  observe(node: Node) {
+    this.observer.observe(node, {
       attributes: true,
       childList: true,
       characterData: true,
       subtree: true,
     })
+  }
+  disconnect() {
+    this.observer.disconnect()
   }
   private handleMutation(mutation: MutationRecord) {
     if (mutation.type === 'attributes') {

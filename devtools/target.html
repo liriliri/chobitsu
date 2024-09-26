@@ -49,6 +49,19 @@
           console.log('touch')
         })
     </script>
+    <div id="shadow1">
+      <template shadowrootmode="open">
+        <span>I'm in the shadow DOM</span>
+      </template>
+    </div>
+    <div id="shadow2"></div>
+    <script>
+      setTimeout(() => {
+        const shadow2 = document.getElementById('shadow2')
+        const shadow2Root = shadow2.attachShadow({ mode: 'closed' })
+        shadow2Root.innerHTML = "<span>I'm in the shadow DOM</span>"
+      }, 2000)
+    </script>
     <div class="scroll">
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus.
       Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies

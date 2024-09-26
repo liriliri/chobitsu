@@ -56,10 +56,42 @@ export function copyTo(params: DOM.CopyToRequest): DOM.CopyToResponse {
   }
 }
 
+let isEnable = false
+
 export function enable() {
-  mutationObserver.observe()
+  isEnable = true
+
+  mutationObserver.disconnect()
+  mutationObserver.observe(document.documentElement)
   nodeManager.clear()
 }
+
+function hookAttachShadow() {
+  const origAttachShadow = Element.prototype.attachShadow
+  if (origAttachShadow) {
+    Element.prototype.attachShadow = function (init) {
+      const shadowRoot = origAttachShadow.apply(this, [init])
+      if (!nodeManager.isValidNode(this)) {
+        return shadowRoot
+      }
+
+      ;(this as any).__shadowRoot__ = shadowRoot
+      if (isEnable) {
+        mutationObserver.observe(shadowRoot)
+        const hostId = getNodeId(this)
+        if (hostId) {
+          connector.trigger('DOM.shadowRootPushed', {
+            hostId,
+            root: nodeManager.wrap(shadowRoot, { depth: 1 }),
+          })
+        }
+      }
+      return shadowRoot
+    }
+  }
+}
+
+hookAttachShadow()
 
 export function getDocument() {
   return {

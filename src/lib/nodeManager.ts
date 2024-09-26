@@ -59,6 +59,15 @@ export function wrap(node: any, { depth = 1 } = {}) {
     ret.attributes = attributes
   }
 
+  if (node.shadowRoot) {
+    ret.shadowRoots = [wrap(node.shadowRoot, { depth: 1 })]
+  } else if (node.__shadowRoot__) {
+    ret.shadowRoots = [wrap(node.__shadowRoot__, { depth: 1 })]
+  }
+  if (isShadowRoot(node)) {
+    ret.shadowRootType = node.mode || 'user-agent'
+  }
+
   const childNodes = filterNodes(node.childNodes)
   ret.childNodeCount = childNodes.length
   const hasOneTextNode =
@@ -114,9 +123,17 @@ export function isValidNode(node: Node): boolean {
 export function getNode(nodeId: number) {
   const node = nodes.get(nodeId)
 
-  if (!node || node.nodeType === 10) {
+  if (!node || node.nodeType === 10 || node.nodeType === 11) {
     throw createErr(-32000, 'Could not find node with given id')
   }
 
   return node
+}
+
+function isShadowRoot(node: any) {
+  if (window.ShadowRoot) {
+    return node instanceof ShadowRoot
+  }
+
+  return false
 }
