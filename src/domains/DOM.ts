@@ -75,7 +75,7 @@ function hookAttachShadow() {
         return shadowRoot
       }
 
-      ;(this as any).__shadowRoot__ = shadowRoot
+      ;(this as any).chobitsuShadowRoot = shadowRoot
       if (isEnable) {
         mutationObserver.observe(shadowRoot)
         const hostId = getNodeId(this)

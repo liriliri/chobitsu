@@ -1,3 +1,7 @@
+## 1.8.1 (27 Sep 2024)
+
+* fix: shadowRoot hook
+
 ## 1.8.0 (26 Sep 2024)
 
 * feat: support shadow dom

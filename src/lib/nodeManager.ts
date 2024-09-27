@@ -61,8 +61,8 @@ export function wrap(node: any, { depth = 1 } = {}) {
 
   if (node.shadowRoot) {
     ret.shadowRoots = [wrap(node.shadowRoot, { depth: 1 })]
-  } else if (node.__shadowRoot__) {
-    ret.shadowRoots = [wrap(node.__shadowRoot__, { depth: 1 })]
+  } else if (node.chobitsuShadowRoot) {
+    ret.shadowRoots = [wrap(node.chobitsuShadowRoot, { depth: 1 })]
   }
   if (isShadowRoot(node)) {
     ret.shadowRootType = node.mode || 'user-agent'
