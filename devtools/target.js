@@ -1,3 +1,5 @@
+import './db.js'
+
 const targetOrigin = location.protocol + '//' + location.host
 function sendToDevtools(message) {
   devtoolsIframe.contentWindow.postMessage(

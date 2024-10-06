@@ -2,6 +2,7 @@ import map from 'licia/map'
 import filter from 'licia/filter'
 import compact from 'licia/compact'
 import contain from 'licia/contain'
+import endWith from 'licia/endWith'
 
 let isPerformanceSupported = false
 const performance = (window as any).webkitPerformance || window.performance
@@ -35,10 +36,24 @@ export function isImage(url: string) {
 
 function getResources(type: string) {
   return map(
-    filter(
-      performance.getEntries(),
-      (entry: any) => entry.initiatorType === type
-    ),
+    filter(performance.getEntries(), (entry: any) => {
+      if (entry.entryType !== 'resource') {
+        return false
+      }
+
+      if (entry.initiatorType === type) {
+        return true
+      } else if (entry.initiatorType === 'other') {
+        // preload
+        if (type === 'script') {
+          if (endWith(entry.name, '.js')) {
+            return true
+          }
+        }
+      }
+
+      return false
+    }),
     entry => entry.name
   )
 }
