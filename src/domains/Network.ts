@@ -2,13 +2,13 @@ import trim from 'licia/trim'
 import each from 'licia/each'
 import decodeUriComponent from 'licia/decodeUriComponent'
 import rmCookie from 'licia/rmCookie'
-import once from 'licia/once'
 import isNative from 'licia/isNative'
 import contain from 'licia/contain'
 import now from 'licia/now'
 import isStr from 'licia/isStr'
 import isBlob from 'licia/isBlob'
 import isUndef from 'licia/isUndef'
+import types from 'licia/types'
 import convertBin from 'licia/convertBin'
 import { XhrRequest, FetchRequest } from '../lib/request'
 import connector from '../lib/connector'
@@ -41,11 +41,22 @@ export function getCookies(): Network.GetCookiesResponse {
 
 const resTxtMap = new Map()
 
-export const enable = once(function () {
-  enableXhr()
-  enableFetch()
-  enableWebSocket()
-})
+let isEnable = false
+
+export const enable = function () {
+  isEnable = true
+  each(triggers, trigger => trigger())
+  triggers = []
+}
+
+export function getResponseBody(
+  params: Network.GetResponseBodyRequest
+): Network.GetResponseBodyResponse {
+  return {
+    base64Encoded: false,
+    body: resTxtMap.get(params.requestId),
+  }
+}
 
 function enableXhr() {
   const winXhrProto = window.XMLHttpRequest.prototype
@@ -77,7 +88,7 @@ function enableXhr() {
         request.postData = data.data
       }
 
-      connector.trigger('Network.requestWillBeSent', {
+      trigger('Network.requestWillBeSent', {
         requestId: id,
         type: 'XHR',
         request,
@@ -85,14 +96,14 @@ function enableXhr() {
       })
     })
     req.on('headersReceived', (id: string, data: any) => {
-      connector.trigger('Network.responseReceivedExtraInfo', {
+      trigger('Network.responseReceivedExtraInfo', {
         requestId: id,
         blockedCookies: [],
         headers: data.resHeaders,
       })
     })
     req.on('done', (id: string, data: any) => {
-      connector.trigger('Network.responseReceived', {
+      trigger('Network.responseReceived', {
         requestId: id,
         type: 'XHR',
         response: {
@@ -101,7 +112,7 @@ function enableXhr() {
         timestamp: data.time / 1000,
       })
       resTxtMap.set(id, data.resTxt)
-      connector.trigger('Network.loadingFinished', {
+      trigger('Network.loadingFinished', {
         requestId: id,
         encodedDataLength: data.size,
         timestamp: data.time / 1000,
@@ -168,7 +179,7 @@ function enableFetch() {
         request.postData = data.data
       }
 
-      connector.trigger('Network.requestWillBeSent', {
+      trigger('Network.requestWillBeSent', {
         requestId: id,
         type: 'Fetch',
         request,
@@ -176,7 +187,7 @@ function enableFetch() {
       })
     })
     req.on('done', (id, data) => {
-      connector.trigger('Network.responseReceived', {
+      trigger('Network.responseReceived', {
         requestId: id,
         type: 'Fetch',
         response: {
@@ -186,7 +197,7 @@ function enableFetch() {
         timestamp: data.time / 1000,
       })
       resTxtMap.set(id, data.resTxt)
-      connector.trigger('Network.loadingFinished', {
+      trigger('Network.loadingFinished', {
         requestId: id,
         encodedDataLength: data.size,
         timestamp: data.time / 1000,
@@ -206,20 +217,20 @@ function enableWebSocket() {
     const ws = new origWebSocket(url, protocols)
     const requestId = createId()
 
-    connector.trigger('Network.webSocketCreated', {
+    trigger('Network.webSocketCreated', {
       requestId,
       url,
     })
 
     ws.addEventListener('open', function () {
-      connector.trigger('Network.webSocketWillSendHandshakeRequest', {
+      trigger('Network.webSocketWillSendHandshakeRequest', {
         requestId,
         timestamp: now() / 1000,
         request: {
           headers: {},
         },
       })
-      connector.trigger('Network.webSocketHandshakeResponseReceived', {
+      trigger('Network.webSocketHandshakeResponseReceived', {
         requestId,
         timeStamp: now() / 1000,
         response: {
@@ -244,7 +255,7 @@ function enableWebSocket() {
         payloadData = convertBin(payloadData, 'base64')
       }
 
-      connector.trigger('Network.webSocketFrameReceived', {
+      trigger('Network.webSocketFrameReceived', {
         requestId,
         timestamp: now() / 1000,
         response: {
@@ -274,7 +285,7 @@ function enableWebSocket() {
         payloadData = convertBin(data, 'base64')
       }
 
-      connector.trigger('Network.webSocketFrameSent', {
+      trigger('Network.webSocketFrameSent', {
         requestId,
         timestamp: now() / 1000,
         response: {
@@ -285,14 +296,14 @@ function enableWebSocket() {
     }
 
     ws.addEventListener('close', function () {
-      connector.trigger('Network.webSocketClosed', {
+      trigger('Network.webSocketClosed', {
         requestId,
         timestamp: now() / 1000,
       })
     })
 
     ws.addEventListener('error', function () {
-      connector.trigger('Network.webSocketFrameError', {
+      trigger('Network.webSocketFrameError', {
         requestId,
         timestamp: now() / 1000,
         errorMessage: 'WebSocket error',
@@ -309,15 +320,20 @@ function enableWebSocket() {
   window.WebSocket = WebSocket as any
 }
 
-export function getResponseBody(
-  params: Network.GetResponseBodyRequest
-): Network.GetResponseBodyResponse {
-  return {
-    base64Encoded: false,
-    body: resTxtMap.get(params.requestId),
-  }
-}
-
 function isValidUrl(url: string) {
   return !contain(url, '__chobitsu-hide__=true')
 }
+
+let triggers: types.AnyFn[] = []
+
+function trigger(method: string, params: any) {
+  if (isEnable) {
+    connector.trigger(method, params)
+  } else {
+    triggers.push(() => connector.trigger(method, params))
+  }
+}
+
+enableXhr()
+enableFetch()
+enableWebSocket()

@@ -86,6 +86,9 @@
       }, 1000)
     </script>
     <script>
+      function testFetch() {
+        fetch('/index.js')
+      }
       function testWs() {
         const text = 'This is the text used for testing!'
 
@@ -97,7 +100,8 @@
           ws.send(enc.encode(text))
         }
       }
-      setTimeout(() => testWs(), 5000)
+      testFetch()
+      testWs()
     </script>
     <script>
       // https://gist.github.com/enjalot/6472041

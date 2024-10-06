@@ -53,7 +53,7 @@ export function enable() {
   each(triggers, trigger => trigger())
   triggers = []
 
-  connector.trigger('Runtime.executionContextCreated', {
+  trigger('Runtime.executionContextCreated', {
     context: executionContext,
   })
 }
