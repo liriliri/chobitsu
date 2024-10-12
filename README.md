@@ -13,7 +13,7 @@
 [codecov-url]: https://codecov.io/github/liriliri/chobitsu?branch=master
 [license-image]: https://img.shields.io/npm/l/chobitsu?style=flat-square
 
-Chrome devtools protocol JavaScript implementation.
+[Chrome devtools protocol](https://chromedevtools.github.io/devtools-protocol/) JavaScript implementation.
 
 ## Install
 
@@ -42,36 +42,6 @@ chobitsu.sendRawMessage(JSON.stringify({
     }
   }
 }));
-
-!(async () => {
-  console.log(await chobitsu.sendMessage('Storage.clearDataForOrigin', {
-    storageTypes: 'local_storage'
-  }));
-})();
-
-const domStorage = chobitsu.domain('DOMStorage');
-domStorage.enable();
-domStorage.on('domStorageItemUpdated', params => console.log(params));
 ```
 
-## API
-
-### sendRawMessage(message: string)
-
-Send message to chobitsu.
-
-### setOnMessage(onMessage: (message: string) => void)
-
-Set message handler.
-
-### sendMessage(method: string, params: any): Promise<any>
-
-Send message without setting id and get result.
-
-### domain(name: string)
-
-Get domain object.
-
-## Related Projects
-
-* [chii](https://github.com/liriliri/chii): Remote debugging tool.
+For more detailed usage instructions, please read the documentation at [chii.liriliri.io](https://chii.liriliri.io/docs/chobitsu.html)!
