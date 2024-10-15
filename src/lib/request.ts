@@ -24,6 +24,18 @@ export class XhrRequest extends Emitter {
     this.method = method
     this.url = fullUrl(url)
     this.id = createId()
+
+    xhr.addEventListener('readystatechange', () => {
+      if (xhr.readyState === 2) {
+        this.handleHeadersReceived()
+      } else if (xhr.readyState === 4) {
+        if (xhr.status === 0) {
+          this.handleError()
+        } else {
+          this.handleDone()
+        }
+      }
+    })
   }
   // #1
   toJSON() {
@@ -54,7 +66,7 @@ export class XhrRequest extends Emitter {
       this.reqHeaders[key] = val
     }
   }
-  handleHeadersReceived() {
+  private handleHeadersReceived() {
     const { xhr } = this
 
     const type = getType(xhr.getResponseHeader('Content-Type') || '')
@@ -66,7 +78,7 @@ export class XhrRequest extends Emitter {
       resHeaders: getHeaders(xhr),
     })
   }
-  handleDone() {
+  private handleDone() {
     const xhr = this.xhr
     const resType = xhr.responseType
     let resTxt = ''
@@ -97,6 +109,12 @@ export class XhrRequest extends Emitter {
 
       update()
     }
+  }
+  private handleError() {
+    this.emit('error', this.id, {
+      errorText: 'Network error',
+      time: now(),
+    })
   }
 }
 
@@ -132,28 +150,35 @@ export class FetchRequest extends Emitter {
       method: this.method,
     })
 
-    fetchResult.then((res: any) => {
-      res = res.clone()
+    fetchResult
+      .then((res: any) => {
+        res = res.clone()
 
-      const type = getType(res.headers.get('Content-Type'))
-      res.text().then((resTxt: string) => {
-        const data: any = {
-          type: type.type,
-          subType: type.subType,
-          time: now(),
-          size: getFetchSize(res, resTxt),
-          resTxt,
-          resHeaders: getFetchHeaders(res),
-          status: res.status,
-        }
-        if (!isEmpty(this.reqHeaders)) {
-          data.reqHeaders = this.reqHeaders
-        }
-        this.emit('done', this.id, data)
+        const type = getType(res.headers.get('Content-Type'))
+        res.text().then((resTxt: string) => {
+          const data: any = {
+            type: type.type,
+            subType: type.subType,
+            time: now(),
+            size: getFetchSize(res, resTxt),
+            resTxt,
+            resHeaders: getFetchHeaders(res),
+            status: res.status,
+          }
+          if (!isEmpty(this.reqHeaders)) {
+            data.reqHeaders = this.reqHeaders
+          }
+          this.emit('done', this.id, data)
+        })
+
+        return res
       })
-
-      return res
-    })
+      .catch((err: any) => {
+        this.emit('error', this.id, {
+          errorText: err.message,
+          time: now(),
+        })
+      })
   }
 }
 

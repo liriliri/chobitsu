@@ -5,6 +5,7 @@ import rmCookie from 'licia/rmCookie'
 import isNative from 'licia/isNative'
 import contain from 'licia/contain'
 import now from 'licia/now'
+import Emitter from 'licia/Emitter'
 import isStr from 'licia/isStr'
 import isBlob from 'licia/isBlob'
 import isUndef from 'licia/isUndef'
@@ -78,55 +79,7 @@ function enableXhr() {
       url
     ))
 
-    req.on('send', (id: string, data: any) => {
-      const request: any = {
-        method: data.method,
-        url: data.url,
-        headers: data.reqHeaders,
-      }
-      if (data.data) {
-        request.postData = data.data
-      }
-
-      trigger('Network.requestWillBeSent', {
-        requestId: id,
-        type: 'XHR',
-        request,
-        timestamp: data.time / 1000,
-      })
-    })
-    req.on('headersReceived', (id: string, data: any) => {
-      trigger('Network.responseReceivedExtraInfo', {
-        requestId: id,
-        blockedCookies: [],
-        headers: data.resHeaders,
-      })
-    })
-    req.on('done', (id: string, data: any) => {
-      trigger('Network.responseReceived', {
-        requestId: id,
-        type: 'XHR',
-        response: {
-          status: data.status,
-        },
-        timestamp: data.time / 1000,
-      })
-      resTxtMap.set(id, data.resTxt)
-      trigger('Network.loadingFinished', {
-        requestId: id,
-        encodedDataLength: data.size,
-        timestamp: data.time / 1000,
-      })
-    })
-
-    xhr.addEventListener('readystatechange', function () {
-      switch (xhr.readyState) {
-        case 2:
-          return req.handleHeadersReceived()
-        case 4:
-          return req.handleDone()
-      }
-    })
+    bindRequestEvent(req, 'XHR')
 
     origOpen.apply(this, arguments)
   }
@@ -168,47 +121,68 @@ function enableFetch() {
 
   window.fetch = function (...args) {
     const req = new FetchRequest(...args)
-    req.on('send', (id, data) => {
-      const request: any = {
-        method: data.method,
-        url: data.url,
-        headers: data.reqHeaders,
-      }
-
-      if (data.data) {
-        request.postData = data.data
-      }
-
-      trigger('Network.requestWillBeSent', {
-        requestId: id,
-        type: 'Fetch',
-        request,
-        timestamp: data.time / 1000,
-      })
-    })
-    req.on('done', (id, data) => {
-      trigger('Network.responseReceived', {
-        requestId: id,
-        type: 'Fetch',
-        response: {
-          status: data.status,
-          headers: data.resHeaders,
-        },
-        timestamp: data.time / 1000,
-      })
-      resTxtMap.set(id, data.resTxt)
-      trigger('Network.loadingFinished', {
-        requestId: id,
-        encodedDataLength: data.size,
-        timestamp: data.time / 1000,
-      })
-    })
-
+    bindRequestEvent(req, 'Fetch')
     const fetchResult = origFetch(...args)
     req.send(fetchResult)
 
     return fetchResult
   }
+}
+
+function bindRequestEvent(req: Emitter, type: string) {
+  req.on('send', (id: string, data: any) => {
+    const request: any = {
+      method: data.method,
+      url: data.url,
+      headers: data.reqHeaders,
+    }
+    if (data.data) {
+      request.postData = data.data
+    }
+
+    trigger('Network.requestWillBeSent', {
+      requestId: id,
+      type,
+      request,
+      timestamp: data.time / 1000,
+    })
+  })
+  req.on('headersReceived', (id: string, data: any) => {
+    trigger('Network.responseReceivedExtraInfo', {
+      requestId: id,
+      blockedCookies: [],
+      headers: data.resHeaders,
+    })
+  })
+  req.on('done', (id: string, data: any) => {
+    const response: any = {
+      status: data.status,
+    }
+    if (data.resHeaders) {
+      response.headers = data.resHeaders
+    }
+
+    trigger('Network.responseReceived', {
+      requestId: id,
+      type,
+      response,
+      timestamp: data.time / 1000,
+    })
+    resTxtMap.set(id, data.resTxt)
+    trigger('Network.loadingFinished', {
+      requestId: id,
+      encodedDataLength: data.size,
+      timestamp: data.time / 1000,
+    })
+  })
+  req.on('error', (id, data) => {
+    trigger('Network.loadingFailed', {
+      requestId: id,
+      errorText: data.errorText,
+      timestamp: data.time / 1000,
+      type,
+    })
+  })
 }
 
 function enableWebSocket() {

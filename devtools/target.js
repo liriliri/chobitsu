@@ -1,4 +1,5 @@
 import './db.js'
+import './network.js'
 
 const targetOrigin = location.protocol + '//' + location.host
 function sendToDevtools(message) {
@@ -48,29 +49,29 @@ function resetDevtools() {
           resourceTreeModel
         )
       }
-    })
-    sendToDevtools({
-      method: 'Page.frameNavigated',
-      params: {
-        frame: {
-          id: '1',
-          mimeType: 'text/html',
-          securityOrigin: location.origin,
-          url: location.href,
+      sendToDevtools({
+        method: 'Page.frameNavigated',
+        params: {
+          frame: {
+            id: '1',
+            mimeType: 'text/html',
+            securityOrigin: location.origin,
+            url: location.href,
+          },
+          type: 'Navigation',
         },
-        type: 'Navigation',
-      },
+      })
+      sendToChobitsu({ method: 'Network.enable' })
+      sendToDevtools({ method: 'Runtime.executionContextsCleared' })
+      sendToChobitsu({ method: 'Runtime.enable' })
+      sendToChobitsu({ method: 'Debugger.enable' })
+      sendToChobitsu({ method: 'DOMStorage.enable' })
+      sendToChobitsu({ method: 'DOM.enable' })
+      sendToChobitsu({ method: 'CSS.enable' })
+      sendToChobitsu({ method: 'Overlay.enable' })
+      sendToDevtools({ method: 'DOM.documentUpdated' })
+      sendToChobitsu({ method: 'Page.enable' })
+      sendToDevtools({ method: 'Page.loadEventFired' })
     })
-    sendToChobitsu({ method: 'Network.enable' })
-    sendToDevtools({ method: 'Runtime.executionContextsCleared' })
-    sendToChobitsu({ method: 'Runtime.enable' })
-    sendToChobitsu({ method: 'Debugger.enable' })
-    sendToChobitsu({ method: 'DOMStorage.enable' })
-    sendToChobitsu({ method: 'DOM.enable' })
-    sendToChobitsu({ method: 'CSS.enable' })
-    sendToChobitsu({ method: 'Overlay.enable' })
-    sendToDevtools({ method: 'DOM.documentUpdated' })
-    sendToChobitsu({ method: 'Page.enable' })
-    sendToDevtools({ method: 'Page.loadEventFired' })
   }, 0)
 }

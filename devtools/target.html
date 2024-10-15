@@ -86,26 +86,7 @@
       console.log('Page loaded!')
       setTimeout(function () {
         console.log('Hello Chii')
-        fetch(location.href)
       }, 1000)
-    </script>
-    <script>
-      function testFetch() {
-        fetch('/index.js')
-      }
-      function testWs() {
-        const text = 'This is the text used for testing!'
-
-        const enc = new TextEncoder()
-        const ws = new WebSocket('wss://echo.websocket.org')
-
-        ws.onopen = function () {
-          ws.send(text)
-          ws.send(enc.encode(text))
-        }
-      }
-      testFetch()
-      testWs()
     </script>
     <script type="module" src="target.js"></script>
     <script>
