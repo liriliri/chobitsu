@@ -1,3 +1,8 @@
+## 1.8.2 (15 Oct 2024)
+
+* fix: cache network requests before enable
+* fix: fetch remains pending when error occurs [#10](https://github.com/liriliri/chobitsu/issues/10)
+
 ## 1.8.1 (27 Sep 2024)
 
 * fix: shadowRoot hook
