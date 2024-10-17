@@ -32,6 +32,18 @@ function testWs() {
   setTimeout(() => {
     ws.close()
   }, 1000)
+
+  const wsIgnore = new WebSocket(
+    'wss://echo.websocket.org?__chobitsu-hide__=true'
+  )
+
+  wsIgnore.onopen = function () {
+    wsIgnore.send(text)
+    wsIgnore.send(enc.encode(text))
+  }
+  setTimeout(() => {
+    wsIgnore.close()
+  }, 1000)
 }
 
 testFetch()

@@ -189,6 +189,11 @@ function enableWebSocket() {
   const origWebSocket = window.WebSocket
   function WebSocket(url: string, protocols?: string | string[]) {
     const ws = new origWebSocket(url, protocols)
+
+    if (!isValidUrl(url)) {
+      return ws
+    }
+
     const requestId = createId()
 
     trigger('Network.webSocketCreated', {

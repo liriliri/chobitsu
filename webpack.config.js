@@ -17,6 +17,7 @@ module.exports = {
   devServer: {
     static: {
       directory: path.join(__dirname, 'devtools'),
+      watch: false,
     },
     port: 8080,
   },

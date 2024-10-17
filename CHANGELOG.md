@@ -1,3 +1,7 @@
+## 1.8.3 (17 Oct 2024)
+
+* fix: ignore special ws connection
+
 ## 1.8.2 (15 Oct 2024)
 
 * fix: cache network requests before enable
