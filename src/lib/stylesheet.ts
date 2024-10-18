@@ -3,6 +3,8 @@ import Emitter from 'licia/Emitter'
 import strHash from 'licia/strHash'
 import toStr from 'licia/toStr'
 import trim from 'licia/trim'
+import cssPriority from 'licia/cssPriority'
+import map from 'licia/map'
 import { createId, getTextContent } from './util'
 
 const elProto: any = Element.prototype
@@ -37,7 +39,7 @@ export function getStyleSheets() {
 }
 
 export function getMatchedCssRules(node: any) {
-  const ret: any[] = []
+  const unsorted: any[] = []
 
   each(document.styleSheets, (styleSheet: any) => {
     let styleSheetId = styleSheet.styleSheetId
@@ -65,7 +67,7 @@ export function getMatchedCssRules(node: any) {
 
       if (!matchesEl) return
 
-      ret.push({
+      unsorted.push({
         selectorText: cssRule.selectorText,
         style: cssRule.style,
         styleSheetId,
@@ -73,7 +75,15 @@ export function getMatchedCssRules(node: any) {
     })
   })
 
-  return ret
+  const sorted: any[] = []
+  const priorities = map(unsorted, ({ selectorText }, i) => {
+    return cssPriority(selectorText, { position: i })
+  })
+  each(priorities.sort(cssPriority.compare), property => {
+    sorted.push(unsorted[property[5]])
+  })
+
+  return sorted
 }
 
 export function formatStyle(style: any) {

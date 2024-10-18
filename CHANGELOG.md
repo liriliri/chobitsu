@@ -1,3 +1,7 @@
+## 1.8.4 (18 Oct 2024)
+
+* fix: css priority [#16](https://github.com/liriliri/chobitsu/issues/16)
+
 ## 1.8.3 (17 Oct 2024)
 
 * fix: ignore special ws connection
