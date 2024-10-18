@@ -117,10 +117,14 @@ export function getMatchedStylesForNode(
   const node = getNode(params.nodeId)
   const matchedCSSRules = stylesheet.getMatchedCssRules(node)
 
+  const formatedMatchedCSSRules = map(matchedCSSRules, matchedCSSRule =>
+    formatMatchedCssRule(node, matchedCSSRule)
+  )
+  const sortedMatchedCSSRules = stylesheet.sortBySpecificity(
+    formatedMatchedCSSRules
+  )
   return {
-    matchedCSSRules: map(matchedCSSRules, matchedCSSRule =>
-      formatMatchedCssRule(node, matchedCSSRule)
-    ),
+    matchedCSSRules: sortedMatchedCSSRules,
     ...getInlineStylesForNode(params),
   }
 }

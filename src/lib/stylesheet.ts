@@ -3,6 +3,11 @@ import Emitter from 'licia/Emitter'
 import strHash from 'licia/strHash'
 import toStr from 'licia/toStr'
 import trim from 'licia/trim'
+import {
+  compare as specCompare,
+  compareDesc as specCompareDesc,
+  calculate as specCalculate,
+} from 'specificity'
 import { createId, getTextContent } from './util'
 
 const elProto: any = Element.prototype
@@ -133,4 +138,28 @@ function getStyleSheetId(sourceUrl = '') {
   }
 
   return createId()
+}
+
+function getSelectorsByCssRule(cssRule: any) {
+  return cssRule.matchingSelectors.map((selectorId: string) => {
+    const selector = cssRule.rule.selectorList.selectors[selectorId]
+    return selector.text
+  })
+}
+function selectMaxSpecificity(selectors: string[]) {
+  if (selectors.length < 1) return '*'
+  if (selectors.length === 1) return selectors[0]
+  else {
+    return selectors.sort((s1, s2) => {
+      return specCompareDesc(specCalculate(s1), specCalculate(s2))
+    })[0]
+  }
+}
+
+export function sortBySpecificity(matchedCssRules: any[]) {
+  return matchedCssRules.sort((cssRule1, cssRule2) => {
+    const selector1 = selectMaxSpecificity(getSelectorsByCssRule(cssRule1))
+    const selector2 = selectMaxSpecificity(getSelectorsByCssRule(cssRule2))
+    return specCompare(specCalculate(selector1), specCalculate(selector2))
+  })
 }

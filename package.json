@@ -41,7 +41,8 @@
     "devtools-protocol": "^0.0.1339468",
     "html2canvas": "^1.4.1",
     "licia": "^1.41.1",
-    "luna-dom-highlighter": "^1.0.2"
+    "luna-dom-highlighter": "^1.0.2",
+    "specificity": "^1.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.10",
