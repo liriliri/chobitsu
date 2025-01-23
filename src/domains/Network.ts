@@ -73,11 +73,18 @@ function enableXhr() {
 
     const xhr = this
 
-    const req = ((xhr as any).chobitsuRequest = new XhrRequest(
+    const req = new XhrRequest(
       xhr,
       method,
       url
-    ))
+    );
+
+    const xhrObj = xhr as any;
+    if (xhrObj.chobitsuRequests) {
+      xhrObj.chobitsuRequests.push(req);
+    } else {
+      xhrObj.chobitsuRequests = [req];
+    }
 
     bindRequestEvent(req, 'XHR')
 
@@ -85,16 +92,22 @@ function enableXhr() {
   }
 
   winXhrProto.send = function (data) {
-    const req = (this as any).chobitsuRequest
-    if (req) req.handleSend(data)
+    const reqs = (this as any).chobitsuRequests
+    if (reqs) {
+      reqs.forEach((req: XhrRequest) => {
+        req.handleSend(data)
+      });
+    }
 
     origSend.apply(this, arguments)
   }
 
   winXhrProto.setRequestHeader = function (key, val) {
-    const req = (this as any).chobitsuRequest
-    if (req) {
-      req.handleReqHeadersSet(key, val)
+    const reqs = (this as any).chobitsuRequests
+    if (reqs) {
+      reqs.forEach((req: XhrRequest) => {
+        req.handleReqHeadersSet(key, val)
+      });
     }
 
     origSetRequestHeader.apply(this, arguments)
