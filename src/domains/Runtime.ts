@@ -141,7 +141,7 @@ function monitorConsole() {
             type === 'error' || type === 'warning' ? getCallFrames() : [],
         },
         executionContextId: executionContext.id,
-        timestamp: now(),
+        timestamp: performance.timeOrigin + performance.now(),
       })
     }
   })
