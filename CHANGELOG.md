@@ -1,3 +1,8 @@
+## 1.8.5 (14 Aug 2025)
+
+* fix: await in repl mode [#18](https://github.com/liriliri/chobitsu/issues/18)
+* fix: same console messages missing [#19](https://github.com/liriliri/chobitsu/issues/19)
+
 ## 1.8.4 (18 Oct 2024)
 
 * fix: css priority [#16](https://github.com/liriliri/chobitsu/issues/16)
