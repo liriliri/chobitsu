@@ -6,6 +6,8 @@ import convertBin from 'licia/convertBin'
 import axios from 'axios'
 import _type from 'licia/type'
 import _has from 'licia/has'
+import perfNow from 'licia/perfNow'
+import now from 'licia/now'
 
 const prefix = random(1000, 9999) + '.'
 
@@ -71,6 +73,14 @@ export function has(obj: any, key: string) {
   } catch (e) {
     return false
   }
+}
+
+export function getTimestamp() {
+  if (window.performance && performance.timeOrigin) {
+    return performance.timeOrigin + perfNow()
+  }
+
+  return now()
 }
 
 async function getContent(url: string, responseType: any, proxy = '') {

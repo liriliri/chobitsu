@@ -10,8 +10,9 @@ import stackTrace from 'licia/stackTrace'
 import trim from 'licia/trim'
 import types from 'licia/types'
 import * as objManager from '../lib/objManager'
-import evaluateJs, { setGlobal } from '../lib/evaluate'
+import { evalJs, evalJsAsync, setGlobal } from '../lib/evaluate'
 import Protocol from 'devtools-protocol'
+import { getTimestamp } from '../lib/util'
 import Runtime = Protocol.Runtime
 
 const executionContext = {
@@ -64,9 +65,17 @@ export function getProperties(
   return objManager.getProperties(params)
 }
 
-export function evaluate(
+let isAsyncSupported = true
+
+try {
+  eval('async () => {}')
+} catch (e) {
+  isAsyncSupported = false
+}
+
+export async function evaluate(
   params: Runtime.EvaluateRequest
-): Runtime.EvaluateResponse {
+): Promise<Runtime.EvaluateResponse> {
   const ret: any = {}
 
   let result: any
@@ -74,7 +83,12 @@ export function evaluate(
     if (params.throwOnSideEffect && hasSideEffect(params.expression)) {
       throw EvalError('Possible side-effect in debug-evaluate')
     }
-    result = evaluateJs(params.expression)
+
+    if (isAsyncSupported && (params.replMode || params.awaitPromise)) {
+      result = await evalJsAsync(params.expression)
+    } else {
+      result = evalJs(params.expression)
+    }
     setGlobal('$_', result)
     ret.result = objManager.wrap(result, {
       generatePreview: true,
@@ -123,6 +137,7 @@ function monitorConsole() {
     if (!console[name]) {
       return
     }
+    let lastTimestamp = 0
     const origin = console[name].bind(console)
     console[name] = (...args: any[]) => {
       origin(...args)
@@ -133,6 +148,12 @@ function monitorConsole() {
         })
       )
 
+      let timestamp = getTimestamp()
+      if (timestamp <= lastTimestamp) {
+        timestamp = lastTimestamp + 0.001
+      }
+      lastTimestamp = timestamp
+
       trigger('Runtime.consoleAPICalled', {
         type,
         args,
@@ -141,7 +162,7 @@ function monitorConsole() {
             type === 'error' || type === 'warning' ? getCallFrames() : [],
         },
         executionContextId: executionContext.id,
-        timestamp: now(),
+        timestamp,
       })
     }
   })

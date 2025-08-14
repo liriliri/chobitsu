@@ -44,7 +44,7 @@ export function setGlobal(name: string, val: any) {
   global[name] = val
 }
 
-export default function evaluate(expression: string) {
+export function evalJs(expression: string) {
   let ret
 
   injectGlobal()
@@ -52,6 +52,20 @@ export default function evaluate(expression: string) {
     ret = eval.call(window, `(${expression})`)
   } catch (e) {
     ret = eval.call(window, expression)
+  }
+  clearGlobal()
+
+  return ret
+}
+
+export function evalJsAsync(expression: string) {
+  let ret
+
+  injectGlobal()
+  try {
+    ret = eval.call(window, `(async () => (${expression}))()`)
+  } catch (e) {
+    ret = eval.call(window, `(async () => {${expression}})()`)
   }
   clearGlobal()
 
