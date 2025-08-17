@@ -1,3 +1,7 @@
+## 1.8.6 (17 Aug 2025)
+
+* fix: es5 check
+
 ## 1.8.5 (14 Aug 2025)
 
 * fix: await in repl mode [#18](https://github.com/liriliri/chobitsu/issues/18)

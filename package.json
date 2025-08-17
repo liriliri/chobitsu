@@ -1,6 +1,6 @@
 {
   "name": "chobitsu",
-  "version": "1.8.5",
+  "version": "1.8.6",
   "description": "Chrome devtools protocol JavaScript implementation",
   "main": "dist/chobitsu.js",
   "exports": {
@@ -18,7 +18,7 @@
     "build:front_end": "cd devtools/devtools-frontend && gn gen out/Default --args=\"is_debug=false\" && autoninja -C out/Default",
     "lint": "eslint src/**/*.ts",
     "test": "karma start",
-    "es5": "es-check es5 dist/**/*.js",
+    "es5": "es-check es5 dist/**/*.js dist/chobitsu.js",
     "format": "lsla prettier \"src/**/*.ts\" \"*.{js,json}\" \"devtools/*.{js,html}\" \"test/*.js\" \"script/*.js\" --write",
     "init:front_end": "cd devtools && rm -rf devtools-frontend && gclient sync --with_branch_heads --verbose"
   },

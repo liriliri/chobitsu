@@ -1,10 +1,12 @@
 const path = require('path')
 const webpack = require('webpack')
 const pkg = require('./package.json')
+const TerserPlugin = require('terser-webpack-plugin')
 
 const banner = pkg.name + ' v' + pkg.version + ' ' + pkg.homepage
 
 module.exports = {
+  target: ['web', 'es5'],
   entry: './src/index.ts',
   devtool: 'source-map',
   output: {
@@ -53,4 +55,11 @@ module.exports = {
     ],
   },
   plugins: [new webpack.BannerPlugin(banner)],
+  optimization: {
+    minimizer: [
+      new TerserPlugin({
+        extractComments: false,
+      }),
+    ],
+  },
 }
